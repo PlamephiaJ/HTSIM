@@ -5,6 +5,7 @@
 #include <iostream>
 #include <functional>
 #include <memory>
+#include <stdexcept>
 #include "compute_event.h"
 #include "null_event.h"
 #include "atlahs_event.h"
@@ -182,6 +183,14 @@ public:
     // Generate Setter and getter for multipathing
     // Replace single-instance setter with a factory to create a new instance per flow
     void setMultipathFactory(std::function<std::unique_ptr<UecMultipath>()> f) { mp_factory = std::move(f); }
+
+protected:
+    std::unique_ptr<UecMultipath> createMultipath() {
+        if (!mp_factory) {
+            throw std::logic_error("Multipath factory not set");
+        }
+        return mp_factory();
+    }
 
 private:
     EventList* _eventlist = nullptr;

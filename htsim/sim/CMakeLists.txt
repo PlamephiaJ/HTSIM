@@ -127,6 +127,7 @@ set(SOURCE_FILES
     compute_event.cpp
     null_event.cpp
     atlahs_htsim_api.cpp
+    atlahs_dragonfly_api.cpp
 )
 
 # Create static library

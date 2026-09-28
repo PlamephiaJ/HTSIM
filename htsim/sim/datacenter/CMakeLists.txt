@@ -71,3 +71,6 @@ foreach(EXECUTABLE ${ALL_EXECUTABLES})
     add_symlink_target(${EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR})
 endforeach()
 
+# AtlahsDragonflyApi inherits the FatTree-capable base API from htsim. Rescan
+# both static archives to resolve the resulting htsim/htsim_dc dependency cycle.
+target_link_libraries(htsim_uec_df PRIVATE htsim_dc htsim)

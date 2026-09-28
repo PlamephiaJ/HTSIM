@@ -23,6 +23,8 @@
 #include "uec_logger.h"
 #include "uec_mp.h"
 
+#include "atlahs_dragonfly_api.h"
+#include "logsim-interface.h"
 #include "dragonfly_switch.h"
 #include "dragonfly_topology.h"
 
@@ -43,7 +45,7 @@ int main(int argc, char** argv) {
     UecMpSource::Strategy source_lb_strategy = UecMpSource::Strategy::RANDOM;
     UecMpSource::SpritzConfig spritz_config;
     std::string source_lb_name = "RANDOM";
-    std::string topo_base_path, tm_file;
+    std::string topo_base_path, tm_file, goal_filename;
     std::string host_table_base_path;
     mem_b cwnd_b = 0;
     mem_b queuesize = 88;  // Dragonfly default (1x BDP)
@@ -168,6 +170,9 @@ int main(int argc, char** argv) {
             i++;
         } else if (!strcmp(argv[i], "-tm")) {
             tm_file = argv[i + 1];
+            i++;
+        } else if (!strcmp(argv[i], "-goal")) {
+            goal_filename = argv[i + 1];
             i++;
         } else if (!strcmp(argv[i], "-cwnd")) {
             cwnd_b = (mem_b)std::stoi(argv[i + 1]);
@@ -297,14 +302,6 @@ int main(int argc, char** argv) {
                        "queueSizeBytes", "kMinBytes", "kMaxBytes", "routing", "sourceLB"});
 
     uint32_t no_hosts = topo->get_no_hosts();
-    ConnectionMatrix* conns = new ConnectionMatrix(no_hosts);
-
-    if (!conns->load(tm_file.c_str()))
-        throw std::logic_error("Could not load connection matrix file");
-
-    if (conns->N != no_hosts)
-        throw std::logic_error("Number of nodes mismatch");
-
     UecSrc::_global_node_count = no_hosts;
 
     simtime_picosec max_rtt = topo->get_max_rtt(routing_strategy, Packet::data_packet_size(),
@@ -321,6 +318,77 @@ int main(int argc, char** argv) {
 
     if (sender_driven_cc)
         UecSrc::initNsccParams(max_rtt, linkspeed, timeFromUs((uint32_t)0), -1, !trim_disable);
+
+    if (!goal_filename.empty()) {
+        AtlahsDragonflyApi* api = new AtlahsDragonflyApi();
+        api->setDragonflyTopology(topo);
+        api->setMaxRtt(max_rtt);
+        api->cwnd_b = cwnd_b;
+        api->setEventList(&eventlist);
+        api->setComputeEvent(new ComputeEvent(eventlist));
+        api->setNullEvent(new NullEvent(eventlist));
+
+        LogSimInterface* lgs =
+            new LogSimInterface(nullptr, traffic_logger, eventlist, nullptr, nullptr);
+        lgs->htsim_api = api;
+        api->setLogSimInterface(lgs);
+        lgs->set_protocol(UEC_PROTOCOL);
+
+        api->linkspeed = linkspeed;
+        api->total_nodes = no_hosts;
+        api->print_stats_flows = LogSimInterface::print_stats_flows;
+
+        switch (load_balancing_algo) {
+            case BITMAP:
+                api->setMultipathFactory([path_entropy_size]() {
+                    return std::make_unique<UecMpBitmap>(path_entropy_size, UecSrc::_debug);
+                });
+                break;
+            case REPS:
+                api->setMultipathFactory([path_entropy_size, trim_disable]() {
+                    return std::make_unique<UecMpReps>(
+                        path_entropy_size, UecSrc::_debug, !trim_disable);
+                });
+                break;
+            case REPS_LEGACY:
+                api->setMultipathFactory([path_entropy_size]() {
+                    return std::make_unique<UecMpRepsLegacy>(
+                        path_entropy_size, UecSrc::_debug);
+                });
+                break;
+            case OBLIVIOUS:
+                api->setMultipathFactory([path_entropy_size]() {
+                    return std::make_unique<UecMpOblivious>(
+                        path_entropy_size, UecSrc::_debug);
+                });
+                break;
+            case MIXED:
+                api->setMultipathFactory([path_entropy_size]() {
+                    return std::make_unique<UecMpMixed>(path_entropy_size, UecSrc::_debug);
+                });
+                break;
+            case ECMP:
+                api->setMultipathFactory([path_entropy_size]() {
+                    return std::make_unique<UecMpEcmp>(path_entropy_size, UecSrc::_debug);
+                });
+                break;
+        }
+
+        double link_speed_bytes_per_sec = (linkspeed / 1000000000 * 1e9) / 8.0;
+        api->htsim_G = 1e9 / link_speed_bytes_per_sec;
+
+        api->Setup();
+        start_lgs(goal_filename, *lgs);
+        return 0;
+    }
+
+    ConnectionMatrix* conns = new ConnectionMatrix(no_hosts);
+
+    if (!conns->load(tm_file.c_str()))
+        throw std::logic_error("Could not load connection matrix file");
+
+    if (conns->N != no_hosts)
+        throw std::logic_error("Number of nodes mismatch");
 
     std::vector<std::unique_ptr<UecPullPacer>> pacers;
     std::vector<std::unique_ptr<UecNIC>> nics;
