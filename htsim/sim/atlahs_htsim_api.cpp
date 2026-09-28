@@ -45,11 +45,7 @@ void AtlahsHtsimApi::Send(const SendEvent &event, graph_node_properties elem) {
         TrafficLoggerSimple* traffic_logger = NULL;
 
         // Construct a fresh multipath instance per flow
-        if (!mp_factory) {
-            std::cerr << "Error: Multipath not set in AtlahsHtsimApi" << std::endl;
-            exit(0);
-        }
-        auto per_flow_mp = mp_factory();
+        auto per_flow_mp = createMultipath();
 
         UecSrc *uecSrc = new UecSrc(traffic_logger, *_eventlist, std::move(per_flow_mp), *uec_nics.at(from), 1);
 
