@@ -16,10 +16,19 @@ Edit `config.env` to change the routing or transport settings. The default is
 `ROUTING=MINIMAL`. To allow adaptive selection of the longer path through group
 2, set `ROUTING=UGAL_L` and run the script again.
 
+The runner discovers the HTSIM root through Git, so it does not depend on a fixed
+directory depth. Shared paths in `config.env` are root-relative, while the bundled
+topology and generated artifacts follow the experiment directory. The experiment
+directory can therefore be moved under another directory within this worktree.
+
+The summary title, rank placement, and flow description come from
+`EXPERIMENT_NAME`, `EXPERIMENT_DESCRIPTION`, `RANK_PLACEMENT`, and
+`FLOW_PATTERN` in `config.env`; the shared `experiments/common/summarize.py` contains no experiment-specific mapping.
+
 Each invocation creates a new directory named
 `artifacts/YYYYMMDD-HHMMSS/`. It contains:
 
-- `config_snapshot/`: the exact config, binary workload, topology, runner, and summarizer used;
+- `config_snapshot/`: the exact config, binary workload, topology, runner, and shared summarizer used;
 - `summary.md`: graph makespan and critical rank, per-rank finish times, configuration, network settings, flow results, aggregate FCT, and reproducibility information;
 - `command.txt`: the fully resolved simulator command;
 - `simulator.log` and `logout.dat`: simulator logs;

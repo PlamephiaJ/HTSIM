@@ -2,10 +2,7 @@
 set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-if ! REPO_ROOT="$(git -C "${SCRIPT_DIR}" rev-parse --show-toplevel 2>/dev/null)"; then
-    echo "error: could not locate the HTSIM repository root from ${SCRIPT_DIR}" >&2
-    exit 2
-fi
+REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
 CONFIG_FILE="${1:-${SCRIPT_DIR}/config.env}"
 SIM_EXTRA_ARGS=()
 

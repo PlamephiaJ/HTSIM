@@ -88,9 +88,12 @@ def main() -> int:
     git_revision = read_text(run_dir / "git-revision.txt")
     git_status = read_text(run_dir / "git-status.txt", default="")
     command = read_text(run_dir / "command.txt")
+    experiment_name = config.get("EXPERIMENT_NAME", run_dir.parent.parent.name)
+    experiment_description = config.get("EXPERIMENT_DESCRIPTION", "")
+    title = f"{experiment_name}: {experiment_description}" if experiment_description else experiment_name
 
     lines = [
-        f"# Experiment 1 summary — {run_dir.name}",
+        f"# {title} — {run_dir.name}",
         "",
         f"**Status:** {status} (exit code `{exit_code}`)",
         "",
@@ -135,8 +138,8 @@ def main() -> int:
             "",
             "## Network",
             "",
-            "- Rank placement: `0,1,2 → group 0`; `3,4,5 → group 1`; group 2 is the two-hop alternative.",
-            "- Concurrent flows: `0→3`, `1→4`, `2→5`.",
+            f"- Rank placement: `{config.get('RANK_PLACEMENT', 'not specified')}`",
+            f"- Flow pattern: `{config.get('FLOW_PATTERN', 'not specified')}`",
         ]
     )
 
