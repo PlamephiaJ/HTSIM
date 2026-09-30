@@ -1,0 +1,3 @@
+[submodule "workload_gen"]
+	path = workload_gen
+	url = https://github.com/PlamephiaJ/workload_gen.git
