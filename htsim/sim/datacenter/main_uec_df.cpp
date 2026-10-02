@@ -24,6 +24,7 @@
 #include "uec_mp.h"
 
 #include "atlahs_dragonfly_api.h"
+#include "messagelet_runtime.h"
 #include "logsim-interface.h"
 #include "dragonfly_switch.h"
 #include "dragonfly_topology.h"
@@ -47,6 +48,7 @@ int main(int argc, char** argv) {
     std::string source_lb_name = "RANDOM";
     std::string topo_base_path, tm_file, goal_filename;
     std::string host_table_base_path;
+    std::string messagelet_config_file;
     mem_b cwnd_b = 0;
     mem_b queuesize = 88;  // Dragonfly default (1x BDP)
 
@@ -78,6 +80,9 @@ int main(int argc, char** argv) {
             i++;
         } else if (!strcmp(argv[i], "-host_table_basepath")) {
             host_table_base_path = argv[i + 1];
+            i++;
+        } else if (!strcmp(argv[i], "-messagelet_config")) {
+            messagelet_config_file = argv[i + 1];
             i++;
         } else if (!strcmp(argv[i], "-sender_cc_only")) {
             UecSrc::_sender_based_cc = true;
@@ -321,6 +326,9 @@ int main(int argc, char** argv) {
 
     if (!goal_filename.empty()) {
         AtlahsDragonflyApi* api = new AtlahsDragonflyApi();
+        if (!messagelet_config_file.empty()) {
+            api->getMessageletRuntime().loadConfig(messagelet_config_file);
+        }
         api->setDragonflyTopology(topo);
         api->setMaxRtt(max_rtt);
         api->cwnd_b = cwnd_b;

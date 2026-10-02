@@ -109,6 +109,24 @@ Supported routing strategies: `MINIMAL`, `VALIANT`, `UGAL_L`, `SOURCE`
 
 For `SOURCE` routing, host-level routing tables are loaded automatically from the `host_table/` subdirectory within the topology path.
 
+GOAL-driven Dragonfly runs pass each flow through the messagelet runtime. By default, the
+messagelet size is the complete parent flow and every messagelet uses the minimum source
+route. Pass a unified JSON configuration with
+`-messagelet_config messagelet_configs/default.json`. The current schema is:
+
+```json
+{
+  "schema_version": 1,
+  "messagelet": {"size_bytes": 0},
+  "routing": {"default": "minimum"},
+  "logging": {"trace_decisions": false}
+}
+```
+
+`messagelet.size_bytes: 0` means one messagelet per parent flow. Positive sizes split at
+packet boundaries. Enabling `logging.trace_decisions` prints the path ID and human-readable
+route selected at every messagelet boundary.
+
 #### Spritz Source Routing
 
 The Dragonfly and SlimFly binaries accept the Spritz artifact-style source load balancer flags when `-routing SOURCE` is selected:

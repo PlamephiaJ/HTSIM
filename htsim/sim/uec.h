@@ -268,6 +268,12 @@ public:
     map<UecDataPacket::seq_t, uint16_t> _rtx_times;
 
     map<UecDataPacket::seq_t, mem_b> _rtx_queue;
+    map<UecDataPacket::seq_t, uint32_t> _messagelet_packet_paths;
+    uint64_t _messagelet_index = 0;
+    uint64_t _messagelet_bytes_sent = 0;
+    uint64_t _current_messagelet_size = 0;
+    uint32_t _current_messagelet_path_id = 0;
+    bool _messagelet_route_valid = false;
     bool isSendPermitted();
     void sendIfPermitted();
     mem_b sendPacket(const Route& route);
@@ -275,6 +281,10 @@ public:
     mem_b sendRtxPacket(const Route& route);
     void sendRTS();
     void sendProbe();
+    uint32_t messageletPathIdForNewPacket(UecDataPacket::seq_t seqno, mem_b pkt_size);
+    uint32_t messageletPathIdForRetransmission(UecDataPacket::seq_t seqno);
+    uint32_t messageletPathIdForControlPacket();
+    void ensureMessageletRoute();
     void createSendRecord(uint32_t path_id, UecDataPacket::seq_t seqno, mem_b pkt_size);
     void queueForRtx(UecBasePacket::seq_t seqno, mem_b pkt_size);
     bool validateSendTs(UecBasePacket::seq_t acked_psn, bool rtx_echo);
