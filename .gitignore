@@ -28,6 +28,8 @@ htsim/sim/datacenter/core_*
 *.err
 prompt.txt
 
-# Experiment definitions and generated artifacts are intentionally version-visible.
+# Experiment definitions, generated artifacts, and workloads are intentionally version-visible.
 !experiments/
 !experiments/**
+!workload/
+!workload/**
