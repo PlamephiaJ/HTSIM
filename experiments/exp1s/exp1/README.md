@@ -32,7 +32,7 @@ Each invocation creates a new directory named
 - `summary.md`: graph makespan and critical rank, per-rank finish times, configuration, network settings, flow results, aggregate FCT, and reproducibility information;
 - `command.txt`: the fully resolved simulator command;
 - `simulator.log` and `logout.dat`: simulator logs;
-- `output_metrics/`: simulator CSV metrics;
+- `output_metrics/`: simulator CSV metrics, including per-node GOAL DAG lifecycle data in `flow_dag_info.csv`;
 - timestamps, exit status, Git revision, and worktree status.
 
 `artifacts/latest` points to the latest completed invocation, so the usual result entry point is `artifacts/latest/summary.md`.

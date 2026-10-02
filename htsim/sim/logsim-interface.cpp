@@ -1,6 +1,7 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 
 #include "logsim-interface.h"
+#include "data_collector.h"
 #include "lgs/LogGOPSim.hpp"
 //#include "lgs/Network.hpp"
 #include "lgs/Noise.hpp"
@@ -612,7 +613,7 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
                     nexto[elem.host][elem.proc] = cpu_time;
 
                     // Mark Compute As Started
-                    parser.schedules[elem.host].MarkNodeAsStarted(elem.offset);
+                    parser.schedules[elem.host].MarkNodeAsStarted(elem.offset, elem.time);
 
                     // Update Element
                     elem.type = OP_LOCOP_IN_PROGRESS;
@@ -650,7 +651,7 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
                     printf("-- satisfy local irequires\n");
 
                   // We Mark the Send as started, before passing it to htsim
-                  parser.schedules[elem.host].MarkNodeAsStarted(elem.offset);
+                  parser.schedules[elem.host].MarkNodeAsStarted(elem.offset, elem.time);
                   check_hosts.insert(elem.host);
                   check_hosts.insert(elem.target);
 
@@ -703,7 +704,7 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
                     printf("[%i] found recv from %i tag %lu - t: %lu, label: %lu (CPU: %i)\n",
                             elem.host, elem.target, (ulint)elem.tag, (ulint)elem.time, (ulint)elem.offset + 1, elem.proc);
     
-                parser.schedules[elem.host].MarkNodeAsStarted(elem.offset);
+                parser.schedules[elem.host].MarkNodeAsStarted(elem.offset, elem.time);
                 // check_hosts.push_back(elem.host);
                 check_hosts.insert(elem.host);
                 if(myprint) printf("-- satisfy local irequires\n");
@@ -1090,6 +1091,29 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
         }
       }
       std::cout << "Maximum finishing time at host " << host << ": " << max << " ("<<(double)max/1e9<< " s)\n";
+
+      htsim::CsvMetric* dag_metric = htsim::DataCollector::get_instance().RegisterCsvMetric(
+          "flow_dag_info",
+          {"rank", "nodeOffset", "op", "peer", "tag", "size", "readyTimeNs",
+           "issueTimeNs", "finishTimeNs"});
+      for (uint32_t rank = 0; rank < parser.schedules.size(); ++rank) {
+        for (const NodeLifecycle& lifecycle : parser.schedules[rank].GetNodeLifecycles()) {
+          const char* op = lifecycle.type == OPTYPE_SEND ? "send" :
+                           lifecycle.type == OPTYPE_RECV ? "recv" :
+                           lifecycle.type == OPTYPE_CALC ? "calc" : "unknown";
+          dag_metric->LogData({
+              std::to_string(rank),
+              std::to_string(lifecycle.offset),
+              op,
+              std::to_string(lifecycle.peer),
+              std::to_string(lifecycle.tag),
+              std::to_string(lifecycle.size),
+              lifecycle.ready ? std::to_string(lifecycle.ready_time_ns) : "",
+              lifecycle.issued ? std::to_string(lifecycle.issue_time_ns) : "",
+              lifecycle.finished ? std::to_string(lifecycle.finish_time_ns) : "",
+          });
+        }
+      }
       
       // Outputs recorded communication dependencies
       if (comm_dep_file_given)

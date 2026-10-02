@@ -58,6 +58,21 @@ struct DeserializedNode {
 	std::vector<uint32_t> StartDependOnMe;
 };
 
+struct NodeLifecycle {
+	uint32_t offset;
+	uint32_t peer;
+	uint32_t tag;
+	uint64_t size;
+	char type;
+	// All lifecycle timestamps use the GOAL scheduler's nanosecond clock.
+	uint64_t ready_time_ns = 0;
+	uint64_t issue_time_ns = 0;
+	uint64_t finish_time_ns = 0;
+	bool ready = false;
+	bool issued = false;
+	bool finished = false;
+};
+
 class Graph {
 	
 	private:
@@ -448,6 +463,7 @@ class SerializedGraph {
 	uint32_t my_rank;
 
 	std::vector<DeserializedNode> executableNodes;
+	std::vector<NodeLifecycle> node_lifecycles;
 
 	// A hashmap that maps the offset of a node to the timestamp
 	// at which it should start. This is updated every time
@@ -497,6 +513,7 @@ class SerializedGraph {
 		N.Proc = (uint8_t) *( (uint8_t*) (start_of_node + sizeof(uint32_t) + sizeof(char) + sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint32_t)));
 		N.Nic = (uint8_t) *( (uint8_t*) (start_of_node + sizeof(uint32_t) + sizeof(char) + sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint32_t) + sizeof(uint8_t)));
 		N.offset = (uint32_t) offset;
+		N.start_time = 0;
 		uint32_t num_deps =                      (uint32_t) *( (uint32_t*) (start_of_node + sizeof(char) + sizeof(uint64_t) + sizeof(uint32_t)*3 + sizeof(uint8_t)*2));
 		uint32_t deps_startoffset_in_apdx =      (uint32_t) *( (uint32_t*) (start_of_node + sizeof(char) + sizeof(uint64_t) + sizeof(uint32_t)*4 + sizeof(uint8_t)*2));
 		uint32_t num_startdeps =                 (uint32_t) *( (uint32_t*) (start_of_node + sizeof(char) + sizeof(uint64_t) + sizeof(uint32_t)*5 + sizeof(uint8_t)*2));
@@ -613,9 +630,24 @@ class SerializedGraph {
 		 //printf("xxx 5\n");	
 		num_root_nodes = *((uint32_t*) (mapping_start+sizeof(uint32_t)));
 		//printf("num-root-nodes: %i\n", num_root_nodes);
-		 //printf("xxx 6\n");	
+		//printf("xxx 6\n");
+		node_lifecycles.reserve(num_nodes);
+		for (uint32_t offset = 0; offset < num_nodes; ++offset) {
+			DeserializedNode node = get_node_by_offset(offset);
+			NodeLifecycle lifecycle;
+			lifecycle.offset = offset;
+			lifecycle.peer = node.Peer;
+			lifecycle.tag = node.Tag;
+			lifecycle.size = node.Size;
+			lifecycle.type = node.Type;
+			if (node.DependenciesCnt == 0) {
+				lifecycle.ready = true;
+				lifecycle.ready_time_ns = 0;
+			}
+			node_lifecycles.push_back(lifecycle);
+		}
 		add_root_nodes();
-		 //printf("xxx 7\n");	
+		//printf("xxx 7\n");
 
 	}
 
@@ -682,7 +714,13 @@ class SerializedGraph {
 		executableNodes.clear();
 	}
 
-	void MarkNodeAsStarted(uint32_t offset) {
+	void MarkNodeAsStarted(uint32_t offset, uint64_t issue_time_ns) {
+		assert(offset < node_lifecycles.size());
+		NodeLifecycle& lifecycle = node_lifecycles[offset];
+		if (!lifecycle.issued) {
+			lifecycle.issue_time_ns = issue_time_ns;
+			lifecycle.issued = true;
+		}
 
 		DeserializedNode N = get_node_by_offset(offset);
 		for (uint32_t cnt=0; cnt<N.StartDependOnMe.size(); cnt++) {
@@ -692,17 +730,29 @@ class SerializedGraph {
 			int SIZEOF_NODE_INFO = sizeof(char) + sizeof(uint64_t) + sizeof(uint32_t)*7 + sizeof(uint8_t)*2;
 			uint32_t* dep_cnt = (uint32_t*) (mapping_start + sizeof(uint32_t)*2 + sizeof(uint32_t)*num_root_nodes + SIZEOF_NODE_INFO*offset);
 			(*dep_cnt)--;
+			if (node_start_time.find(offset) == node_start_time.end()) {
+				node_start_time[offset] = issue_time_ns;
+			} else {
+				node_start_time[offset] = std::max(node_start_time[offset], issue_time_ns);
+			}
 			if ((*dep_cnt) == 0) {
 				DeserializedNode freed = get_node_by_offset(offset);
-				freed.start_time = 0;
+				uint64_t ready_time_ns = node_start_time[offset];
+				node_start_time.erase(offset);
+				freed.start_time = ready_time_ns;
+				node_lifecycles[offset].ready_time_ns = ready_time_ns;
+				node_lifecycles[offset].ready = true;
 				executableNodes.push_back(freed);
 			}
 		}
 	}
 
+	void MarkNodeAsStarted(uint32_t offset) {
+		MarkNodeAsStarted(offset, 0);
+	}
+
 
 	void MarkNodeAsDone(uint32_t offset) {
-
         DeserializedNode N = get_node_by_offset(offset);
 
         /* if (N.Type == OP_LOCOP_IN_PROGRESS || N.Type == OP_LOCOP) {
@@ -732,6 +782,12 @@ class SerializedGraph {
 	 */
 	void MarkNodeAsDone(uint32_t offset, uint64_t cpu_time)
 	{
+		assert(offset < node_lifecycles.size());
+		NodeLifecycle& lifecycle = node_lifecycles[offset];
+		if (!lifecycle.finished) {
+			lifecycle.finish_time_ns = cpu_time;
+			lifecycle.finished = true;
+		}
 		DeserializedNode N = get_node_by_offset(offset);
 		//std::cout << "[INFO] " << "Host: " << my_rank << ", Node " << offset << " has " << N.DependOnMe.size() << " dependencies" << std::endl;
 		//printf("Executable1 Nodes: %u\n", executableNodes.size());
@@ -756,12 +812,18 @@ class SerializedGraph {
 			{
 				DeserializedNode freed = get_node_by_offset(offset);
 				freed.start_time = node_start_time[offset];
+				node_lifecycles[offset].ready_time_ns = freed.start_time;
+				node_lifecycles[offset].ready = true;
 				// Remove the node offset from `node_start_time`
 				node_start_time.erase(offset);
 				executableNodes.push_back(freed);
 			}
 		}
 		//printf("[%d-%d] Unlocked Number Nodes: %u\n", my_rank, offset, executableNodes.size());
+	}
+
+	const std::vector<NodeLifecycle>& GetNodeLifecycles() const {
+		return node_lifecycles;
 	}
 
 };
@@ -875,4 +937,3 @@ class Parser {
 	}
 	
 };
-

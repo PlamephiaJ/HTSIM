@@ -129,19 +129,6 @@ def format_duration_ns(value: int | float) -> str:
     return f"{value:g} ns"
 
 
-def parse_optional_int(value: str | None) -> int | None:
-    try:
-        return int(value) if value not in (None, "") else None
-    except ValueError:
-        return None
-
-
-def dag_node_sort_key(row: dict[str, str]) -> tuple[int, int]:
-    rank = parse_optional_int(row.get("rank"))
-    offset = parse_optional_int(row.get("nodeOffset"))
-    return rank if rank is not None else sys.maxsize, offset if offset is not None else sys.maxsize
-
-
 def main() -> int:
     if len(sys.argv) != 2:
         print(f"usage: {Path(sys.argv[0]).name} RUN_DIR", file=sys.stderr)
@@ -151,7 +138,6 @@ def main() -> int:
     config = read_env(run_dir / "config_snapshot" / "config.env")
     global_rows = read_csv(run_dir / "output_metrics" / "globalInfo.csv")
     flows = read_csv(run_dir / "output_metrics" / "flowsInfo.csv")
-    dag_nodes = read_csv(run_dir / "output_metrics" / "flow_dag_info.csv")
     global_info = global_rows[0] if global_rows else {}
     exit_code = read_text(run_dir / "exit_code.txt")
     status = "SUCCESS" if exit_code == "0" else "FAILED"
@@ -192,78 +178,6 @@ def main() -> int:
         for rank, finish in sorted(host_times.items()):
             marker = " **(critical)**" if rank == critical_rank else ""
             lines.append(f"| {rank}{marker} | {finish} | {finish / 1000:.3f} |")
-
-    lines.extend(["", "## GOAL DAG lifecycle", ""])
-    if dag_nodes:
-        completed_nodes = sum(
-            parse_optional_int(row.get("finishTimeNs")) is not None for row in dag_nodes
-        )
-        op_counts: dict[str, int] = {}
-        ready_to_issue: list[int] = []
-        issue_to_finish: list[int] = []
-        for row in dag_nodes:
-            op = row.get("op", "unknown") or "unknown"
-            op_counts[op] = op_counts.get(op, 0) + 1
-            ready = parse_optional_int(row.get("readyTimeNs"))
-            issue = parse_optional_int(row.get("issueTimeNs"))
-            finish = parse_optional_int(row.get("finishTimeNs"))
-            if ready is not None and issue is not None:
-                ready_to_issue.append(issue - ready)
-            if issue is not None and finish is not None:
-                issue_to_finish.append(finish - issue)
-
-        counts = ", ".join(f"{op}={count}" for op, count in sorted(op_counts.items()))
-        lines.extend(
-            [
-                f"- Recorded nodes: **{len(dag_nodes)}**",
-                f"- Completed nodes: **{completed_nodes}/{len(dag_nodes)}**",
-                f"- Operations: **{counts}**",
-            ]
-        )
-        if ready_to_issue:
-            lines.append(
-                "- Ready-to-issue wait min / average / max: "
-                f"**{min(ready_to_issue):g} / "
-                f"{sum(ready_to_issue) / len(ready_to_issue):g} / "
-                f"{max(ready_to_issue):g} ns**"
-            )
-        if issue_to_finish:
-            lines.append(
-                "- Issue-to-finish duration min / average / max: "
-                f"**{min(issue_to_finish):g} / "
-                f"{sum(issue_to_finish) / len(issue_to_finish):g} / "
-                f"{max(issue_to_finish):g} ns**"
-            )
-
-        max_dag_rows = 200
-        shown_nodes = sorted(dag_nodes, key=dag_node_sort_key)[:max_dag_rows]
-        lines.extend(
-            [
-                "",
-                "| Rank | Node offset | Op | Peer | Tag | Size | Ready (ns) | Issue (ns) | Finish (ns) |",
-                "| ---: | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |",
-            ]
-        )
-        for row in shown_nodes:
-            lines.append(
-                f"| {row.get('rank', '?')} | {row.get('nodeOffset', '?')} | "
-                f"{row.get('op', '?')} | {row.get('peer', '?')} | {row.get('tag', '?')} | "
-                f"{row.get('size', '?')} | {row.get('readyTimeNs') or '?'} | "
-                f"{row.get('issueTimeNs') or '?'} | {row.get('finishTimeNs') or '?'} |"
-            )
-        if len(dag_nodes) > max_dag_rows:
-            lines.extend(
-                [
-                    "",
-                    f"Showing the first {max_dag_rows} nodes in rank/offset order; "
-                    "the complete lifecycle is in `output_metrics/flow_dag_info.csv`.",
-                ]
-            )
-    else:
-        lines.append(
-            "No GOAL DAG lifecycle records were produced. See "
-            "`output_metrics/flow_dag_info.csv` and `simulator.log`."
-        )
 
     lines.extend(
         [
@@ -426,7 +340,6 @@ def main() -> int:
             "",
             "- Full simulator output: `simulator.log`",
             "- Per-flow CSV: `output_metrics/flowsInfo.csv`",
-            "- GOAL DAG lifecycle CSV: `output_metrics/flow_dag_info.csv`",
             "- Global CSV: `output_metrics/globalInfo.csv`",
             "- Exact input snapshot: `config_snapshot/`",
             "- Resolved command: `command.txt`",
