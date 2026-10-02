@@ -1,4 +1,4 @@
-# Experiment 2.a.1: collective interference with a bypass group
+# Experiment 2.a.2: collective interference with a bypass group
 
 This experiment runs the existing 12-rank
 `exp2a1_collective_internal_slack` workload. Three collectives start together:
@@ -12,7 +12,7 @@ This experiment runs the existing 12-rank
 From anywhere in the repository:
 
 ```bash
-./experiments/exp2s/exp2.a.1/run.sh
+./experiments/exp2s/exp2.a.2/run.sh
 ```
 
 Each invocation writes an immutable input snapshot, logs, CSV metrics, and a
@@ -31,13 +31,10 @@ controls the ready-time bin width and defaults to 100 ns.
 The bundled `p6a1h2` Dragonfly has three groups with six hosts each. Group 0
 and group 1 carry the workload; group 2 has no assigned rank and provides the
 same kind of two-global-hop alternative used by experiment 1.
-`rank_placement.json` interleaves the ranks across the first two groups:
-
-| Collective | Group 0 | Group 1 |
-| --- | --- | --- |
-| Ring | ranks 0, 2 | ranks 1, 3 |
-| Tree | ranks 4, 6 | ranks 5, 7 |
-| All-to-all | ranks 8, 10 | ranks 9, 11 |
+`rank_placement.json` is the sole source of truth for the rank-to-endpoint
+mapping. Run summaries derive their group membership and physical HTSIM host
+IDs directly from the snapshotted JSON instead of duplicating the rank lists
+in configuration text.
 
 Each placement row explicitly names the GOAL rank, Dragonfly group, switch
 within that group, and host within that switch; all three endpoint coordinates

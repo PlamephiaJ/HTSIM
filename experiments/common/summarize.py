@@ -60,30 +60,42 @@ def read_dragonfly_dimensions(path: Path) -> tuple[int, int] | None:
     return values["p"], values["a"]
 
 
-def read_physical_host_to_goal_rank(run_dir: Path) -> dict[int, int]:
+def read_rank_placements(run_dir: Path) -> list[dict[str, int]]:
+    """Read the snapshotted placement and derive physical host IDs.
+
+    The snapshot is the sole source of truth. The returned records always
+    contain ``rank`` and ``physical_host``; the coordinate fields are present
+    when the current placement schema is used.
+    """
     placement_path = run_dir / "config_snapshot" / "rank_placement.json"
     try:
         placement = json.loads(placement_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
-        return {}
+        return []
 
     # Retain support for summaries of runs made with the original compact schema.
     rank_to_host = placement.get("rank_to_host")
     if isinstance(rank_to_host, list):
         try:
-            return {int(host): rank for rank, host in enumerate(rank_to_host)}
+            records = [
+                {"rank": rank, "physical_host": int(host)}
+                for rank, host in enumerate(rank_to_host)
+            ]
         except (TypeError, ValueError):
-            return {}
+            return []
+        if len({row["physical_host"] for row in records}) != len(records):
+            return []
+        return records
 
     dimensions = read_dragonfly_dimensions(
         run_dir / "config_snapshot" / "topology" / "dragonfly.topo"
     )
     placements = placement.get("placements")
     if dimensions is None or not isinstance(placements, list):
-        return {}
+        return []
 
     hosts_per_switch, switches_per_group = dimensions
-    host_to_rank: dict[int, int] = {}
+    records: list[dict[str, int]] = []
     try:
         for endpoint in placements:
             rank = int(endpoint["rank"])
@@ -93,10 +105,22 @@ def read_physical_host_to_goal_rank(run_dir: Path) -> dict[int, int]:
             physical_host = (
                 (group * switches_per_group + switch) * hosts_per_switch + host
             )
-            host_to_rank[physical_host] = rank
+            records.append(
+                {
+                    "rank": rank,
+                    "group": group,
+                    "switch": switch,
+                    "host": host,
+                    "physical_host": physical_host,
+                }
+            )
     except (KeyError, TypeError, ValueError):
-        return {}
-    return host_to_rank
+        return []
+    if len({row["rank"] for row in records}) != len(records):
+        return []
+    if len({row["physical_host"] for row in records}) != len(records):
+        return []
+    return sorted(records, key=lambda row: row["rank"])
 
 
 def split_flow_id(value: str) -> tuple[str, str, str]:
@@ -160,7 +184,10 @@ def main() -> int:
     git_revision = read_text(run_dir / "git-revision.txt")
     git_status = read_text(run_dir / "git-status.txt", default="")
     command = read_text(run_dir / "command.txt")
-    physical_host_to_goal_rank = read_physical_host_to_goal_rank(run_dir)
+    rank_placements = read_rank_placements(run_dir)
+    physical_host_to_goal_rank = {
+        row["physical_host"]: row["rank"] for row in rank_placements
+    }
     experiment_name = config.get("EXPERIMENT_NAME", run_dir.parent.parent.name)
     experiment_description = config.get("EXPERIMENT_DESCRIPTION", "")
     title = f"{experiment_name}: {experiment_description}" if experiment_description else experiment_name
@@ -280,12 +307,63 @@ def main() -> int:
             f"- Path entropy: `{config.get('PATH_ENTROPY_SIZE', 'unknown')}`",
             f"- Initial cwnd: `{config.get('CWND_BYTES', 'unknown')} bytes` (`0` means simulator default)",
             f"- Queue: `{config.get('QUEUE_PACKETS', 'unknown')}` packets",
-            f"- Rank placement config: `{config.get('RANK_PLACEMENT_CONFIG', 'not provided')}`",
+            "- Rank placement snapshot: "
+            + (
+                "`config_snapshot/rank_placement.json`"
+                if rank_placements
+                else "not available"
+            ),
             f"- Messagelet config: `{config.get('MESSAGELET_CONFIG', 'not provided')}`",
+            "",
+            "## Rank placement",
+            "",
+        ]
+    )
+
+    if rank_placements:
+        lines.append(
+            "Derived from the snapshotted `config_snapshot/rank_placement.json`; "
+            "no descriptive placement string from `config.env` is used."
+        )
+        if all({"group", "switch", "host"} <= row.keys() for row in rank_placements):
+            ranks_by_location: dict[tuple[int, int], list[int]] = {}
+            for row in rank_placements:
+                location = (row["group"], row["switch"])
+                ranks_by_location.setdefault(location, []).append(row["rank"])
+            lines.append("")
+            for (group, switch), ranks in sorted(ranks_by_location.items()):
+                rank_list = ", ".join(str(rank) for rank in sorted(ranks))
+                lines.append(f"- Group {group}, switch {switch}: ranks {rank_list}")
+            lines.extend(
+                [
+                    "",
+                    "| GOAL rank | Group | Switch | Host | Physical HTSIM host |",
+                    "| ---: | ---: | ---: | ---: | ---: |",
+                ]
+            )
+            for row in rank_placements:
+                lines.append(
+                    f"| {row['rank']} | {row['group']} | {row['switch']} | "
+                    f"{row['host']} | {row['physical_host']} |"
+                )
+        else:
+            lines.extend(
+                [
+                    "",
+                    "| GOAL rank | Physical HTSIM host |",
+                    "| ---: | ---: |",
+                ]
+            )
+            for row in rank_placements:
+                lines.append(f"| {row['rank']} | {row['physical_host']} |")
+    else:
+        lines.append("No valid snapshotted rank placement was available.")
+
+    lines.extend(
+        [
             "",
             "## Network",
             "",
-            f"- Rank placement: `{config.get('RANK_PLACEMENT', 'not specified')}`",
             f"- Flow pattern: `{config.get('FLOW_PATTERN', 'not specified')}`",
         ]
     )

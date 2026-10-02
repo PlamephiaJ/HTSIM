@@ -246,12 +246,33 @@
 - Path entropy: `64`
 - Initial cwnd: `0 bytes` (`0` means simulator default)
 - Queue: `88` packets
-- Rank placement config: `${SCRIPT_DIR}/rank_placement.json`
+- Rank placement snapshot: `config_snapshot/rank_placement.json`
 - Messagelet config: `${SCRIPT_DIR}/messagelet_configs/default.json`
+
+## Rank placement
+
+Derived from the snapshotted `config_snapshot/rank_placement.json`; no descriptive placement string from `config.env` is used.
+
+- Group 0, switch 0: ranks 0, 2, 4, 7, 8, 10
+- Group 1, switch 0: ranks 1, 3, 5, 6, 9, 11
+
+| GOAL rank | Group | Switch | Host | Physical HTSIM host |
+| ---: | ---: | ---: | ---: | ---: |
+| 0 | 0 | 0 | 0 | 0 |
+| 1 | 1 | 0 | 0 | 6 |
+| 2 | 0 | 0 | 1 | 1 |
+| 3 | 1 | 0 | 1 | 7 |
+| 4 | 0 | 0 | 2 | 2 |
+| 5 | 1 | 0 | 2 | 8 |
+| 6 | 1 | 0 | 3 | 9 |
+| 7 | 0 | 0 | 3 | 3 |
+| 8 | 0 | 0 | 4 | 4 |
+| 9 | 1 | 0 | 4 | 10 |
+| 10 | 0 | 0 | 5 | 5 |
+| 11 | 1 | 0 | 5 | 11 |
 
 ## Network
 
-- Rank placement: `group 0: ranks 0,2,4,6,8,10; group 1: ranks 1,3,5,7,9,11`
 - Flow pattern: `ranks 0-3 ring all-reduce; ranks 4-7 tree all-reduce; ranks 8-11 direct all-to-all`
 - Link speed: `400.000000 Gbps`
 - Link delays (global/local/host): `500/25/25 ns`
