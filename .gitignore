@@ -26,3 +26,4 @@ sim_progress.log
 core_*
 htsim/sim/datacenter/core_*
 *.err
+prompt.txt

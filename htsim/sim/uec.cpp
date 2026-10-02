@@ -7,6 +7,7 @@
 #include <sstream>
 #include "circular_buffer.h"
 #include "data_collector.h"
+#include "messagelet_runtime.h"
 #include "uec_logger.h"
 #include "pciemodel.h"
 
@@ -904,7 +905,11 @@ bool UecSrc::checkFinished(UecDataPacket::seq_t cum_ack) {
                     if (_atlahs_api->print_stats_flows) {
                         _atlahs_api->flowInfos.push_back(FlowInfo(timeAsUs(_flow_start_time), timeAsUs(eventlist().now()), timeAsUs(eventlist().now() - _flow_start_time), _flow_size, 1, _cwnd));
                     }
-                    _atlahs_api->EventFinished(*flow_over);
+                    if (_messagelet_runtime) {
+                        _messagelet_runtime->eventFinished(*flow_over);
+                    } else {
+                        _atlahs_api->EventFinished(*flow_over);
+                    }
                 }
             }
         } else {
@@ -943,7 +948,11 @@ bool UecSrc::checkFinished(UecDataPacket::seq_t cum_ack) {
                     if (_atlahs_api->print_stats_flows) {
                         _atlahs_api->flowInfos.push_back(FlowInfo(timeAsUs(_flow_start_time), timeAsUs(eventlist().now()), timeAsUs(eventlist().now() - _flow_start_time), _flow_size, 1, _cwnd));
                     }
-                    _atlahs_api->EventFinished(*flow_over);
+                    if (_messagelet_runtime) {
+                        _messagelet_runtime->eventFinished(*flow_over);
+                    } else {
+                        _atlahs_api->EventFinished(*flow_over);
+                    }
                 }
                 _done_sending = true;
             }
