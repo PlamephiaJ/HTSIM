@@ -698,6 +698,7 @@ mem_b UecSrc::handleAckno(UecDataPacket::seq_t ackno) {
             // packet was in RTX queue
             mem_b pkt_size = rtx_i->second;
             _rtx_queue.erase(rtx_i);
+            _messagelet_packet_paths.erase(ackno);
             _rtx_backlog -= pkt_size;
             _in_flight += pkt_size; // don't double count - we decremented when we marked for rtx
             if (_debug_src) {
@@ -731,6 +732,7 @@ mem_b UecSrc::handleAckno(UecDataPacket::seq_t ackno) {
         }
 
         _tx_bitmap.erase(i);
+        _messagelet_packet_paths.erase(ackno);
         // _send_times.erase(send_time);
         delFromSendTimes(send_time, ackno);
 
@@ -778,6 +780,7 @@ mem_b UecSrc::handleCumulativeAck(UecDataPacket::seq_t cum_ack) {
         if (seqno < cum_ack) {
             mem_b pkt_size = _rtx_queue.begin()->second;
             _rtx_queue.erase(_rtx_queue.begin());
+            _messagelet_packet_paths.erase(seqno);
             _rtx_backlog -= pkt_size;
             _in_flight += pkt_size; // don't double count - we decremented when we marked for rtx
         } else {
@@ -808,6 +811,7 @@ mem_b UecSrc::handleCumulativeAck(UecDataPacket::seq_t cum_ack) {
                 << endl;
         }  
         _tx_bitmap.erase(i);
+        _messagelet_packet_paths.erase(seqno);
         i = _tx_bitmap.begin();
         // _send_times.erase(send_time);
         delFromSendTimes(send_time, seqno);
@@ -2176,7 +2180,7 @@ mem_b UecSrc::sendNewPacket(const Route& route) {
                                      _pull_target, _dstaddr);
     p->set_src(_srcaddr);
 
-    uint32_t ev = _mp->nextEntropy(_highest_sent, (uint64_t)_cwnd/_mss);
+    uint32_t ev = messageletPathIdForNewPacket(_highest_sent, full_pkt_size);
     p->set_pathid(ev);
     p->set_hop_count(0);
     p->flow().logTraffic(*p, *this, TrafficLogger::PKT_CREATESEND);
@@ -2223,7 +2227,7 @@ mem_b UecSrc::sendRtxPacket(const Route& route) {
                                      _pull_target, _dstaddr);
     p->set_src(_srcaddr);
 
-    uint32_t ev = _mp->nextEntropy(_highest_sent, (uint64_t)_cwnd/_mss);
+    uint32_t ev = messageletPathIdForRetransmission(seq_no);
     p->set_pathid(ev);
     p->set_hop_count(0);
     p->flow().logTraffic(*p, *this, TrafficLogger::PKT_CREATESEND);
@@ -2257,7 +2261,7 @@ void UecSrc::sendProbe() {
                                     UecBasePacket::DATA_PROBE, 0, _dstaddr);
     p->set_src(_srcaddr);
     p->set_dst(_dstaddr);
-    uint32_t ev = _mp->nextEntropy(_highest_sent, (uint64_t)_cwnd/_mss);
+    uint32_t ev = messageletPathIdForControlPacket();
     p->set_pathid(ev);
     p->set_hop_count(0);
     // p->sendOn();
@@ -2288,9 +2292,12 @@ void UecSrc::sendRTS() {
         UecRtsPacket::newpkt(_flow, NULL, _highest_sent, _pull_target, _dstaddr);
     p->set_src(_srcaddr);
 
-    uint32_t ev = _mp->nextEntropy(_highest_sent, (uint64_t)_cwnd/_mss);
+    uint32_t ev = messageletPathIdForControlPacket();
     p->set_pathid(ev);
     p->set_hop_count(0);
+    if (_messagelet_runtime) {
+        _messagelet_packet_paths[_highest_sent] = ev;
+    }
     createSendRecord(ev, _highest_sent, _hdr_size);
 
     // p->sendOn();
@@ -2300,6 +2307,61 @@ void UecSrc::sendRTS() {
     _stats.rts_pkts_sent++;
     _last_rts = eventlist().now();
     startRTO(eventlist().now());
+}
+
+uint32_t UecSrc::messageletPathIdForNewPacket(UecDataPacket::seq_t seqno,
+                                              mem_b pkt_size) {
+    if (!_messagelet_runtime) {
+        return _mp->nextEntropy(_highest_sent, (uint64_t)_cwnd / _mss);
+    }
+
+    ensureMessageletRoute();
+    if (_messagelet_bytes_sent >= _current_messagelet_size) {
+        _messagelet_index++;
+        _messagelet_route_valid = false;
+        ensureMessageletRoute();
+        _messagelet_bytes_sent = 0;
+    }
+
+    const uint32_t path_id = _current_messagelet_path_id;
+    _messagelet_packet_paths[seqno] = path_id;
+    _messagelet_bytes_sent += pkt_size;
+    return path_id;
+}
+
+uint32_t UecSrc::messageletPathIdForRetransmission(UecDataPacket::seq_t seqno) {
+    if (!_messagelet_runtime) {
+        return _mp->nextEntropy(_highest_sent, (uint64_t)_cwnd / _mss);
+    }
+
+    auto path = _messagelet_packet_paths.find(seqno);
+    if (path == _messagelet_packet_paths.end()) {
+        throw std::logic_error("Retransmitted packet has no messagelet routing decision");
+    }
+    return path->second;
+}
+
+uint32_t UecSrc::messageletPathIdForControlPacket() {
+    if (!_messagelet_runtime) {
+        return _mp->nextEntropy(_highest_sent, (uint64_t)_cwnd / _mss);
+    }
+
+    ensureMessageletRoute();
+    return _current_messagelet_path_id;
+}
+
+void UecSrc::ensureMessageletRoute() {
+    if (_messagelet_route_valid) {
+        return;
+    }
+
+    _current_messagelet_size = _messagelet_runtime->messageletSize(*this);
+    if (_current_messagelet_size == 0) {
+        throw std::logic_error("Messagelet runtime returned a zero messagelet size");
+    }
+    _current_messagelet_path_id =
+        _messagelet_runtime->pathIdForMessagelet(*this, _messagelet_index);
+    _messagelet_route_valid = true;
 }
 
 void UecSrc::createSendRecord(uint32_t path_id, UecBasePacket::seq_t seqno, mem_b full_pkt_size) {

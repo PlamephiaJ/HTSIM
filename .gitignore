@@ -14,6 +14,7 @@ idmap.txt
 *.pdf
 *.png
 !example_validate.json
+!htsim/sim/datacenter/messagelet_configs/*.json
 build/
 *.bin
 *:Zone.Identifier
