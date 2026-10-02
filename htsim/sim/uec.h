@@ -31,6 +31,7 @@ class UecPullPacer;
 class UecSink;
 class UecSrc;
 class UecLogger;
+class MessageletRuntime;
 
 
 // UecNIC aggregates UecSrcs that are on the same NIC.  It round
@@ -383,6 +384,7 @@ public:
 
     // ATLAHS
     AtlahsHtsimApi *_atlahs_api = nullptr;
+    MessageletRuntime *_messagelet_runtime = nullptr;
     graph_node_properties *lgs_node; // used for logging purposes
     uint64_t send_size = 0;
     uint32_t from = -1;
