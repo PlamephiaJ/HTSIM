@@ -39,6 +39,7 @@ WORKLOAD_PATH="$(resolve_from_repo "${WORKLOAD}")"
 TOPOLOGY_PATH="$(resolve_from_repo "${TOPOLOGY}")"
 BINARY_PATH="$(resolve_from_repo "${BINARY}")"
 SUMMARIZER_PATH="${REPO_ROOT}/experiments/common/summarize.py"
+SLACK_ANALYZER_PATH="${REPO_ROOT}/experiments/common/analyze_slack.py"
 RANK_PLACEMENT_PATH=""
 MESSAGELET_CONFIG_PATH=""
 
@@ -69,6 +70,10 @@ if [[ ! -x "${SUMMARIZER_PATH}" ]]; then
     echo "error: shared summarizer not found: ${SUMMARIZER_PATH}" >&2
     exit 2
 fi
+if [[ ! -f "${SLACK_ANALYZER_PATH}" ]]; then
+    echo "error: shared slack analyzer not found: ${SLACK_ANALYZER_PATH}" >&2
+    exit 2
+fi
 
 if [[ ! -x "${BINARY_PATH}" ]]; then
     if [[ "${BUILD_IF_MISSING:-0}" != 1 ]]; then
@@ -92,6 +97,7 @@ mkdir -p "${run_dir}/config_snapshot" "${run_dir}/output_metrics"
 cp "${CONFIG_FILE}" "${run_dir}/config_snapshot/config.env"
 cp "${SCRIPT_DIR}/run.sh" "${run_dir}/config_snapshot/run.sh"
 cp "${SUMMARIZER_PATH}" "${run_dir}/config_snapshot/summarize.py"
+cp "${SLACK_ANALYZER_PATH}" "${run_dir}/config_snapshot/analyze_slack.py"
 cp "${WORKLOAD_PATH}" "${run_dir}/config_snapshot/workload.bin"
 if [[ -f "${WORKLOAD_PATH%.bin}.goal" ]]; then
     cp "${WORKLOAD_PATH%.bin}.goal" "${run_dir}/config_snapshot/workload.goal"
@@ -146,16 +152,34 @@ set -e
 date --iso-8601=seconds > "${run_dir}/finished_at.txt"
 printf '%s\n' "${status}" > "${run_dir}/exit_code.txt"
 python3 "${run_dir}/config_snapshot/summarize.py" "${run_dir}"
+analysis_status=0
+if (( status == 0 )); then
+    if python3 "${run_dir}/config_snapshot/analyze_slack.py" \
+        "${run_dir}" \
+        --ready-window-ns "${SLACK_READY_WINDOW_NS:-100}"; then
+        :
+    else
+        analysis_status=$?
+    fi
+fi
 ln -sfn "$(basename "${run_dir}")" "${SCRIPT_DIR}/artifacts/latest"
 
 echo
 echo "Final summary: ${run_dir}/summary.md"
 cat "${run_dir}/summary.md"
 echo
+if (( status == 0 && analysis_status == 0 )); then
+    echo "Slack analysis: ${run_dir}/slack_analysis.md"
+    echo
+fi
 
 if (( status != 0 )); then
     echo "Experiment failed with exit code ${status}; see ${run_dir}/simulator.log" >&2
     exit "${status}"
+fi
+if (( analysis_status != 0 )); then
+    echo "Experiment completed, but slack analysis failed with exit code ${analysis_status}" >&2
+    exit "${analysis_status}"
 fi
 
 echo "Experiment completed: ${run_dir}"

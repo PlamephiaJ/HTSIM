@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Offline oracle-slack analysis for an Exp2-A artifact.
+"""Offline oracle-slack analysis for a GOAL workload artifact.
 
-Only Python's standard library is required.  The input artifact is read-only;
-all generated files are written below --output-dir.
+Only Python's standard library is required. Existing input files are not
+modified; generated files are written below --output-dir.
 """
 
 from __future__ import annotations
@@ -184,19 +184,19 @@ def format_table_value(value: int | float) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("artifact", type=Path, help="Exp2-A artifact directory")
+    parser.add_argument("artifact", type=Path, help="timestamped experiment artifact directory")
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path(__file__).resolve().parent,
-        help="analysis output directory (default: directory containing this script)",
+        default=None,
+        help="analysis output directory (default: the artifact directory)",
     )
     parser.add_argument("--ready-window-ns", type=int, default=100)
     args = parser.parse_args()
     require(args.ready_window_ns > 0, "--ready-window-ns must be positive")
 
     artifact = args.artifact.resolve()
-    output_dir = args.output_dir.resolve()
+    output_dir = (args.output_dir or args.artifact).resolve()
     goal_path = artifact / "config_snapshot" / "workload.goal"
     meta_path = artifact / "config_snapshot" / "workload.meta.json"
     lifecycle_path = artifact / "output_metrics" / "flow_dag_info.csv"
@@ -212,7 +212,8 @@ def main() -> int:
     flows = {int(flow_id): value for flow_id, value in raw_flows.items()}
 
     expected_flow_count = int(metadata["workload"]["p2p_flows"])
-    require(len(flows) == expected_flow_count == 60, "expected exactly 60 metadata flows")
+    require(expected_flow_count > 0, "metadata contains no P2P flows")
+    require(len(flows) == expected_flow_count, "metadata flow count mismatch")
     require(len(tasks) == int(metadata["workload"]["tasks"]), "GOAL/metadata task count mismatch")
     require(
         len(task_edges) == int(metadata["workload"]["dependency_edges"]),
@@ -333,10 +334,10 @@ def main() -> int:
         flow_rows.append(
             {
                 "flow_id": flow_id,
-                "collective_id": flow["collective_id"],
-                "collective_node": flow["node_id"],
-                "algorithm": flow["algorithm"],
-                "phase": flow["phase"],
+                "collective_id": flow.get("collective_id", ""),
+                "collective_node": flow.get("node_id", ""),
+                "algorithm": flow.get("algorithm", flow.get("type", "unknown")),
+                "phase": flow.get("phase", ""),
                 "step": flow.get("step", ""),
                 "chunk": flow.get("chunk", ""),
                 "channel": flow.get("channel", ""),
@@ -413,8 +414,9 @@ def main() -> int:
         (row for row in window_rows if int(row["ready_flow_count"]) > 1),
         key=lambda row: (-int(row["slack_spread_ns"]), int(row["ready_window_start_ns"])),
     )
+    workload_name = str(metadata["workload"].get("name", artifact.name))
     report = [
-        "# Exp2-A offline oracle-slack analysis",
+        f"# Offline oracle-slack analysis: {workload_name}",
         "",
         f"- Input artifact: `{artifact}`",
         f"- Observed `C_ref`: **{c_ref} ns**",
@@ -513,7 +515,7 @@ def main() -> int:
             "",
             "## Sufficiency and limitation",
             "",
-            "The artifact is sufficient for this offline Exp2-A measurement: it contains the authoritative GOAL "
+            "The artifact is sufficient for this offline oracle-slack measurement: it contains the authoritative GOAL "
             "dependencies, unique flow-to-task mappings, complete lifecycle timestamps, and an independently logged "
             "application makespan. No additional simulator instrumentation is required for the reported metric.",
             "",

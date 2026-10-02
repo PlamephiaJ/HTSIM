@@ -1,4 +1,4 @@
-# Exp2-A offline oracle-slack analysis
+# Offline oracle-slack analysis: exp2a1_collective_internal_slack
 
 - Input artifact: `/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp2s/exp2.a.1/artifacts/20261002-152340`
 - Observed `C_ref`: **40104 ns**
@@ -73,6 +73,6 @@ Measured slack spread in this window: **4228 ns**. This table reports the observ
 
 ## Sufficiency and limitation
 
-The artifact is sufficient for this offline Exp2-A measurement: it contains the authoritative GOAL dependencies, unique flow-to-task mappings, complete lifecycle timestamps, and an independently logged application makespan. No additional simulator instrumentation is required for the reported metric.
+The artifact is sufficient for this offline oracle-slack measurement: it contains the authoritative GOAL dependencies, unique flow-to-task mappings, complete lifecycle timestamps, and an independently logged application makespan. No additional simulator instrumentation is required for the reported metric.
 
 The remaining-path value is an **observed-time** quantity. Reinterpreting it as a sum of isolated node service durations would require an additional causal/resource model and can double-count overlapping communication lifetimes after send/recv collapse; that alternative is intentionally not claimed here.

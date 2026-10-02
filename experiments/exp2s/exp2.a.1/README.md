@@ -19,6 +19,13 @@ Each invocation writes an immutable input snapshot, logs, CSV metrics, and a
 summary under `artifacts/YYYYMMDD-HHMMSS/`; `artifacts/latest` points to the
 most recent completed run.
 
+After a successful simulation, the runner also invokes the shared
+`experiments/common/analyze_slack.py` offline analyzer. It writes
+`slack_analysis.md` plus `oracle_slack.csv`, `ready_set_slack.csv`, and
+`ready_window_summary.csv` in that same timestamped artifact (the CSV files
+live under `output_metrics/`). `SLACK_READY_WINDOW_NS` in `config.env`
+controls the ready-time bin width and defaults to 100 ns.
+
 ## Rank placement
 
 The bundled `p6a1h2` Dragonfly has three groups with six hosts each. Group 0
