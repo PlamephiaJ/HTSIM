@@ -1,0 +1,356 @@
+queue_id 2 ecn_low 70720 ecn_high 291200
+Chosen filter for metric globalInfo: Filter: regex=.*, enabled=1, downsampling_ratio=1
+Initializing static NSCC parameters: _reference_network_linkspeed=100000000000 _reference_network_rtt=12000000 _reference_network_bdp=150000 _target_Qdelay=5485350 _network_linkspeed=400000000000 _network_rtt=7313800 _network_bdp=365690 _qa_gate=2^3 _qa_threshold=2.19414e+07 _scaling_factor_a=2.43793 _scaling_factor_b=0.457112 _alpha=0.00332859 _fi=49928.9 _eta=1497.87 _qa_scaling=1 _gamma=0.8 _fi_scale=0.609483 _delay_alpha=0.0125 _adjust_period_threshold=7313800 _adjust_bytes_threshold=33280
+No of nodes 18
+filename is /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp2s/exp2.a.2/artifacts/20261002-162855/config_snapshot/workload.bin
+[ATLAHS] GOAL rank mapping: gpu-rank (placement=custom, LGS ranks=12, CPUs=1, NICs=1, HTSIM nodes=18)
+Starting 12
+LGS Compute Event - Host 0 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 2 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 6 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 11 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 5 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 1 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 4 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 10 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 9 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 3 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 8 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 7 - CPU 0 - StartTime 0 - Time 1 - Size 1
+progress: 0 % (12) - 1 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 1 % (12) - 1 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 2 % (12) - 1 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 3 % (12) - 1 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 4 % (12) - 1 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 5 % (12) - 1 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 6 % (24) - 1 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 1 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 5 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 0 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 9 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 11 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 2 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 6 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 8 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 10 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 7 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 3 - CPU 0 - StartTime 1 - Time 2 - Size 1
+progress: 7 % (24) - 2 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 8 % (24) - 2 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 9 % (24) - 2 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 10 % (24) - 2 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 11 % (24) - 2 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 12 % (76) - 2 [sizes: aq: 52 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 13 % (83) - 2831 [sizes: aq: 6 max rq: 8 max uq: 0: reinserts: (0, 6, 0)]
+progress: 14 % (85) - 5660 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 4, 0)]
+Flow uec_7_0 flowId 1000000001 uecSrc 18 finished at 7.14816 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2145 fast_inc 0 eta_inc 0 multi_dec -0 quick_dec -0 nack_dec -0
+Chosen filter for metric flowsInfo: Filter: regex=.*, enabled=1, downsampling_ratio=1
+LGS Flow Event - Host 3 - CPU 0 - StartTime 2 - Time 7148 - Dst 0 - Tag 0 - Size 65536
+progress: 15 % (87) - 7148 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 2, 0)]
+progress: 16 % (88) - 7148 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 0 - CPU 0 - StartTime 7148 - Time 7149 - Size 1
+progress: 17 % (88) - 7149 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 18 % (89) - 7149 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_6_1 flowId 1000000007 uecSrc 21 finished at 7.23264 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1169 fast_inc 0 eta_inc 0 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 1 - CPU 0 - StartTime 2 - Time 7232 - Dst 2 - Tag 0 - Size 65536
+progress: 19 % (90) - 7232 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 20 % (91) - 7232 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 7232 - Time 7233 - Size 1
+progress: 21 % (91) - 7233 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 22 % (92) - 7233 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_9_2 flowId 1000000009 uecSrc 22 finished at 7.31712 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2644 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 6 - CPU 0 - StartTime 2 - Time 7317 - Dst 4 - Tag 300001 - Size 65536
+progress: 23 % (93) - 7317 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 24 % (95) - 7317 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 7317 - Time 7318 - Size 1
+progress: 25 % (95) - 7318 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_3_8 flowId 1000000003 uecSrc 19 finished at 8.3812 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1051 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 7 - CPU 0 - StartTime 2 - Time 8381 - Dst 5 - Tag 300001 - Size 65536
+progress: 26 % (95) - 8381 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 27 % (97) - 8381 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 5 - CPU 0 - StartTime 8381 - Time 8382 - Size 1
+progress: 28 % (97) - 8382 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 29 % (98) - 8382 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_4_10 flowId 1000000005 uecSrc 20 finished at 8.46568 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1239 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 8 - CPU 0 - StartTime 2 - Time 8465 - Dst 9 - Tag 2 - Size 65536
+progress: 30 % (99) - 8465 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 31 % (101) - 8465 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 32 % (102) - 8489 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_1_7 flowId 1000000011 uecSrc 23 finished at 8.55016 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 647 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 2 - CPU 0 - StartTime 2 - Time 8550 - Dst 3 - Tag 0 - Size 65536
+progress: 33 % (104) - 8550 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 34 % (105) - 8550 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 8550 - Time 8551 - Size 1
+progress: 35 % (105) - 8551 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 36 % (106) - 8551 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_0_6 flowId 1000000013 uecSrc 24 finished at 8.63464 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1382 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 0 - CPU 0 - StartTime 2 - Time 8634 - Dst 1 - Tag 0 - Size 65536
+progress: 37 % (107) - 8634 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 38 % (108) - 8634 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 1 - CPU 0 - StartTime 8634 - Time 8635 - Size 1
+progress: 39 % (108) - 8635 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 40 % (109) - 8635 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_9_2 flowId 1000000017 uecSrc 26 finished at 8.65472 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2858 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 6 - CPU 0 - StartTime 2831 - Time 8654 - Dst 4 - Tag 100001 - Size 65536
+progress: 41 % (110) - 8654 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 42 % (112) - 8654 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 8654 - Time 8655 - Size 1
+progress: 43 % (112) - 8655 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 44 % (112) - 9978 [sizes: aq: 0 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 45 % (112) - 10062 [sizes: aq: 0 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_3_8 flowId 1000000015 uecSrc 25 finished at 10.1012 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2231 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 7 - CPU 0 - StartTime 2831 - Time 10101 - Dst 5 - Tag 200001 - Size 65536
+progress: 46 % (112) - 10101 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 47 % (114) - 10101 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 5 - CPU 0 - StartTime 10101 - Time 10102 - Size 1
+progress: 48 % (114) - 10102 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 49 % (115) - 10102 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_9_2 flowId 1000000021 uecSrc 28 finished at 10.3251 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3807 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 6 - CPU 0 - StartTime 5660 - Time 10325 - Dst 4 - Tag 1 - Size 65536
+progress: 50 % (115) - 10325 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 1, 0)]
+progress: 51 % (117) - 10325 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 10325 - Time 10326 - Size 1
+progress: 52 % (117) - 10326 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 53 % (117) - 11211 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 54 % (118) - 11294 [sizes: aq: 0 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 55 % (118) - 11318 [sizes: aq: 0 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_3_8 flowId 1000000019 uecSrc 27 finished at 11.3556 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2886 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 7 - CPU 0 - StartTime 5660 - Time 11355 - Dst 5 - Tag 1 - Size 65536
+progress: 56 % (118) - 11355 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 57 % (120) - 11355 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 5 - CPU 0 - StartTime 11355 - Time 11356 - Size 1
+progress: 58 % (120) - 11356 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 59 % (121) - 11356 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 60 % (121) - 11380 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 1, 0)]
+Flow uec_0_6 flowId 1000000023 uecSrc 29 finished at 13.8631 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2729 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 0 - CPU 0 - StartTime 7149 - Time 13863 - Dst 1 - Tag 100000 - Size 65536
+LGS Compute Event - Host 1 - CPU 0 - StartTime 13863 - Time 13864 - Size 1
+progress: 61 % (123) - 13864 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_1_7 flowId 1000000025 uecSrc 30 finished at 14.032 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1876 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 2 - CPU 0 - StartTime 7233 - Time 14032 - Dst 3 - Tag 100000 - Size 65536
+progress: 62 % (125) - 14032 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 14032 - Time 14033 - Size 1
+progress: 63 % (127) - 14040 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_3_8 flowId 1000000033 uecSrc 34 finished at 15.3696 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2326 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 7 - CPU 0 - StartTime 8489 - Time 15369 - Dst 5 - Tag 100001 - Size 65536
+progress: 64 % (130) - 15369 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 5 - CPU 0 - StartTime 15369 - Time 15370 - Size 1
+progress: 65 % (131) - 15370 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_8_2 flowId 1000000027 uecSrc 31 finished at 17.671 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 301 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 8382 - Time 17671 - Dst 4 - Tag 300001 - Size 65536
+progress: 66 % (134) - 17671 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 1, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 17671 - Time 17672 - Size 1
+progress: 67 % (136) - 17672 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_10_4 flowId 1000000029 uecSrc 32 finished at 17.8374 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 301 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 9 - CPU 0 - StartTime 8465 - Time 17837 - Dst 8 - Tag 2 - Size 65536
+progress: 68 % (137) - 17837 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 1, 0)]
+progress: 69 % (139) - 17837 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_9_2 flowId 1000000031 uecSrc 33 finished at 18.087 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 288 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 6 - CPU 0 - StartTime 8489 - Time 18087 - Dst 4 - Tag 200001 - Size 65536
+progress: 70 % (141) - 18087 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 71 % (143) - 18087 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 18087 - Time 18088 - Size 1
+Flow uec_7_0 flowId 1000000035 uecSrc 35 finished at 18.1702 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 268 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 3 - CPU 0 - StartTime 8551 - Time 18170 - Dst 0 - Tag 100000 - Size 65536
+LGS Compute Event - Host 0 - CPU 0 - StartTime 18170 - Time 18171 - Size 1
+progress: 72 % (145) - 18171 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_6_1 flowId 1000000037 uecSrc 36 finished at 18.3366 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 0 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 1 - CPU 0 - StartTime 8635 - Time 18336 - Dst 2 - Tag 100000 - Size 65536
+progress: 73 % (147) - 18336 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 18336 - Time 18337 - Size 1
+progress: 74 % (149) - 19698 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_8_2 flowId 1000000039 uecSrc 37 finished at 19.894 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 0 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 11211 - Time 19894 - Dst 4 - Tag 200001 - Size 65536
+progress: 75 % (151) - 19894 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 19894 - Time 19895 - Size 1
+progress: 76 % (153) - 19895 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_4_5 flowId 1000000051 uecSrc 43 finished at 20.3544 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 9492 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 8 - CPU 0 - StartTime 17837 - Time 20354 - Dst 10 - Tag 2 - Size 65536
+progress: 77 % (155) - 20354 [sizes: aq: 5 max rq: 8 max uq: 0: reinserts: (0, 2, 0)]
+progress: 78 % (157) - 20666 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 2, 0)]
+Flow uec_5_4 flowId 1000000059 uecSrc 47 finished at 22.8713 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 9492 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 10 - CPU 0 - StartTime 20354 - Time 22871 - Dst 8 - Tag 2 - Size 65536
+progress: 79 % (159) - 22871 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_6_1 flowId 1000000041 uecSrc 38 finished at 23.2514 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 0 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 1 - CPU 0 - StartTime 13864 - Time 23251 - Dst 2 - Tag 200000 - Size 65536
+progress: 80 % (161) - 23251 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 23251 - Time 23252 - Size 1
+progress: 81 % (163) - 23330 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_7_0 flowId 1000000043 uecSrc 39 finished at 23.5894 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 0 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 3 - CPU 0 - StartTime 14033 - Time 23589 - Dst 0 - Tag 200000 - Size 65536
+progress: 82 % (165) - 23589 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 1, 0)]
+LGS Compute Event - Host 0 - CPU 0 - StartTime 23589 - Time 23590 - Size 1
+Flow uec_8_2 flowId 1000000045 uecSrc 40 finished at 23.7558 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 163 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 14040 - Time 23755 - Dst 4 - Tag 1 - Size 65536
+progress: 83 % (167) - 23755 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 84 % (169) - 23755 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 23755 - Time 23756 - Size 1
+progress: 85 % (171) - 23756 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_2_8 flowId 1000000049 uecSrc 42 finished at 23.8701 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3533 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 17672 - Time 23870 - Dst 5 - Tag 300001 - Size 65536
+Flow uec_0_6 flowId 1000000055 uecSrc 45 finished at 24.804 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3021 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 0 - CPU 0 - StartTime 18171 - Time 24804 - Dst 1 - Tag 200000 - Size 65536
+progress: 86 % (173) - 24804 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 2, 0)]
+LGS Compute Event - Host 1 - CPU 0 - StartTime 24804 - Time 24805 - Size 1
+progress: 87 % (175) - 24805 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_1_7 flowId 1000000057 uecSrc 46 finished at 24.973 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1970 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 2 - CPU 0 - StartTime 18337 - Time 24972 - Dst 3 - Tag 200000 - Size 65536
+progress: 88 % (177) - 24972 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 24972 - Time 24973 - Size 1
+Flow uec_8_2 flowId 1000000047 uecSrc 41 finished at 25.5132 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1881 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 16869 - Time 25513 - Dst 4 - Tag 100001 - Size 65536
+progress: 89 % (179) - 25513 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 90 % (181) - 25513 [sizes: aq: 5 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 25513 - Time 25514 - Size 1
+progress: 91 % (183) - 25514 [sizes: aq: 5 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_10_5 flowId 1000000053 uecSrc 44 finished at 26.349 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1788 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 9 - CPU 0 - StartTime 17837 - Time 26349 - Dst 10 - Tag 2 - Size 65536
+progress: 92 % (186) - 26349 [sizes: aq: 6 max rq: 8 max uq: 0: reinserts: (0, 6, 0)]
+progress: 93 % (187) - 26419 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_2_8 flowId 1000000061 uecSrc 48 finished at 26.4236 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2832 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 20501 - Time 26423 - Dst 5 - Tag 200001 - Size 65536
+progress: 94 % (189) - 27634 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 1, 0)]
+Flow uec_8_3 flowId 1000000071 uecSrc 53 finished at 29.0204 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3808 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 23870 - Time 29020 - Dst 7 - Tag 300001 - Size 65536
+Flow uec_4_11 flowId 1000000063 uecSrc 49 finished at 30.023 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1418 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 8 - CPU 0 - StartTime 22871 - Time 30023 - Dst 11 - Tag 2 - Size 65536
+progress: 95 % (192) - 30023 [sizes: aq: 5 max rq: 8 max uq: 0: reinserts: (0, 3, 0)]
+Flow uec_6_1 flowId 1000000073 uecSrc 54 finished at 30.943 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3173 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 1 - CPU 0 - StartTime 24805 - Time 30942 - Dst 2 - Tag 300000 - Size 65536
+progress: 96 % (193) - 30942 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 30942 - Time 30943 - Size 1
+progress: 97 % (195) - 30943 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_1_7 flowId 1000000065 uecSrc 50 finished at 31.1566 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1806 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 2 - CPU 0 - StartTime 23252 - Time 31156 - Dst 3 - Tag 300000 - Size 65536
+progress: 98 % (197) - 31156 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 31156 - Time 31157 - Size 1
+Flow uec_7_0 flowId 1000000075 uecSrc 55 finished at 31.1951 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2142 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 3 - CPU 0 - StartTime 24973 - Time 31195 - Dst 0 - Tag 300000 - Size 65536
+progress: 99 % (199) - 31195 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 0 - CPU 0 - StartTime 31195 - Time 31196 - Size 1
+progress: 100 % (201) - 31196 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_2_9 flowId 1000000067 uecSrc 51 finished at 31.3243 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1593 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 23330 - Time 31324 - Dst 6 - Tag 300001 - Size 65536
+Flow uec_0_6 flowId 1000000069 uecSrc 52 finished at 31.742 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 908 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 0 - CPU 0 - StartTime 23590 - Time 31741 - Dst 1 - Tag 300000 - Size 65536
+progress: 101 % (203) - 31741 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 1 - CPU 0 - StartTime 31741 - Time 31742 - Size 1
+progress: 102 % (205) - 31817 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_8_3 flowId 1000000081 uecSrc 58 finished at 32.5327 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2851 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 26699 - Time 32532 - Dst 7 - Tag 200001 - Size 65536
+Flow uec_2_9 flowId 1000000077 uecSrc 56 finished at 34.0844 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1483 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 26159 - Time 34084 - Dst 6 - Tag 1 - Size 65536
+Flow uec_5_10 flowId 1000000079 uecSrc 57 finished at 34.3352 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1467 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 10 - CPU 0 - StartTime 26349 - Time 34335 - Dst 9 - Tag 2 - Size 65536
+progress: 103 % (208) - 34335 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 2, 0)]
+progress: 104 % (210) - 34571 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_11_4 flowId 1000000085 uecSrc 60 finished at 34.87 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3792 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 11 - CPU 0 - StartTime 30023 - Time 34870 - Dst 8 - Tag 2 - Size 65536
+progress: 105 % (211) - 34870 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 1, 0)]
+progress: 106 % (213) - 34870 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 8 - CPU 0 - StartTime 34870 - Time 34871 - Size 1
+LGS Compute Event - Host 8 - CPU 0 - StartTime 34871 - Time 34872 - Size 1
+Flow uec_2_9 flowId 1000000083 uecSrc 59 finished at 35.6767 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 930 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 28988 - Time 35676 - Dst 6 - Tag 100001 - Size 65536
+Flow uec_7_0 flowId 1000000089 uecSrc 62 finished at 36.7081 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3528 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 3 - CPU 0 - StartTime 31157 - Time 36708 - Dst 0 - Tag 400000 - Size 65536
+progress: 107 % (215) - 36708 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 0 - CPU 0 - StartTime 36708 - Time 36709 - Size 1
+Flow uec_10_11 flowId 1000000097 uecSrc 66 finished at 36.8522 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 9492 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 9 - CPU 0 - StartTime 34335 - Time 36852 - Dst 11 - Tag 2 - Size 65536
+progress: 108 % (217) - 36852 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 109 % (219) - 36852 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_6_1 flowId 1000000093 uecSrc 64 finished at 37.4594 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3144 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 1 - CPU 0 - StartTime 31742 - Time 37459 - Dst 2 - Tag 400000 - Size 65536
+progress: 110 % (221) - 37459 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 37459 - Time 37460 - Size 1
+progress: 111 % (223) - 37475 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_1_7 flowId 1000000087 uecSrc 61 finished at 38.427 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 699 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 2 - CPU 0 - StartTime 30943 - Time 38427 - Dst 3 - Tag 400000 - Size 65536
+progress: 112 % (225) - 38427 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 38427 - Time 38428 - Size 1
+Flow uec_0_6 flowId 1000000091 uecSrc 63 finished at 39.012 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 611 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 0 - CPU 0 - StartTime 31196 - Time 39012 - Dst 1 - Tag 400000 - Size 65536
+progress: 113 % (227) - 39012 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 1 - CPU 0 - StartTime 39012 - Time 39013 - Size 1
+progress: 114 % (229) - 39013 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_11_10 flowId 1000000105 uecSrc 70 finished at 39.3692 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 9484 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 11 - CPU 0 - StartTime 36852 - Time 39369 - Dst 9 - Tag 2 - Size 65536
+progress: 115 % (232) - 39369 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 9 - CPU 0 - StartTime 39369 - Time 39370 - Size 1
+progress: 116 % (233) - 39370 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 9 - CPU 0 - StartTime 39370 - Time 39371 - Size 1
+Flow uec_2_8 flowId 1000000095 uecSrc 65 finished at 39.6789 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1410 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 31817 - Time 39678 - Dst 5 - Tag 1 - Size 65536
+progress: 117 % (235) - 39681 [sizes: aq: 0 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_5_11 flowId 1000000099 uecSrc 67 finished at 42.0747 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 0 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 10 - CPU 0 - StartTime 34335 - Time 42074 - Dst 11 - Tag 2 - Size 65536
+progress: 118 % (237) - 42074 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_2_9 flowId 1000000101 uecSrc 68 finished at 42.4113 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 874 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 34646 - Time 42411 - Dst 6 - Tag 200001 - Size 65536
+progress: 119 % (239) - 42411 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 6 - CPU 0 - StartTime 42411 - Time 42412 - Size 1
+LGS Compute Event - Host 6 - CPU 0 - StartTime 42412 - Time 42413 - Size 1
+Flow uec_7_0 flowId 1000000111 uecSrc 73 finished at 43.7097 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3739 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 3 - CPU 0 - StartTime 38428 - Time 43709 - Dst 0 - Tag 500000 - Size 65536
+Flow uec_0_6 flowId 1000000103 uecSrc 69 finished at 44.7563 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 174 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 0 - CPU 0 - StartTime 36709 - Time 44756 - Dst 1 - Tag 500000 - Size 65536
+progress: 120 % (241) - 44756 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 0 - CPU 0 - StartTime 44756 - Time 44757 - Size 1
+LGS Compute Event - Host 0 - CPU 0 - StartTime 44757 - Time 44758 - Size 1
+Flow uec_6_1 flowId 1000000113 uecSrc 74 finished at 44.9687 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3335 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 1 - CPU 0 - StartTime 39013 - Time 44968 - Dst 2 - Tag 500000 - Size 65536
+progress: 121 % (243) - 44968 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 1 - CPU 0 - StartTime 44968 - Time 44969 - Size 1
+LGS Compute Event - Host 1 - CPU 0 - StartTime 44969 - Time 44970 - Size 1
+Flow uec_8_3 flowId 1000000115 uecSrc 75 finished at 45.7226 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2818 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 39678 - Time 45722 - Dst 7 - Tag 1 - Size 65536
+Flow uec_1_7 flowId 1000000107 uecSrc 71 finished at 46.2645 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1827 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 2 - CPU 0 - StartTime 37460 - Time 46264 - Dst 3 - Tag 500000 - Size 65536
+progress: 122 % (246) - 46264 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 46264 - Time 46265 - Size 1
+LGS Compute Event - Host 2 - CPU 0 - StartTime 46264 - Time 46265 - Size 1
+progress: 123 % (248) - 46265 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 46265 - Time 46266 - Size 1
+LGS Compute Event - Host 3 - CPU 0 - StartTime 46265 - Time 46266 - Size 1
+Flow uec_2_8 flowId 1000000109 uecSrc 72 finished at 46.349 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1037 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 37475 - Time 46348 - Dst 5 - Tag 100001 - Size 65536
+progress: 124 % (250) - 46348 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 46348 - Time 46349 - Size 1
+progress: 125 % (251) - 46349 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 46349 - Time 46350 - Size 1
+Flow uec_11_5 flowId 1000000117 uecSrc 76 finished at 47.0602 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3488 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 11 - CPU 0 - StartTime 42074 - Time 47060 - Dst 10 - Tag 2 - Size 65536
+progress: 126 % (254) - 47060 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 10 - CPU 0 - StartTime 47060 - Time 47061 - Size 1
+LGS Compute Event - Host 11 - CPU 0 - StartTime 47060 - Time 47061 - Size 1
+progress: 127 % (256) - 47061 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 11 - CPU 0 - StartTime 47061 - Time 47062 - Size 1
+LGS Compute Event - Host 10 - CPU 0 - StartTime 47061 - Time 47062 - Size 1
+Flow uec_8_3 flowId 1000000119 uecSrc 77 finished at 50.9504 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3873 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 46348 - Time 50950 - Dst 7 - Tag 100001 - Size 65536
+progress: 128 % (258) - 50950 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 7 - CPU 0 - StartTime 50950 - Time 50951 - Size 1
+LGS Compute Event - Host 5 - CPU 0 - StartTime 50950 - Time 50951 - Size 1
+progress: 129 % (260) - 50951 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 5 - CPU 0 - StartTime 50951 - Time 50952 - Size 1
+LGS Compute Event - Host 7 - CPU 0 - StartTime 50951 - Time 50952 - Size 1
+It terminates! Htsim time 50952
+PERFORMANCE: Processes: 12 	 Events: 260 	 Time: 0 s 	 Speed: inf ev/s
+Times: 
+Host 0: 44758
+Host 1: 44970
+Host 2: 46266
+Host 3: 46266
+Host 4: 46350
+Host 5: 50952
+Host 6: 42413
+Host 7: 50952
+Host 8: 34872
+Host 9: 39371
+Host 10: 47062
+Host 11: 47062
+Maximum finishing time at host 5: 50952 (5.0952e-05 s)
+Chosen filter for metric flow_dag_info: Filter: regex=.*, enabled=1, downsampling_ratio=1
+LGS terminates!
