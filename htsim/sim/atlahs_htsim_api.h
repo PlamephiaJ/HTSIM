@@ -5,10 +5,12 @@
 #include <iostream>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <stdexcept>
 #include "compute_event.h"
 #include "null_event.h"
 #include "atlahs_event.h"
+#include "rank_placement.h"
 
 // Forward declarations
 class EventList;
@@ -142,6 +144,23 @@ public:
             (nic_count == 2 && rank_count > static_cast<uint32_t>(nic_count) && cpu_count <= 8);
         goal_rank_mapping =
             looks_like_v2_gpu_rank ? GoalRankMapping::GpuRank : GoalRankMapping::UniqueNic;
+
+        if (rank_placement) {
+            const uint64_t effective_rank_count =
+                usesUniqueNicRankMapping()
+                    ? static_cast<uint64_t>(rank_count) * static_cast<uint64_t>(nic_count)
+                    : rank_count;
+            if (effective_rank_count > UINT32_MAX) {
+                throw std::runtime_error("Effective GOAL rank count exceeds placement limits");
+            }
+            if (!rank_placement_topology_set) {
+                throw std::logic_error("Rank placement topology dimensions were not configured");
+            }
+            rank_placement->resolveAndValidate(static_cast<uint32_t>(effective_rank_count),
+                                               placement_hosts_per_switch,
+                                               placement_switches_per_group,
+                                               placement_group_count);
+        }
     }
 
     bool usesUniqueNicRankMapping() const {
@@ -164,8 +183,26 @@ public:
     simtime_picosec getGlobalTimePs() const { return _eventlist->now(); }
     simtime_picosec getGlobalTimeNs() const { return _eventlist->now() / 1000; }
 
-    int getHtsimNodeNumber(int lgs_host, int lgs_nic) {
-        return usesUniqueNicRankMapping() ? lgs_host * number_nics + lgs_nic : lgs_host;
+    void loadRankPlacement(const std::string& filename) {
+        rank_placement = RankPlacement::loadFromFile(filename);
+    }
+
+    void setRankPlacementTopology(uint32_t hosts_per_switch,
+                                  uint32_t switches_per_group,
+                                  uint32_t group_count) {
+        placement_hosts_per_switch = hosts_per_switch;
+        placement_switches_per_group = switches_per_group;
+        placement_group_count = group_count;
+        rank_placement_topology_set = true;
+    }
+
+    bool hasRankPlacement() const { return rank_placement.has_value(); }
+
+    int getHtsimNodeNumber(int lgs_host, int lgs_nic) const {
+        const uint32_t effective_rank = usesUniqueNicRankMapping()
+                                            ? lgs_host * number_nics + lgs_nic
+                                            : lgs_host;
+        return rank_placement ? rank_placement->hostForRank(effective_rank) : effective_rank;
     }
 
     linkspeed_bps linkspeed; // TO DO
@@ -204,6 +241,11 @@ private:
     // LGS Specific
     int number_nics = 1;
     GoalRankMapping goal_rank_mapping = GoalRankMapping::GpuRank;
+    std::optional<RankPlacement> rank_placement;
+    uint32_t placement_hosts_per_switch = 0;
+    uint32_t placement_switches_per_group = 0;
+    uint32_t placement_group_count = 0;
+    bool rank_placement_topology_set = false;
 
     // EQDS Specific 
     vector<EqdsPullPacer*> pacersEQDS;

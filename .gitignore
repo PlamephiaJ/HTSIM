@@ -15,6 +15,9 @@ idmap.txt
 *.png
 !example_validate.json
 !htsim/sim/datacenter/messagelet_configs/*.json
+!experiments/exp2s/exp2.a.1/rank_placement.json
+!experiments/exp2s/exp2.a.1/messagelet_configs/default.json
+experiments/exp2s/**/artifacts/
 build/
 *.bin
 *:Zone.Identifier

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Build one human-readable summary for an exp1 run directory."""
+"""Build one human-readable summary for an experiment run directory."""
 
 from __future__ import annotations
 
 import csv
+import json
 import re
 import sys
 from pathlib import Path
@@ -39,6 +40,63 @@ def read_csv(path: Path) -> list[dict[str, str]]:
             return list(csv.DictReader(handle))
     except OSError:
         return []
+
+
+def read_dragonfly_dimensions(path: Path) -> tuple[int, int] | None:
+    values: dict[str, int] = {}
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return None
+    for raw in lines:
+        tokens = raw.split()
+        if len(tokens) >= 2 and tokens[0] in {"p", "a"}:
+            try:
+                values[tokens[0]] = int(tokens[1])
+            except ValueError:
+                return None
+    if "p" not in values or "a" not in values:
+        return None
+    return values["p"], values["a"]
+
+
+def read_physical_host_to_goal_rank(run_dir: Path) -> dict[int, int]:
+    placement_path = run_dir / "config_snapshot" / "rank_placement.json"
+    try:
+        placement = json.loads(placement_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+    # Retain support for summaries of runs made with the original compact schema.
+    rank_to_host = placement.get("rank_to_host")
+    if isinstance(rank_to_host, list):
+        try:
+            return {int(host): rank for rank, host in enumerate(rank_to_host)}
+        except (TypeError, ValueError):
+            return {}
+
+    dimensions = read_dragonfly_dimensions(
+        run_dir / "config_snapshot" / "topology" / "dragonfly.topo"
+    )
+    placements = placement.get("placements")
+    if dimensions is None or not isinstance(placements, list):
+        return {}
+
+    hosts_per_switch, switches_per_group = dimensions
+    host_to_rank: dict[int, int] = {}
+    try:
+        for endpoint in placements:
+            rank = int(endpoint["rank"])
+            group = int(endpoint["group"])
+            switch = int(endpoint["switch"])
+            host = int(endpoint["host"])
+            physical_host = (
+                (group * switches_per_group + switch) * hosts_per_switch + host
+            )
+            host_to_rank[physical_host] = rank
+    except (KeyError, TypeError, ValueError):
+        return {}
+    return host_to_rank
 
 
 def split_flow_id(value: str) -> tuple[str, str, str]:
@@ -88,6 +146,7 @@ def main() -> int:
     git_revision = read_text(run_dir / "git-revision.txt")
     git_status = read_text(run_dir / "git-status.txt", default="")
     command = read_text(run_dir / "command.txt")
+    physical_host_to_goal_rank = read_physical_host_to_goal_rank(run_dir)
     experiment_name = config.get("EXPERIMENT_NAME", run_dir.parent.parent.name)
     experiment_description = config.get("EXPERIMENT_DESCRIPTION", "")
     title = f"{experiment_name}: {experiment_description}" if experiment_description else experiment_name
@@ -105,14 +164,14 @@ def main() -> int:
     else:
         lines.append("- Computation-graph makespan: **not available**")
     if critical_rank is not None:
-        lines.append(f"- Critical rank: **{critical_rank}**")
-    lines.append(f"- Completed ranks: **{len(host_times)}**")
+        lines.append(f"- Critical GOAL rank: **{critical_rank}**")
+    lines.append(f"- Completed GOAL ranks: **{len(host_times)}**")
 
     if host_times:
         lines.extend(
             [
                 "",
-                "| Rank | Graph finish (ns) | Graph finish (µs) |",
+                "| GOAL rank | Graph finish (ns) | Graph finish (µs) |",
                 "| ---: | ---: | ---: |",
             ]
         )
@@ -135,6 +194,8 @@ def main() -> int:
             f"- Path entropy: `{config.get('PATH_ENTROPY_SIZE', 'unknown')}`",
             f"- Initial cwnd: `{config.get('CWND_BYTES', 'unknown')} bytes` (`0` means simulator default)",
             f"- Queue: `{config.get('QUEUE_PACKETS', 'unknown')}` packets",
+            f"- Rank placement config: `{config.get('RANK_PLACEMENT_CONFIG', 'not provided')}`",
+            f"- Messagelet config: `{config.get('MESSAGELET_CONFIG', 'not provided')}`",
             "",
             "## Network",
             "",
@@ -157,14 +218,46 @@ def main() -> int:
             ]
         )
 
-    lines.extend(["", "## Flow results", ""])
-    if flows:
+    lines.extend(
+        [
+            "",
+            "## Flow results",
+            "",
+            "The raw `flowsInfo.csv` `srcNode`/`dstNode` values are **physical HTSIM "
+            "host IDs after rank placement**.",
+        ]
+    )
+    if physical_host_to_goal_rank:
         lines.extend(
             [
-                "| Flow | Size (bytes) | Start (ns) | End (ns) | FCT (ns) | Base RTT (ns) | Packets |",
-                "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+                "The GOAL rank endpoints below are reverse-mapped from the snapshotted "
+                "`rank_placement.json` and Dragonfly topology.",
+                "",
             ]
         )
+    else:
+        lines.extend(
+            [
+                "No rank-placement snapshot was available, so this summary does not infer "
+                "logical GOAL rank endpoints.",
+                "",
+            ]
+        )
+    if flows:
+        if physical_host_to_goal_rank:
+            lines.extend(
+                [
+                    "| GOAL rank flow | Physical HTSIM host flow | Size (bytes) | Start (ns) | End (ns) | FCT (ns) | Base RTT (ns) | Packets |",
+                    "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+                ]
+            )
+        else:
+            lines.extend(
+                [
+                    "| Physical HTSIM host flow | Size (bytes) | Start (ns) | End (ns) | FCT (ns) | Base RTT (ns) | Packets |",
+                    "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+                ]
+            )
         fcts: list[float] = []
         total_bytes = 0
         total_packets = 0
@@ -175,19 +268,36 @@ def main() -> int:
             fcts.append(fct)
             total_bytes += int(row.get("flowSizeBytes", "0"))
             total_packets += int(row.get("totalPackets", "0"))
-            completion_order.append(f"{src}→{dst}")
-            lines.append(
-                f"| {src}→{dst} | {row.get('flowSizeBytes', '?')} | "
-                f"{row.get('startTimeNs', '?')} | {row.get('endTimeNs', '?')} | "
-                f"{fct:.3f} | {row.get('baseRttNs', '?')} | {row.get('totalPackets', '?')} |"
-            )
+            physical_flow = f"{src}→{dst}"
+            if physical_host_to_goal_rank:
+                try:
+                    goal_src = physical_host_to_goal_rank[int(src)]
+                    goal_dst = physical_host_to_goal_rank[int(dst)]
+                    goal_flow = f"{goal_src}→{goal_dst}"
+                except (KeyError, ValueError):
+                    goal_flow = "?→?"
+                completion_order.append(goal_flow)
+                lines.append(
+                    f"| {goal_flow} | {physical_flow} | {row.get('flowSizeBytes', '?')} | "
+                    f"{row.get('startTimeNs', '?')} | {row.get('endTimeNs', '?')} | "
+                    f"{fct:.3f} | {row.get('baseRttNs', '?')} | {row.get('totalPackets', '?')} |"
+                )
+            else:
+                completion_order.append(physical_flow)
+                lines.append(
+                    f"| {physical_flow} | {row.get('flowSizeBytes', '?')} | "
+                    f"{row.get('startTimeNs', '?')} | {row.get('endTimeNs', '?')} | "
+                    f"{fct:.3f} | {row.get('baseRttNs', '?')} | {row.get('totalPackets', '?')} |"
+                )
         lines.extend(
             [
                 "",
                 f"- Completed flows: **{len(fcts)}**",
                 f"- Total communicated data: **{total_bytes} bytes ({total_bytes / 1024:.0f} KiB)**",
                 f"- Total data packets: **{total_packets}**",
-                f"- Completion order: **{' → '.join(completion_order)}**",
+                "- Completion order "
+                f"({'GOAL rank flows' if physical_host_to_goal_rank else 'physical host flows'}): "
+                f"**{' → '.join(completion_order)}**",
                 f"- FCT min / average / max: **{min(fcts):.3f} / "
                 f"{sum(fcts) / len(fcts):.3f} / {max(fcts):.3f} ns**",
             ]

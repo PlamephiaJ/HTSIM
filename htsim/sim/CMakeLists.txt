@@ -128,6 +128,7 @@ set(SOURCE_FILES
     null_event.cpp
     atlahs_htsim_api.cpp
     atlahs_dragonfly_api.cpp
+    rank_placement.cpp
     messagelet_config.cpp
     messagelet_runtime.cpp
 )

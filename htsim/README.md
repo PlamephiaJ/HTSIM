@@ -127,6 +127,24 @@ route. Pass a unified JSON configuration with
 packet boundaries. Enabling `logging.trace_decisions` prints the path ID and human-readable
 route selected at every messagelet boundary.
 
+GOAL ranks map to HTSIM hosts in their existing sequential order by default. To place ranks
+explicitly, pass `-rank_placement path/to/placement.json`. Each entry names the GOAL rank
+and its Dragonfly endpoint using group-local switch and host indices:
+
+```json
+{
+  "schema_version": 1,
+  "placements": [
+    {"rank": 0, "group": 0, "switch": 0, "host": 0},
+    {"rank": 1, "group": 1, "switch": 0, "host": 0}
+  ]
+}
+```
+
+The placement must contain every workload rank exactly once. Dragonfly endpoints must be
+unique and within the selected topology. Omitting `-rank_placement` preserves the sequential
+mapping.
+
 #### Spritz Source Routing
 
 The Dragonfly and SlimFly binaries accept the Spritz artifact-style source load balancer flags when `-routing SOURCE` is selected:

@@ -401,12 +401,13 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
     const int nnics = parser.GetNumNIC();
     lgs_interface->htsim_api->setGoalRankMappingFromBinaryHeader(
         static_cast<uint32_t>(p), ncpus, nnics);
-    printf("[ATLAHS] GOAL rank mapping: %s (LGS ranks=%u, CPUs=%d, NICs=%d, HTSIM nodes=%u)\n",
+    printf("[ATLAHS] GOAL rank mapping: %s (placement=%s, LGS ranks=%u, CPUs=%d, NICs=%d, HTSIM nodes=%u)\n",
            lgs_interface->htsim_api->getGoalRankMappingName(),
+           lgs_interface->htsim_api->hasRankPlacement() ? "custom" : "sequential",
            p,
            ncpus,
            nnics,
-           lgs_interface->htsim_api->usesUniqueNicRankMapping() ? p * nnics : p);
+           lgs_interface->htsim_api->total_nodes);
     bool comm_dep_file_arg = false;
 
     
