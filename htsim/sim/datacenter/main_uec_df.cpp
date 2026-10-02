@@ -49,6 +49,7 @@ int main(int argc, char** argv) {
     std::string topo_base_path, tm_file, goal_filename;
     std::string host_table_base_path;
     std::string messagelet_config_file;
+    std::string rank_placement_file;
     mem_b cwnd_b = 0;
     mem_b queuesize = 88;  // Dragonfly default (1x BDP)
 
@@ -83,6 +84,9 @@ int main(int argc, char** argv) {
             i++;
         } else if (!strcmp(argv[i], "-messagelet_config")) {
             messagelet_config_file = argv[i + 1];
+            i++;
+        } else if (!strcmp(argv[i], "-rank_placement")) {
+            rank_placement_file = argv[i + 1];
             i++;
         } else if (!strcmp(argv[i], "-sender_cc_only")) {
             UecSrc::_sender_based_cc = true;
@@ -326,6 +330,10 @@ int main(int argc, char** argv) {
 
     if (!goal_filename.empty()) {
         AtlahsDragonflyApi* api = new AtlahsDragonflyApi();
+        api->setRankPlacementTopology(topo->get_p(), topo->get_a(), topo->get_no_groups());
+        if (!rank_placement_file.empty()) {
+            api->loadRankPlacement(rank_placement_file);
+        }
         if (!messagelet_config_file.empty()) {
             api->getMessageletRuntime().loadConfig(messagelet_config_file);
         }
