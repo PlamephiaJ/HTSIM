@@ -27,3 +27,7 @@ core_*
 htsim/sim/datacenter/core_*
 *.err
 prompt.txt
+
+# Experiment definitions and generated artifacts are intentionally version-visible.
+!experiments/
+!experiments/**

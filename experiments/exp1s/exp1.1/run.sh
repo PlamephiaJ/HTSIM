@@ -76,6 +76,12 @@ cp "${CONFIG_FILE}" "${run_dir}/config_snapshot/config.env"
 cp "${SCRIPT_DIR}/run.sh" "${run_dir}/config_snapshot/run.sh"
 cp "${SUMMARIZER_PATH}" "${run_dir}/config_snapshot/summarize.py"
 cp "${WORKLOAD_PATH}" "${run_dir}/config_snapshot/workload.bin"
+if [[ -f "${WORKLOAD_PATH%.bin}.goal" ]]; then
+    cp "${WORKLOAD_PATH%.bin}.goal" "${run_dir}/config_snapshot/workload.goal"
+fi
+if [[ -f "${WORKLOAD_PATH%.bin}.meta.json" ]]; then
+    cp "${WORKLOAD_PATH%.bin}.meta.json" "${run_dir}/config_snapshot/workload.meta.json"
+fi
 cp -a "${TOPOLOGY_PATH}" "${run_dir}/config_snapshot/topology"
 
 command=(

@@ -28,7 +28,7 @@ The summary title, rank placement, and flow description come from
 Each invocation creates a new directory named
 `artifacts/YYYYMMDD-HHMMSS/`. It contains:
 
-- `config_snapshot/`: the exact config, binary workload, topology, runner, and shared summarizer used;
+- `config_snapshot/`: the exact config, binary workload, readable GOAL and workload metadata when available, topology, runner, and shared summarizer used;
 - `summary.md`: graph makespan and critical rank, per-rank finish times, configuration, network settings, flow results, aggregate FCT, and reproducibility information;
 - `command.txt`: the fully resolved simulator command;
 - `simulator.log` and `logout.dat`: simulator logs;

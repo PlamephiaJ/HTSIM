@@ -1,0 +1,56 @@
+ M .gitignore
+ M experiments/exp1s/exp1.1/run.sh
+ M experiments/exp1s/exp1.2/run.sh
+ M experiments/exp1s/exp1.3/run.sh
+ M experiments/exp1s/exp1.4/run.sh
+ M experiments/exp1s/exp1.5/run.sh
+ M experiments/exp1s/exp1/README.md
+ D experiments/exp1s/exp1/artifacts/.gitignore
+ M experiments/exp1s/exp1/run.sh
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-120847/command.txt
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-120847/config_snapshot/config.env
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-120847/config_snapshot/run.sh
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-120847/config_snapshot/summarize.py
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-120847/config_snapshot/topology/dragonfly.topo
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-120847/exit_code.txt
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-120847/finished_at.txt
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-120847/git-revision.txt
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-120847/git-status.txt
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-120847/simulator.log
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-120847/started_at.txt
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-120847/summary.md
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-151146/command.txt
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-151146/config_snapshot/config.env
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-151146/config_snapshot/run.sh
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-151146/config_snapshot/summarize.py
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-151146/config_snapshot/topology/dragonfly.topo
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-151146/exit_code.txt
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-151146/finished_at.txt
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-151146/git-revision.txt
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-151146/git-status.txt
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-151146/simulator.log
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-151146/started_at.txt
+ D experiments/exp2s/exp2.a.1/artifacts/20261002-151146/summary.md
+ D experiments/exp2s/exp2.a.1/artifacts/latest
+ M experiments/exp2s/exp2.a.1/run.sh
+ ? workload_gen
+?? experiments/exp1s/exp1.1/artifacts/20260929-172311/config_snapshot/workload.bin
+?? experiments/exp1s/exp1.1/artifacts/20260929-172311/logout.dat
+?? experiments/exp1s/exp1.1/artifacts/20260929-172311/output_metrics/
+?? experiments/exp1s/exp1.2/artifacts/20260929-172314/config_snapshot/workload.bin
+?? experiments/exp1s/exp1.2/artifacts/20260929-172314/logout.dat
+?? experiments/exp1s/exp1.2/artifacts/20260929-172314/output_metrics/
+?? experiments/exp1s/exp1.3/artifacts/20260929-172318/config_snapshot/workload.bin
+?? experiments/exp1s/exp1.3/artifacts/20260929-172318/logout.dat
+?? experiments/exp1s/exp1.3/artifacts/20260929-172318/output_metrics/
+?? experiments/exp1s/exp1.4/artifacts/20260929-173903/config_snapshot/workload.bin
+?? experiments/exp1s/exp1.4/artifacts/20260929-173903/logout.dat
+?? experiments/exp1s/exp1.4/artifacts/20260929-173903/output_metrics/
+?? experiments/exp1s/exp1.5/artifacts/20260929-173906/config_snapshot/workload.bin
+?? experiments/exp1s/exp1.5/artifacts/20260929-173906/logout.dat
+?? experiments/exp1s/exp1.5/artifacts/20260929-173906/output_metrics/
+?? experiments/exp1s/exp1/artifacts/20260929-162154/
+?? experiments/exp1s/exp1/artifacts/20260929-170022/
+?? experiments/exp1s/exp1/artifacts/20260929-170145/
+?? experiments/exp1s/exp1/artifacts/latest
+?? experiments/exp2s/exp2.a.1/artifacts/20261002-152340/
