@@ -602,6 +602,7 @@ class UecSink : public DataReceiver {
     inline void setOversubscribedCC(OversubscribedCC* c){_receiver_cc = c;}
 
     uint32_t nextEntropy();
+    void setReturnPath(uint32_t path_id) { _paths.assign(1, path_id); }
 
     UecSrc* getSrc() { return _src; }
     uint32_t getConfiguredMaxWnd() { return _src->configuredMaxWnd(); };

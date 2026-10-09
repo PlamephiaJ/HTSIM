@@ -9,6 +9,8 @@
 #include "atlahs_dragonfly_api.h"
 #include "logsim-interface.h"
 #include "datacenter/dragonfly_topology.h"
+#include "dragonfly_source_route.h"
+#include "data_collector.h"
 #include "uec.h"
 
 MessageletRuntime::MessageletRuntime(AtlahsDragonflyApi& goal_runtime)
@@ -24,6 +26,22 @@ void MessageletRuntime::submit(const SendEvent& event, graph_node_properties nod
     int from = event.getFrom();
     int tag = event.getTag();
     int size = event.getSizeBytes();
+
+    const FlowRoutingConfig::Entry* routing = nullptr;
+    if (_routing_config_loaded) {
+        auto entry = _routing_config.sends.find({static_cast<uint32_t>(from), node.offset});
+        if (entry == _routing_config.sends.end()) {
+            throw std::runtime_error("Routing config has no label for GOAL send rank " +
+                                     std::to_string(from) + " task " + std::to_string(node.offset));
+        }
+        routing = &entry->second;
+        if (routing->dst != static_cast<uint32_t>(to) ||
+            routing->tag != static_cast<uint32_t>(tag) ||
+            routing->bytes != static_cast<uint64_t>(size)) {
+            throw std::runtime_error("Routing config does not match GOAL flow " +
+                                     std::to_string(routing->flow_id));
+        }
+    }
 
     from = _goal_runtime.getHtsimNodeNumber(from, node.nic);
     to = _goal_runtime.getHtsimNodeNumber(to, node.nic);
@@ -53,7 +71,7 @@ void MessageletRuntime::submit(const SendEvent& event, graph_node_properties nod
     uec_src->send_size = size;
     uec_src->_atlahs_api = &_goal_runtime;
     uec_src->_messagelet_runtime = this;
-    registerFlow(*uec_src, size, from, to, tag);
+    registerFlow(*uec_src, size, from, to, tag, routing);
 
     UecSink* uec_sink = new UecSink(traffic_logger,
                                     _goal_runtime.linkspeed,
@@ -91,6 +109,9 @@ void MessageletRuntime::submit(const SendEvent& event, graph_node_properties nod
 
     uec_src->connectPort(
         0, *srctotor, *dsttotor, *uec_sink, _goal_runtime.getEventList()->now());
+    // GOAL SOURCE flows compute both directions from topology, without .lt files.
+    // Receiver credit packets always use a minimum return path.
+    uec_sink->setReturnPath(minimumRoute(to, from).path_id);
 
     topology->switches[src_switch]->addHostPort(
         from, uec_sink->flowId(), uec_src->getPort(0));
@@ -109,6 +130,20 @@ void MessageletRuntime::loadConfig(const std::string& filename) {
     _config = MessageletConfig::loadFromFile(filename);
 }
 
+void MessageletRuntime::loadRoutingConfig(const std::string& filename) {
+    if (!_flows.empty()) {
+        throw std::logic_error("Routing config must be loaded before submitting flows");
+    }
+    _routing_config = FlowRoutingConfig::loadFromFile(filename);
+    _routing_config_loaded = true;
+}
+
+void MessageletRuntime::validateRoutingComplete() const {
+    if (_routing_config_loaded && _flows.size() != _routing_config.sends.size()) {
+        throw std::runtime_error("Routing config contains flows absent from the GOAL workload");
+    }
+}
+
 uint64_t MessageletRuntime::messageletSize(const UecSrc& source) const {
     return flowState(source).messagelet_size;
 }
@@ -124,10 +159,15 @@ uint32_t MessageletRuntime::pathIdForMessagelet(const UecSrc& source,
         std::cout << "Messagelet route - Src " << state.from
                   << " - Dst " << state.to
                   << " - Tag " << state.tag
+                  << " - FlowId " << (state.has_flow_id ? std::to_string(state.flow_id) : "unassigned")
                   << " - Index " << messagelet_index
                   << " - Size " << state.messagelet_size
                   << " - PathId " << route.path_id
-                  << " - Route " << route.description << std::endl;
+                  << " - Route " << route.description;
+        for (const auto& item : route.log_info) {
+            std::cout << " - " << item.first << " " << item.second;
+        }
+        std::cout << std::endl;
     }
     return route.path_id;
 }
@@ -161,7 +201,8 @@ void MessageletRuntime::registerFlow(UecSrc& source,
                                      uint64_t flow_size,
                                      uint32_t from,
                                      uint32_t to,
-                                     uint32_t tag) {
+                                     uint32_t tag,
+                                     const FlowRoutingConfig::Entry* routing) {
     FlowState state;
     state.from = from;
     state.to = to;
@@ -171,6 +212,22 @@ void MessageletRuntime::registerFlow(UecSrc& source,
                                 ? std::max<uint64_t>(flow_size, 1)
                                 : _config.messagelet.size_bytes;
     state.default_route = minimumRoute(from, to);
+    if (routing) {
+        state.flow_id = routing->flow_id;
+        state.has_flow_id = true;
+        if (routing->label == "valiant") {
+            state.default_route = valiantRoute(from, to, routing->flow_id);
+        }
+        auto* metric = htsim::DataCollector::get_instance().RegisterCsvMetric(
+            "flowRouting", {"flow_id", "src_rank", "dst_rank", "send_task_id", "src_host",
+                            "dst_host", "label", "path_id", "intermediate_group"});
+        const auto intermediate = state.default_route.log_info.find("intermediate_group");
+        metric->LogData({std::to_string(routing->flow_id), std::to_string(routing->src),
+                         std::to_string(routing->dst), std::to_string(routing->send_task_id),
+                         std::to_string(from), std::to_string(to), routing->label,
+                         std::to_string(state.default_route.path_id),
+                         intermediate == state.default_route.log_info.end() ? "" : intermediate->second});
+    }
 
     auto inserted = _flows.emplace(&source, std::move(state));
     if (!inserted.second) {
@@ -216,6 +273,31 @@ MessageletRuntime::RouteInfo MessageletRuntime::minimumRoute(uint32_t from, uint
     route.description = "minimum";
     route.log_info.emplace("hop_one_switch", std::to_string(hop_one_switch));
     route.log_info.emplace("hop_two_switch", std::to_string(hop_two_switch));
+    return route;
+}
+
+MessageletRuntime::RouteInfo MessageletRuntime::valiantRoute(uint32_t from, uint32_t to,
+                                                           uint64_t flow_id) const {
+    DragonflyTopology* topology = _goal_runtime.getDragonflyTopology();
+    const uint32_t a = topology->get_a();
+    const uint32_t src_group = topology->get_host_switch(from) / a;
+    const uint32_t dst_group = topology->get_host_switch(to) / a;
+    std::vector<uint32_t> candidates;
+    for (uint32_t group = 0; group < topology->get_no_groups(); ++group) {
+        if (group != src_group && group != dst_group) {
+            candidates.push_back(group);
+        }
+    }
+    if (candidates.empty()) {
+        throw std::runtime_error("No intermediate group for valiant flow " + std::to_string(flow_id));
+    }
+    const uint32_t intermediate_group = candidates[flow_id % candidates.size()];
+    const uint32_t waypoint = topology->get_group_switch(intermediate_group, src_group);
+    RouteInfo route;
+    route.path_id = DragonflySourceRoute::kWaypointFlag | waypoint;
+    route.description = "valiant";
+    route.log_info.emplace("intermediate_group", std::to_string(intermediate_group));
+    route.log_info.emplace("waypoint_switch", std::to_string(waypoint));
     return route;
 }
 

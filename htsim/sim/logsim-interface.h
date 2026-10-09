@@ -118,8 +118,8 @@ class LogSimInterface {
     FatTreeTopology *_topo = NULL;
     std::vector<const Route *> ***_netPaths;
     int _cwd;
-    ComputeEvent *compute_events_handler;
-    NullEvent *null_events_handler;
+    ComputeEvent *compute_events_handler = nullptr;
+    NullEvent *null_events_handler = nullptr;
     graph_node_properties *_latest_recv;
     bool compute_if_finished = false;
     bool time_over = false;

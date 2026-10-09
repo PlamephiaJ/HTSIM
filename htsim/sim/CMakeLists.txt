@@ -130,6 +130,7 @@ set(SOURCE_FILES
     atlahs_dragonfly_api.cpp
     rank_placement.cpp
     messagelet_config.cpp
+    flow_routing_config.cpp
     messagelet_runtime.cpp
 )
 

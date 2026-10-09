@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "messagelet_config.h"
+#include "flow_routing_config.h"
 
 class AtlahsDragonflyApi;
 class EventOver;
@@ -29,6 +30,8 @@ public:
     };
 
     struct FlowState {
+        uint64_t flow_id = 0;
+        bool has_flow_id = false;
         uint32_t from = 0;
         uint32_t to = 0;
         uint32_t tag = 0;
@@ -44,6 +47,8 @@ public:
     void eventFinished(const EventOver& event);
 
     void loadConfig(const std::string& filename);
+    void loadRoutingConfig(const std::string& filename);
+    void validateRoutingComplete() const;
     const MessageletConfig& config() const { return _config; }
 
     uint64_t messageletSize(const UecSrc& source) const;
@@ -61,12 +66,16 @@ private:
                       uint64_t flow_size,
                       uint32_t from,
                       uint32_t to,
-                      uint32_t tag);
+                      uint32_t tag,
+                      const FlowRoutingConfig::Entry* routing);
     RouteInfo minimumRoute(uint32_t from, uint32_t to) const;
+    RouteInfo valiantRoute(uint32_t from, uint32_t to, uint64_t flow_id) const;
     FlowState& mutableFlowState(const UecSrc& source);
 
     AtlahsDragonflyApi& _goal_runtime;
     MessageletConfig _config;
+    FlowRoutingConfig _routing_config;
+    bool _routing_config_loaded = false;
     std::unordered_map<const UecSrc*, FlowState> _flows;
 };
 
