@@ -1,0 +1,5349 @@
+{
+  "schema_version": 1,
+  "generator": {
+    "name": "htsim-workload-gen",
+    "version": "0.4.0"
+  },
+  "workload": {
+    "name": "exp2.c.4.flow",
+    "kind": "flow",
+    "world_size": 12,
+    "binary": "workload.bin",
+    "goal_text": "workload.goal",
+    "tasks": 201,
+    "dependency_edges": 337,
+    "p2p_flows": 60
+  },
+  "source_graph": {
+    "defaults": {
+      "cpu": 0,
+      "nic": 0,
+      "chunk_bytes": 65536
+    },
+    "nodes": [
+      {
+        "id": "calc_r0_t0",
+        "op": "compute",
+        "ranks": [
+          0
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "start"
+      },
+      {
+        "id": "calc_r1_t0",
+        "op": "compute",
+        "ranks": [
+          1
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "start"
+      },
+      {
+        "id": "calc_r2_t0",
+        "op": "compute",
+        "ranks": [
+          2
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "start"
+      },
+      {
+        "id": "calc_r3_t0",
+        "op": "compute",
+        "ranks": [
+          3
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "start"
+      },
+      {
+        "id": "calc_r4_t0",
+        "op": "compute",
+        "ranks": [
+          4
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "start"
+      },
+      {
+        "id": "calc_r5_t0",
+        "op": "compute",
+        "ranks": [
+          5
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "start"
+      },
+      {
+        "id": "calc_r6_t0",
+        "op": "compute",
+        "ranks": [
+          6
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "start"
+      },
+      {
+        "id": "calc_r7_t0",
+        "op": "compute",
+        "ranks": [
+          7
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "start"
+      },
+      {
+        "id": "calc_r8_t0",
+        "op": "compute",
+        "ranks": [
+          8
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "start"
+      },
+      {
+        "id": "calc_r9_t0",
+        "op": "compute",
+        "ranks": [
+          9
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "start"
+      },
+      {
+        "id": "calc_r10_t0",
+        "op": "compute",
+        "ranks": [
+          10
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "start"
+      },
+      {
+        "id": "calc_r11_t0",
+        "op": "compute",
+        "ranks": [
+          11
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "start"
+      },
+      {
+        "id": "calc_r0_t1",
+        "op": "compute",
+        "ranks": [
+          0
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:start",
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t0"
+          ]
+        }
+      },
+      {
+        "id": "calc_r1_t1",
+        "op": "compute",
+        "ranks": [
+          1
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:start",
+        "rank_depends_on": {
+          "1": [
+            "calc_r1_t0"
+          ]
+        }
+      },
+      {
+        "id": "calc_r2_t1",
+        "op": "compute",
+        "ranks": [
+          2
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:start",
+        "rank_depends_on": {
+          "2": [
+            "calc_r2_t0"
+          ]
+        }
+      },
+      {
+        "id": "calc_r3_t1",
+        "op": "compute",
+        "ranks": [
+          3
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:start",
+        "rank_depends_on": {
+          "3": [
+            "calc_r3_t0"
+          ]
+        }
+      },
+      {
+        "id": "calc_r4_t1",
+        "op": "compute",
+        "ranks": [
+          4
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:start",
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t0"
+          ]
+        }
+      },
+      {
+        "id": "calc_r5_t1",
+        "op": "compute",
+        "ranks": [
+          5
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:start",
+        "rank_depends_on": {
+          "5": [
+            "calc_r5_t0"
+          ]
+        }
+      },
+      {
+        "id": "calc_r6_t1",
+        "op": "compute",
+        "ranks": [
+          6
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:start",
+        "rank_depends_on": {
+          "6": [
+            "calc_r6_t0"
+          ]
+        }
+      },
+      {
+        "id": "calc_r7_t1",
+        "op": "compute",
+        "ranks": [
+          7
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:start",
+        "rank_depends_on": {
+          "7": [
+            "calc_r7_t0"
+          ]
+        }
+      },
+      {
+        "id": "calc_r8_t1",
+        "op": "compute",
+        "ranks": [
+          8
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "direct_alltoall:start",
+        "rank_depends_on": {
+          "8": [
+            "calc_r8_t0"
+          ]
+        }
+      },
+      {
+        "id": "calc_r9_t1",
+        "op": "compute",
+        "ranks": [
+          9
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "direct_alltoall:start",
+        "rank_depends_on": {
+          "9": [
+            "calc_r9_t0"
+          ]
+        }
+      },
+      {
+        "id": "calc_r10_t1",
+        "op": "compute",
+        "ranks": [
+          10
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "direct_alltoall:start",
+        "rank_depends_on": {
+          "10": [
+            "calc_r10_t0"
+          ]
+        }
+      },
+      {
+        "id": "calc_r11_t1",
+        "op": "compute",
+        "ranks": [
+          11
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "direct_alltoall:start",
+        "rank_depends_on": {
+          "11": [
+            "calc_r11_t0"
+          ]
+        }
+      },
+      {
+        "id": "flow_0",
+        "op": "flow",
+        "flow_id": 0,
+        "src": 0,
+        "dst": 1,
+        "bytes": 65536,
+        "tag": 0,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "reduce_scatter",
+          "chunk": 3,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t1"
+          ],
+          "1": [
+            "calc_r1_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_1",
+        "op": "flow",
+        "flow_id": 1,
+        "src": 1,
+        "dst": 2,
+        "bytes": 65536,
+        "tag": 0,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "reduce_scatter",
+          "chunk": 0,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "1": [
+            "calc_r1_t1"
+          ],
+          "2": [
+            "calc_r2_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_2",
+        "op": "flow",
+        "flow_id": 2,
+        "src": 2,
+        "dst": 3,
+        "bytes": 65536,
+        "tag": 0,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "reduce_scatter",
+          "chunk": 1,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "2": [
+            "calc_r2_t1"
+          ],
+          "3": [
+            "calc_r3_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_3",
+        "op": "flow",
+        "flow_id": 3,
+        "src": 3,
+        "dst": 0,
+        "bytes": 65536,
+        "tag": 0,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "reduce_scatter",
+          "chunk": 2,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t1"
+          ],
+          "3": [
+            "calc_r3_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_26",
+        "op": "flow",
+        "flow_id": 26,
+        "src": 6,
+        "dst": 4,
+        "bytes": 65536,
+        "tag": 1,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "reduce",
+          "chunk": 0,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "up",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t1"
+          ],
+          "6": [
+            "calc_r6_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_32",
+        "op": "flow",
+        "flow_id": 32,
+        "src": 6,
+        "dst": 4,
+        "bytes": 65536,
+        "tag": 100001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "reduce",
+          "chunk": 1,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "up",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t1"
+          ],
+          "6": [
+            "calc_r6_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_38",
+        "op": "flow",
+        "flow_id": 38,
+        "src": 6,
+        "dst": 4,
+        "bytes": 65536,
+        "tag": 200001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "reduce",
+          "chunk": 2,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "up",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t1"
+          ],
+          "6": [
+            "calc_r6_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_44",
+        "op": "flow",
+        "flow_id": 44,
+        "src": 6,
+        "dst": 4,
+        "bytes": 65536,
+        "tag": 300001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "reduce",
+          "chunk": 3,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "up",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t1"
+          ],
+          "6": [
+            "calc_r6_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_28",
+        "op": "flow",
+        "flow_id": 28,
+        "src": 7,
+        "dst": 5,
+        "bytes": 65536,
+        "tag": 1,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "reduce",
+          "chunk": 0,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "up",
+          "parent": 5,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "5": [
+            "calc_r5_t1"
+          ],
+          "7": [
+            "calc_r7_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_34",
+        "op": "flow",
+        "flow_id": 34,
+        "src": 7,
+        "dst": 5,
+        "bytes": 65536,
+        "tag": 100001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "reduce",
+          "chunk": 1,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "up",
+          "parent": 5,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "5": [
+            "calc_r5_t1"
+          ],
+          "7": [
+            "calc_r7_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_40",
+        "op": "flow",
+        "flow_id": 40,
+        "src": 7,
+        "dst": 5,
+        "bytes": 65536,
+        "tag": 200001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "reduce",
+          "chunk": 2,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "up",
+          "parent": 5,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "5": [
+            "calc_r5_t1"
+          ],
+          "7": [
+            "calc_r7_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_46",
+        "op": "flow",
+        "flow_id": 46,
+        "src": 7,
+        "dst": 5,
+        "bytes": 65536,
+        "tag": 300001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "reduce",
+          "chunk": 3,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "up",
+          "parent": 5,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "5": [
+            "calc_r5_t1"
+          ],
+          "7": [
+            "calc_r7_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_48",
+        "op": "flow",
+        "flow_id": 48,
+        "src": 8,
+        "dst": 9,
+        "bytes": 65536,
+        "tag": 2,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 2,
+          "node_id": "direct_alltoall",
+          "type": "alltoall",
+          "algorithm": "direct",
+          "phase": "exchange",
+          "chunk": 0,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 2,
+          "peer": 9,
+          "chunks_per_peer": 1,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "8": [
+            "calc_r8_t1"
+          ],
+          "9": [
+            "calc_r9_t1"
+          ]
+        }
+      },
+      {
+        "id": "calc_r1_t15",
+        "op": "compute",
+        "ranks": [
+          1
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:reduce:0",
+        "rank_depends_on": {
+          "1": [
+            "flow_0"
+          ]
+        }
+      },
+      {
+        "id": "calc_r2_t15",
+        "op": "compute",
+        "ranks": [
+          2
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:reduce:0",
+        "rank_depends_on": {
+          "2": [
+            "flow_1"
+          ]
+        }
+      },
+      {
+        "id": "calc_r3_t15",
+        "op": "compute",
+        "ranks": [
+          3
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:reduce:0",
+        "rank_depends_on": {
+          "3": [
+            "flow_2"
+          ]
+        }
+      },
+      {
+        "id": "calc_r0_t15",
+        "op": "compute",
+        "ranks": [
+          0
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:reduce:0",
+        "rank_depends_on": {
+          "0": [
+            "flow_3"
+          ]
+        }
+      },
+      {
+        "id": "calc_r4_t8",
+        "op": "compute",
+        "ranks": [
+          4
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:chunk0:reduce-from-6",
+        "rank_depends_on": {
+          "4": [
+            "flow_26"
+          ]
+        }
+      },
+      {
+        "id": "calc_r4_t14",
+        "op": "compute",
+        "ranks": [
+          4
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:chunk1:reduce-from-6",
+        "rank_depends_on": {
+          "4": [
+            "flow_32"
+          ]
+        }
+      },
+      {
+        "id": "calc_r4_t20",
+        "op": "compute",
+        "ranks": [
+          4
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:chunk2:reduce-from-6",
+        "rank_depends_on": {
+          "4": [
+            "flow_38"
+          ]
+        }
+      },
+      {
+        "id": "calc_r4_t26",
+        "op": "compute",
+        "ranks": [
+          4
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:chunk3:reduce-from-6",
+        "rank_depends_on": {
+          "4": [
+            "flow_44"
+          ]
+        }
+      },
+      {
+        "id": "calc_r5_t7",
+        "op": "compute",
+        "ranks": [
+          5
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:chunk0:reduce-from-7",
+        "rank_depends_on": {
+          "5": [
+            "flow_28"
+          ]
+        }
+      },
+      {
+        "id": "calc_r5_t12",
+        "op": "compute",
+        "ranks": [
+          5
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:chunk1:reduce-from-7",
+        "rank_depends_on": {
+          "5": [
+            "flow_34"
+          ]
+        }
+      },
+      {
+        "id": "calc_r5_t17",
+        "op": "compute",
+        "ranks": [
+          5
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:chunk2:reduce-from-7",
+        "rank_depends_on": {
+          "5": [
+            "flow_40"
+          ]
+        }
+      },
+      {
+        "id": "calc_r5_t22",
+        "op": "compute",
+        "ranks": [
+          5
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:chunk3:reduce-from-7",
+        "rank_depends_on": {
+          "5": [
+            "flow_46"
+          ]
+        }
+      },
+      {
+        "id": "flow_51",
+        "op": "flow",
+        "flow_id": 51,
+        "src": 9,
+        "dst": 8,
+        "bytes": 65536,
+        "tag": 2,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 2,
+          "node_id": "direct_alltoall",
+          "type": "alltoall",
+          "algorithm": "direct",
+          "phase": "exchange",
+          "chunk": 0,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 2,
+          "peer": 8,
+          "chunks_per_peer": 1,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "8": [
+            "flow_48"
+          ],
+          "9": [
+            "flow_48"
+          ]
+        }
+      },
+      {
+        "id": "flow_5",
+        "op": "flow",
+        "flow_id": 5,
+        "src": 1,
+        "dst": 2,
+        "bytes": 65536,
+        "tag": 100000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "reduce_scatter",
+          "chunk": 3,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "1": [
+            "calc_r1_t15"
+          ],
+          "2": [
+            "calc_r2_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_6",
+        "op": "flow",
+        "flow_id": 6,
+        "src": 2,
+        "dst": 3,
+        "bytes": 65536,
+        "tag": 100000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "reduce_scatter",
+          "chunk": 0,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "2": [
+            "calc_r2_t15"
+          ],
+          "3": [
+            "calc_r3_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_7",
+        "op": "flow",
+        "flow_id": 7,
+        "src": 3,
+        "dst": 0,
+        "bytes": 65536,
+        "tag": 100000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "reduce_scatter",
+          "chunk": 1,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t1"
+          ],
+          "3": [
+            "calc_r3_t15"
+          ]
+        }
+      },
+      {
+        "id": "flow_4",
+        "op": "flow",
+        "flow_id": 4,
+        "src": 0,
+        "dst": 1,
+        "bytes": 65536,
+        "tag": 100000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "reduce_scatter",
+          "chunk": 2,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t15"
+          ],
+          "1": [
+            "calc_r1_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_24",
+        "op": "flow",
+        "flow_id": 24,
+        "src": 5,
+        "dst": 4,
+        "bytes": 65536,
+        "tag": 1,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "reduce",
+          "chunk": 0,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "up",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t1"
+          ],
+          "5": [
+            "calc_r5_t7"
+          ]
+        }
+      },
+      {
+        "id": "flow_30",
+        "op": "flow",
+        "flow_id": 30,
+        "src": 5,
+        "dst": 4,
+        "bytes": 65536,
+        "tag": 100001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "reduce",
+          "chunk": 1,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "up",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t1"
+          ],
+          "5": [
+            "calc_r5_t12"
+          ]
+        }
+      },
+      {
+        "id": "flow_36",
+        "op": "flow",
+        "flow_id": 36,
+        "src": 5,
+        "dst": 4,
+        "bytes": 65536,
+        "tag": 200001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "reduce",
+          "chunk": 2,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "up",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t1"
+          ],
+          "5": [
+            "calc_r5_t17"
+          ]
+        }
+      },
+      {
+        "id": "flow_42",
+        "op": "flow",
+        "flow_id": 42,
+        "src": 5,
+        "dst": 4,
+        "bytes": 65536,
+        "tag": 300001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "reduce",
+          "chunk": 3,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "up",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t1"
+          ],
+          "5": [
+            "calc_r5_t22"
+          ]
+        }
+      },
+      {
+        "id": "flow_49",
+        "op": "flow",
+        "flow_id": 49,
+        "src": 8,
+        "dst": 10,
+        "bytes": 65536,
+        "tag": 2,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 2,
+          "node_id": "direct_alltoall",
+          "type": "alltoall",
+          "algorithm": "direct",
+          "phase": "exchange",
+          "chunk": 0,
+          "step": 2,
+          "channel": 0,
+          "ordering_domain": 2,
+          "peer": 10,
+          "chunks_per_peer": 1,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "8": [
+            "flow_51"
+          ],
+          "10": [
+            "calc_r10_t1"
+          ]
+        }
+      },
+      {
+        "id": "calc_r2_t16",
+        "op": "compute",
+        "ranks": [
+          2
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:reduce:1",
+        "rank_depends_on": {
+          "2": [
+            "flow_5"
+          ]
+        }
+      },
+      {
+        "id": "calc_r3_t16",
+        "op": "compute",
+        "ranks": [
+          3
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:reduce:1",
+        "rank_depends_on": {
+          "3": [
+            "flow_6"
+          ]
+        }
+      },
+      {
+        "id": "calc_r0_t16",
+        "op": "compute",
+        "ranks": [
+          0
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:reduce:1",
+        "rank_depends_on": {
+          "0": [
+            "flow_7"
+          ]
+        }
+      },
+      {
+        "id": "calc_r1_t16",
+        "op": "compute",
+        "ranks": [
+          1
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:reduce:1",
+        "rank_depends_on": {
+          "1": [
+            "flow_4"
+          ]
+        }
+      },
+      {
+        "id": "calc_r4_t7",
+        "op": "compute",
+        "ranks": [
+          4
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:chunk0:reduce-from-5",
+        "rank_depends_on": {
+          "4": [
+            "flow_24"
+          ]
+        }
+      },
+      {
+        "id": "calc_r4_t13",
+        "op": "compute",
+        "ranks": [
+          4
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:chunk1:reduce-from-5",
+        "rank_depends_on": {
+          "4": [
+            "flow_30"
+          ]
+        }
+      },
+      {
+        "id": "calc_r4_t19",
+        "op": "compute",
+        "ranks": [
+          4
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:chunk2:reduce-from-5",
+        "rank_depends_on": {
+          "4": [
+            "flow_36"
+          ]
+        }
+      },
+      {
+        "id": "calc_r4_t25",
+        "op": "compute",
+        "ranks": [
+          4
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:chunk3:reduce-from-5",
+        "rank_depends_on": {
+          "4": [
+            "flow_42"
+          ]
+        }
+      },
+      {
+        "id": "flow_54",
+        "op": "flow",
+        "flow_id": 54,
+        "src": 10,
+        "dst": 8,
+        "bytes": 65536,
+        "tag": 2,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 2,
+          "node_id": "direct_alltoall",
+          "type": "alltoall",
+          "algorithm": "direct",
+          "phase": "exchange",
+          "chunk": 0,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 2,
+          "peer": 8,
+          "chunks_per_peer": 1,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "8": [
+            "flow_49"
+          ],
+          "10": [
+            "flow_49"
+          ]
+        }
+      },
+      {
+        "id": "flow_10",
+        "op": "flow",
+        "flow_id": 10,
+        "src": 2,
+        "dst": 3,
+        "bytes": 65536,
+        "tag": 200000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "reduce_scatter",
+          "chunk": 3,
+          "step": 2,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "2": [
+            "calc_r2_t16"
+          ],
+          "3": [
+            "calc_r3_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_11",
+        "op": "flow",
+        "flow_id": 11,
+        "src": 3,
+        "dst": 0,
+        "bytes": 65536,
+        "tag": 200000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "reduce_scatter",
+          "chunk": 0,
+          "step": 2,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t1"
+          ],
+          "3": [
+            "calc_r3_t16"
+          ]
+        }
+      },
+      {
+        "id": "flow_8",
+        "op": "flow",
+        "flow_id": 8,
+        "src": 0,
+        "dst": 1,
+        "bytes": 65536,
+        "tag": 200000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "reduce_scatter",
+          "chunk": 1,
+          "step": 2,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t16"
+          ],
+          "1": [
+            "calc_r1_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_9",
+        "op": "flow",
+        "flow_id": 9,
+        "src": 1,
+        "dst": 2,
+        "bytes": 65536,
+        "tag": 200000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "reduce_scatter",
+          "chunk": 2,
+          "step": 2,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "1": [
+            "calc_r1_t16"
+          ],
+          "2": [
+            "calc_r2_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_25",
+        "op": "flow",
+        "flow_id": 25,
+        "src": 4,
+        "dst": 5,
+        "bytes": 65536,
+        "tag": 1,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "broadcast",
+          "chunk": 0,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "down",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t7",
+            "calc_r4_t8"
+          ],
+          "5": [
+            "flow_24"
+          ]
+        }
+      },
+      {
+        "id": "flow_27",
+        "op": "flow",
+        "flow_id": 27,
+        "src": 4,
+        "dst": 6,
+        "bytes": 65536,
+        "tag": 1,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "broadcast",
+          "chunk": 0,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "down",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t7",
+            "calc_r4_t8"
+          ],
+          "6": [
+            "flow_26"
+          ]
+        }
+      },
+      {
+        "id": "flow_31",
+        "op": "flow",
+        "flow_id": 31,
+        "src": 4,
+        "dst": 5,
+        "bytes": 65536,
+        "tag": 100001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "broadcast",
+          "chunk": 1,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "down",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t13",
+            "calc_r4_t14"
+          ],
+          "5": [
+            "flow_30"
+          ]
+        }
+      },
+      {
+        "id": "flow_33",
+        "op": "flow",
+        "flow_id": 33,
+        "src": 4,
+        "dst": 6,
+        "bytes": 65536,
+        "tag": 100001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "broadcast",
+          "chunk": 1,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "down",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t13",
+            "calc_r4_t14"
+          ],
+          "6": [
+            "flow_32"
+          ]
+        }
+      },
+      {
+        "id": "flow_37",
+        "op": "flow",
+        "flow_id": 37,
+        "src": 4,
+        "dst": 5,
+        "bytes": 65536,
+        "tag": 200001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "broadcast",
+          "chunk": 2,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "down",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t19",
+            "calc_r4_t20"
+          ],
+          "5": [
+            "flow_36"
+          ]
+        }
+      },
+      {
+        "id": "flow_39",
+        "op": "flow",
+        "flow_id": 39,
+        "src": 4,
+        "dst": 6,
+        "bytes": 65536,
+        "tag": 200001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "broadcast",
+          "chunk": 2,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "down",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t19",
+            "calc_r4_t20"
+          ],
+          "6": [
+            "flow_38"
+          ]
+        }
+      },
+      {
+        "id": "flow_43",
+        "op": "flow",
+        "flow_id": 43,
+        "src": 4,
+        "dst": 5,
+        "bytes": 65536,
+        "tag": 300001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "broadcast",
+          "chunk": 3,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "down",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t25",
+            "calc_r4_t26"
+          ],
+          "5": [
+            "flow_42"
+          ]
+        }
+      },
+      {
+        "id": "flow_45",
+        "op": "flow",
+        "flow_id": 45,
+        "src": 4,
+        "dst": 6,
+        "bytes": 65536,
+        "tag": 300001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "broadcast",
+          "chunk": 3,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "down",
+          "parent": 4,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t25",
+            "calc_r4_t26"
+          ],
+          "6": [
+            "flow_44"
+          ]
+        }
+      },
+      {
+        "id": "flow_50",
+        "op": "flow",
+        "flow_id": 50,
+        "src": 8,
+        "dst": 11,
+        "bytes": 65536,
+        "tag": 2,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 2,
+          "node_id": "direct_alltoall",
+          "type": "alltoall",
+          "algorithm": "direct",
+          "phase": "exchange",
+          "chunk": 0,
+          "step": 3,
+          "channel": 0,
+          "ordering_domain": 2,
+          "peer": 11,
+          "chunks_per_peer": 1,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "8": [
+            "flow_54"
+          ],
+          "11": [
+            "calc_r11_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_52",
+        "op": "flow",
+        "flow_id": 52,
+        "src": 9,
+        "dst": 10,
+        "bytes": 65536,
+        "tag": 2,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 2,
+          "node_id": "direct_alltoall",
+          "type": "alltoall",
+          "algorithm": "direct",
+          "phase": "exchange",
+          "chunk": 0,
+          "step": 2,
+          "channel": 0,
+          "ordering_domain": 2,
+          "peer": 10,
+          "chunks_per_peer": 1,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "9": [
+            "flow_51"
+          ],
+          "10": [
+            "flow_54"
+          ]
+        }
+      },
+      {
+        "id": "calc_r3_t17",
+        "op": "compute",
+        "ranks": [
+          3
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:reduce:2",
+        "rank_depends_on": {
+          "3": [
+            "flow_10"
+          ]
+        }
+      },
+      {
+        "id": "calc_r0_t17",
+        "op": "compute",
+        "ranks": [
+          0
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:reduce:2",
+        "rank_depends_on": {
+          "0": [
+            "flow_11"
+          ]
+        }
+      },
+      {
+        "id": "calc_r1_t17",
+        "op": "compute",
+        "ranks": [
+          1
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:reduce:2",
+        "rank_depends_on": {
+          "1": [
+            "flow_8"
+          ]
+        }
+      },
+      {
+        "id": "calc_r2_t17",
+        "op": "compute",
+        "ranks": [
+          2
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:reduce:2",
+        "rank_depends_on": {
+          "2": [
+            "flow_9"
+          ]
+        }
+      },
+      {
+        "id": "flow_29",
+        "op": "flow",
+        "flow_id": 29,
+        "src": 5,
+        "dst": 7,
+        "bytes": 65536,
+        "tag": 1,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "broadcast",
+          "chunk": 0,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "down",
+          "parent": 5,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "5": [
+            "flow_25"
+          ],
+          "7": [
+            "flow_28"
+          ]
+        }
+      },
+      {
+        "id": "flow_35",
+        "op": "flow",
+        "flow_id": 35,
+        "src": 5,
+        "dst": 7,
+        "bytes": 65536,
+        "tag": 100001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "broadcast",
+          "chunk": 1,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "down",
+          "parent": 5,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "5": [
+            "flow_31"
+          ],
+          "7": [
+            "flow_34"
+          ]
+        }
+      },
+      {
+        "id": "flow_41",
+        "op": "flow",
+        "flow_id": 41,
+        "src": 5,
+        "dst": 7,
+        "bytes": 65536,
+        "tag": 200001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "broadcast",
+          "chunk": 2,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "down",
+          "parent": 5,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "5": [
+            "flow_37"
+          ],
+          "7": [
+            "flow_40"
+          ]
+        }
+      },
+      {
+        "id": "flow_47",
+        "op": "flow",
+        "flow_id": 47,
+        "src": 5,
+        "dst": 7,
+        "bytes": 65536,
+        "tag": 300001,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 1,
+          "node_id": "tree_allreduce",
+          "type": "allreduce",
+          "algorithm": "tree",
+          "phase": "broadcast",
+          "chunk": 3,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 1,
+          "tree_role": "down",
+          "parent": 5,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "5": [
+            "flow_43"
+          ],
+          "7": [
+            "flow_46"
+          ]
+        }
+      },
+      {
+        "id": "calc_r4_t2",
+        "op": "compute",
+        "ranks": [
+          4
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:end",
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t13",
+            "calc_r4_t14",
+            "calc_r4_t19",
+            "calc_r4_t20",
+            "calc_r4_t25",
+            "calc_r4_t26",
+            "calc_r4_t7",
+            "calc_r4_t8",
+            "flow_24",
+            "flow_25",
+            "flow_26",
+            "flow_27",
+            "flow_30",
+            "flow_31",
+            "flow_32",
+            "flow_33",
+            "flow_36",
+            "flow_37",
+            "flow_38",
+            "flow_39",
+            "flow_42",
+            "flow_43",
+            "flow_44",
+            "flow_45"
+          ]
+        }
+      },
+      {
+        "id": "calc_r6_t2",
+        "op": "compute",
+        "ranks": [
+          6
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:end",
+        "rank_depends_on": {
+          "6": [
+            "flow_26",
+            "flow_27",
+            "flow_32",
+            "flow_33",
+            "flow_38",
+            "flow_39",
+            "flow_44",
+            "flow_45"
+          ]
+        }
+      },
+      {
+        "id": "flow_57",
+        "op": "flow",
+        "flow_id": 57,
+        "src": 11,
+        "dst": 8,
+        "bytes": 65536,
+        "tag": 2,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 2,
+          "node_id": "direct_alltoall",
+          "type": "alltoall",
+          "algorithm": "direct",
+          "phase": "exchange",
+          "chunk": 0,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 2,
+          "peer": 8,
+          "chunks_per_peer": 1,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "8": [
+            "flow_50"
+          ],
+          "11": [
+            "flow_50"
+          ]
+        }
+      },
+      {
+        "id": "flow_55",
+        "op": "flow",
+        "flow_id": 55,
+        "src": 10,
+        "dst": 9,
+        "bytes": 65536,
+        "tag": 2,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 2,
+          "node_id": "direct_alltoall",
+          "type": "alltoall",
+          "algorithm": "direct",
+          "phase": "exchange",
+          "chunk": 0,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 2,
+          "peer": 9,
+          "chunks_per_peer": 1,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "9": [
+            "flow_52"
+          ],
+          "10": [
+            "flow_52"
+          ]
+        }
+      },
+      {
+        "id": "flow_15",
+        "op": "flow",
+        "flow_id": 15,
+        "src": 3,
+        "dst": 0,
+        "bytes": 65536,
+        "tag": 300000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "allgather",
+          "chunk": 3,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t1"
+          ],
+          "3": [
+            "calc_r3_t17"
+          ]
+        }
+      },
+      {
+        "id": "flow_12",
+        "op": "flow",
+        "flow_id": 12,
+        "src": 0,
+        "dst": 1,
+        "bytes": 65536,
+        "tag": 300000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "allgather",
+          "chunk": 0,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t17"
+          ],
+          "1": [
+            "calc_r1_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_13",
+        "op": "flow",
+        "flow_id": 13,
+        "src": 1,
+        "dst": 2,
+        "bytes": 65536,
+        "tag": 300000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "allgather",
+          "chunk": 1,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "1": [
+            "calc_r1_t17"
+          ],
+          "2": [
+            "calc_r2_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_14",
+        "op": "flow",
+        "flow_id": 14,
+        "src": 2,
+        "dst": 3,
+        "bytes": 65536,
+        "tag": 300000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "allgather",
+          "chunk": 2,
+          "step": 0,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "2": [
+            "calc_r2_t17"
+          ],
+          "3": [
+            "calc_r3_t1"
+          ]
+        }
+      },
+      {
+        "id": "calc_r5_t2",
+        "op": "compute",
+        "ranks": [
+          5
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:end",
+        "rank_depends_on": {
+          "5": [
+            "calc_r5_t12",
+            "calc_r5_t17",
+            "calc_r5_t22",
+            "calc_r5_t7",
+            "flow_24",
+            "flow_25",
+            "flow_28",
+            "flow_29",
+            "flow_30",
+            "flow_31",
+            "flow_34",
+            "flow_35",
+            "flow_36",
+            "flow_37",
+            "flow_40",
+            "flow_41",
+            "flow_42",
+            "flow_43",
+            "flow_46",
+            "flow_47"
+          ]
+        }
+      },
+      {
+        "id": "calc_r7_t2",
+        "op": "compute",
+        "ranks": [
+          7
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "tree_allreduce:end",
+        "rank_depends_on": {
+          "7": [
+            "flow_28",
+            "flow_29",
+            "flow_34",
+            "flow_35",
+            "flow_40",
+            "flow_41",
+            "flow_46",
+            "flow_47"
+          ]
+        }
+      },
+      {
+        "id": "calc_r4_t27",
+        "op": "compute",
+        "ranks": [
+          4
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "sink",
+        "rank_depends_on": {
+          "4": [
+            "calc_r4_t2"
+          ]
+        }
+      },
+      {
+        "id": "calc_r6_t11",
+        "op": "compute",
+        "ranks": [
+          6
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "sink",
+        "rank_depends_on": {
+          "6": [
+            "calc_r6_t2"
+          ]
+        }
+      },
+      {
+        "id": "calc_r8_t2",
+        "op": "compute",
+        "ranks": [
+          8
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "direct_alltoall:end",
+        "rank_depends_on": {
+          "8": [
+            "flow_48",
+            "flow_49",
+            "flow_50",
+            "flow_51",
+            "flow_54",
+            "flow_57"
+          ]
+        }
+      },
+      {
+        "id": "flow_53",
+        "op": "flow",
+        "flow_id": 53,
+        "src": 9,
+        "dst": 11,
+        "bytes": 65536,
+        "tag": 2,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 2,
+          "node_id": "direct_alltoall",
+          "type": "alltoall",
+          "algorithm": "direct",
+          "phase": "exchange",
+          "chunk": 0,
+          "step": 3,
+          "channel": 0,
+          "ordering_domain": 2,
+          "peer": 11,
+          "chunks_per_peer": 1,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "9": [
+            "flow_55"
+          ],
+          "11": [
+            "flow_57"
+          ]
+        }
+      },
+      {
+        "id": "calc_r0_t18",
+        "op": "compute",
+        "ranks": [
+          0
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:copy:0",
+        "rank_depends_on": {
+          "0": [
+            "flow_15"
+          ]
+        }
+      },
+      {
+        "id": "calc_r1_t18",
+        "op": "compute",
+        "ranks": [
+          1
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:copy:0",
+        "rank_depends_on": {
+          "1": [
+            "flow_12"
+          ]
+        }
+      },
+      {
+        "id": "calc_r2_t18",
+        "op": "compute",
+        "ranks": [
+          2
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:copy:0",
+        "rank_depends_on": {
+          "2": [
+            "flow_13"
+          ]
+        }
+      },
+      {
+        "id": "calc_r3_t18",
+        "op": "compute",
+        "ranks": [
+          3
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:copy:0",
+        "rank_depends_on": {
+          "3": [
+            "flow_14"
+          ]
+        }
+      },
+      {
+        "id": "calc_r5_t23",
+        "op": "compute",
+        "ranks": [
+          5
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "sink",
+        "rank_depends_on": {
+          "5": [
+            "calc_r5_t2"
+          ]
+        }
+      },
+      {
+        "id": "calc_r7_t11",
+        "op": "compute",
+        "ranks": [
+          7
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "sink",
+        "rank_depends_on": {
+          "7": [
+            "calc_r7_t2"
+          ]
+        }
+      },
+      {
+        "id": "calc_r8_t9",
+        "op": "compute",
+        "ranks": [
+          8
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "sink",
+        "rank_depends_on": {
+          "8": [
+            "calc_r8_t2"
+          ]
+        }
+      },
+      {
+        "id": "flow_58",
+        "op": "flow",
+        "flow_id": 58,
+        "src": 11,
+        "dst": 9,
+        "bytes": 65536,
+        "tag": 2,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 2,
+          "node_id": "direct_alltoall",
+          "type": "alltoall",
+          "algorithm": "direct",
+          "phase": "exchange",
+          "chunk": 0,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 2,
+          "peer": 9,
+          "chunks_per_peer": 1,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "9": [
+            "flow_53"
+          ],
+          "11": [
+            "flow_53"
+          ]
+        }
+      },
+      {
+        "id": "flow_16",
+        "op": "flow",
+        "flow_id": 16,
+        "src": 0,
+        "dst": 1,
+        "bytes": 65536,
+        "tag": 400000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "allgather",
+          "chunk": 3,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t18"
+          ],
+          "1": [
+            "calc_r1_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_17",
+        "op": "flow",
+        "flow_id": 17,
+        "src": 1,
+        "dst": 2,
+        "bytes": 65536,
+        "tag": 400000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "allgather",
+          "chunk": 0,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "1": [
+            "calc_r1_t18"
+          ],
+          "2": [
+            "calc_r2_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_18",
+        "op": "flow",
+        "flow_id": 18,
+        "src": 2,
+        "dst": 3,
+        "bytes": 65536,
+        "tag": 400000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "allgather",
+          "chunk": 1,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "2": [
+            "calc_r2_t18"
+          ],
+          "3": [
+            "calc_r3_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_19",
+        "op": "flow",
+        "flow_id": 19,
+        "src": 3,
+        "dst": 0,
+        "bytes": 65536,
+        "tag": 400000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "allgather",
+          "chunk": 2,
+          "step": 1,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t1"
+          ],
+          "3": [
+            "calc_r3_t18"
+          ]
+        }
+      },
+      {
+        "id": "flow_56",
+        "op": "flow",
+        "flow_id": 56,
+        "src": 10,
+        "dst": 11,
+        "bytes": 65536,
+        "tag": 2,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 2,
+          "node_id": "direct_alltoall",
+          "type": "alltoall",
+          "algorithm": "direct",
+          "phase": "exchange",
+          "chunk": 0,
+          "step": 3,
+          "channel": 0,
+          "ordering_domain": 2,
+          "peer": 11,
+          "chunks_per_peer": 1,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "10": [
+            "flow_55"
+          ],
+          "11": [
+            "flow_58"
+          ]
+        }
+      },
+      {
+        "id": "calc_r9_t2",
+        "op": "compute",
+        "ranks": [
+          9
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "direct_alltoall:end",
+        "rank_depends_on": {
+          "9": [
+            "flow_48",
+            "flow_51",
+            "flow_52",
+            "flow_53",
+            "flow_55",
+            "flow_58"
+          ]
+        }
+      },
+      {
+        "id": "calc_r1_t19",
+        "op": "compute",
+        "ranks": [
+          1
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:copy:1",
+        "rank_depends_on": {
+          "1": [
+            "flow_16"
+          ]
+        }
+      },
+      {
+        "id": "calc_r2_t19",
+        "op": "compute",
+        "ranks": [
+          2
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:copy:1",
+        "rank_depends_on": {
+          "2": [
+            "flow_17"
+          ]
+        }
+      },
+      {
+        "id": "calc_r3_t19",
+        "op": "compute",
+        "ranks": [
+          3
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:copy:1",
+        "rank_depends_on": {
+          "3": [
+            "flow_18"
+          ]
+        }
+      },
+      {
+        "id": "calc_r0_t19",
+        "op": "compute",
+        "ranks": [
+          0
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:ch0:copy:1",
+        "rank_depends_on": {
+          "0": [
+            "flow_19"
+          ]
+        }
+      },
+      {
+        "id": "flow_59",
+        "op": "flow",
+        "flow_id": 59,
+        "src": 11,
+        "dst": 10,
+        "bytes": 65536,
+        "tag": 2,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 2,
+          "node_id": "direct_alltoall",
+          "type": "alltoall",
+          "algorithm": "direct",
+          "phase": "exchange",
+          "chunk": 0,
+          "step": 2,
+          "channel": 0,
+          "ordering_domain": 2,
+          "peer": 10,
+          "chunks_per_peer": 1,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "10": [
+            "flow_56"
+          ],
+          "11": [
+            "flow_56"
+          ]
+        }
+      },
+      {
+        "id": "calc_r9_t9",
+        "op": "compute",
+        "ranks": [
+          9
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "sink",
+        "rank_depends_on": {
+          "9": [
+            "calc_r9_t2"
+          ]
+        }
+      },
+      {
+        "id": "flow_21",
+        "op": "flow",
+        "flow_id": 21,
+        "src": 1,
+        "dst": 2,
+        "bytes": 65536,
+        "tag": 500000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "allgather",
+          "chunk": 3,
+          "step": 2,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "1": [
+            "calc_r1_t19"
+          ],
+          "2": [
+            "calc_r2_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_22",
+        "op": "flow",
+        "flow_id": 22,
+        "src": 2,
+        "dst": 3,
+        "bytes": 65536,
+        "tag": 500000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "allgather",
+          "chunk": 0,
+          "step": 2,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "2": [
+            "calc_r2_t19"
+          ],
+          "3": [
+            "calc_r3_t1"
+          ]
+        }
+      },
+      {
+        "id": "flow_23",
+        "op": "flow",
+        "flow_id": 23,
+        "src": 3,
+        "dst": 0,
+        "bytes": 65536,
+        "tag": 500000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "allgather",
+          "chunk": 1,
+          "step": 2,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t1"
+          ],
+          "3": [
+            "calc_r3_t19"
+          ]
+        }
+      },
+      {
+        "id": "flow_20",
+        "op": "flow",
+        "flow_id": 20,
+        "src": 0,
+        "dst": 1,
+        "bytes": 65536,
+        "tag": 500000,
+        "cpu": 0,
+        "nic": 0,
+        "lowered": true,
+        "metadata": {
+          "collective_id": 0,
+          "node_id": "ring_allreduce",
+          "type": "allreduce",
+          "algorithm": "ring",
+          "phase": "allgather",
+          "chunk": 2,
+          "step": 2,
+          "channel": 0,
+          "ordering_domain": 0,
+          "chunk_bytes": 65536,
+          "protocol": "simple",
+          "payload_bytes": 65536,
+          "wire_bytes": 65536
+        },
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t19"
+          ],
+          "1": [
+            "calc_r1_t1"
+          ]
+        }
+      },
+      {
+        "id": "calc_r10_t2",
+        "op": "compute",
+        "ranks": [
+          10
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "direct_alltoall:end",
+        "rank_depends_on": {
+          "10": [
+            "flow_49",
+            "flow_52",
+            "flow_54",
+            "flow_55",
+            "flow_56",
+            "flow_59"
+          ]
+        }
+      },
+      {
+        "id": "calc_r11_t2",
+        "op": "compute",
+        "ranks": [
+          11
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "direct_alltoall:end",
+        "rank_depends_on": {
+          "11": [
+            "flow_50",
+            "flow_53",
+            "flow_56",
+            "flow_57",
+            "flow_58",
+            "flow_59"
+          ]
+        }
+      },
+      {
+        "id": "calc_r2_t2",
+        "op": "compute",
+        "ranks": [
+          2
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:end",
+        "rank_depends_on": {
+          "2": [
+            "calc_r2_t15",
+            "calc_r2_t16",
+            "calc_r2_t17",
+            "calc_r2_t18",
+            "calc_r2_t19",
+            "flow_1",
+            "flow_10",
+            "flow_13",
+            "flow_14",
+            "flow_17",
+            "flow_18",
+            "flow_2",
+            "flow_21",
+            "flow_22",
+            "flow_5",
+            "flow_6",
+            "flow_9"
+          ]
+        }
+      },
+      {
+        "id": "calc_r3_t2",
+        "op": "compute",
+        "ranks": [
+          3
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:end",
+        "rank_depends_on": {
+          "3": [
+            "calc_r3_t15",
+            "calc_r3_t16",
+            "calc_r3_t17",
+            "calc_r3_t18",
+            "calc_r3_t19",
+            "flow_10",
+            "flow_11",
+            "flow_14",
+            "flow_15",
+            "flow_18",
+            "flow_19",
+            "flow_2",
+            "flow_22",
+            "flow_23",
+            "flow_3",
+            "flow_6",
+            "flow_7"
+          ]
+        }
+      },
+      {
+        "id": "calc_r0_t2",
+        "op": "compute",
+        "ranks": [
+          0
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:end",
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t15",
+            "calc_r0_t16",
+            "calc_r0_t17",
+            "calc_r0_t18",
+            "calc_r0_t19",
+            "flow_0",
+            "flow_11",
+            "flow_12",
+            "flow_15",
+            "flow_16",
+            "flow_19",
+            "flow_20",
+            "flow_23",
+            "flow_3",
+            "flow_4",
+            "flow_7",
+            "flow_8"
+          ]
+        }
+      },
+      {
+        "id": "calc_r1_t2",
+        "op": "compute",
+        "ranks": [
+          1
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "ring_allreduce:end",
+        "rank_depends_on": {
+          "1": [
+            "calc_r1_t15",
+            "calc_r1_t16",
+            "calc_r1_t17",
+            "calc_r1_t18",
+            "calc_r1_t19",
+            "flow_0",
+            "flow_1",
+            "flow_12",
+            "flow_13",
+            "flow_16",
+            "flow_17",
+            "flow_20",
+            "flow_21",
+            "flow_4",
+            "flow_5",
+            "flow_8",
+            "flow_9"
+          ]
+        }
+      },
+      {
+        "id": "calc_r10_t9",
+        "op": "compute",
+        "ranks": [
+          10
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "sink",
+        "rank_depends_on": {
+          "10": [
+            "calc_r10_t2"
+          ]
+        }
+      },
+      {
+        "id": "calc_r11_t9",
+        "op": "compute",
+        "ranks": [
+          11
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "sink",
+        "rank_depends_on": {
+          "11": [
+            "calc_r11_t2"
+          ]
+        }
+      },
+      {
+        "id": "calc_r2_t20",
+        "op": "compute",
+        "ranks": [
+          2
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "sink",
+        "rank_depends_on": {
+          "2": [
+            "calc_r2_t2"
+          ]
+        }
+      },
+      {
+        "id": "calc_r3_t20",
+        "op": "compute",
+        "ranks": [
+          3
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "sink",
+        "rank_depends_on": {
+          "3": [
+            "calc_r3_t2"
+          ]
+        }
+      },
+      {
+        "id": "calc_r0_t20",
+        "op": "compute",
+        "ranks": [
+          0
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "sink",
+        "rank_depends_on": {
+          "0": [
+            "calc_r0_t2"
+          ]
+        }
+      },
+      {
+        "id": "calc_r1_t20",
+        "op": "compute",
+        "ranks": [
+          1
+        ],
+        "duration_ns": 0,
+        "cpu": 0,
+        "source_label": "sink",
+        "rank_depends_on": {
+          "1": [
+            "calc_r1_t2"
+          ]
+        }
+      },
+      {
+        "id": "flow_59_delay_5us",
+        "op": "flow_delay",
+        "flow_id": 59,
+        "duration_ns": 5000
+      }
+    ]
+  },
+  "collectives": [],
+  "flows": {
+    "0": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 3,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_0",
+      "flow_id": 0,
+      "src": 0,
+      "dst": 1,
+      "bytes": 65536,
+      "tag": 0,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 0,
+        "task_id": 2
+      },
+      "recv_task": {
+        "rank": 1,
+        "task_id": 2
+      }
+    },
+    "1": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_1",
+      "flow_id": 1,
+      "src": 1,
+      "dst": 2,
+      "bytes": 65536,
+      "tag": 0,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 1,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 2,
+        "task_id": 2
+      }
+    },
+    "2": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 1,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_2",
+      "flow_id": 2,
+      "src": 2,
+      "dst": 3,
+      "bytes": 65536,
+      "tag": 0,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 2,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 3,
+        "task_id": 2
+      }
+    },
+    "3": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 2,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_3",
+      "flow_id": 3,
+      "src": 3,
+      "dst": 0,
+      "bytes": 65536,
+      "tag": 0,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 3,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 0,
+        "task_id": 3
+      }
+    },
+    "4": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 2,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_4",
+      "flow_id": 4,
+      "src": 0,
+      "dst": 1,
+      "bytes": 65536,
+      "tag": 100000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 0,
+        "task_id": 6
+      },
+      "recv_task": {
+        "rank": 1,
+        "task_id": 6
+      }
+    },
+    "5": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 3,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_5",
+      "flow_id": 5,
+      "src": 1,
+      "dst": 2,
+      "bytes": 65536,
+      "tag": 100000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 1,
+        "task_id": 5
+      },
+      "recv_task": {
+        "rank": 2,
+        "task_id": 5
+      }
+    },
+    "6": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_6",
+      "flow_id": 6,
+      "src": 2,
+      "dst": 3,
+      "bytes": 65536,
+      "tag": 100000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 2,
+        "task_id": 6
+      },
+      "recv_task": {
+        "rank": 3,
+        "task_id": 5
+      }
+    },
+    "7": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 1,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_7",
+      "flow_id": 7,
+      "src": 3,
+      "dst": 0,
+      "bytes": 65536,
+      "tag": 100000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 3,
+        "task_id": 6
+      },
+      "recv_task": {
+        "rank": 0,
+        "task_id": 5
+      }
+    },
+    "8": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 1,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_8",
+      "flow_id": 8,
+      "src": 0,
+      "dst": 1,
+      "bytes": 65536,
+      "tag": 200000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 0,
+        "task_id": 9
+      },
+      "recv_task": {
+        "rank": 1,
+        "task_id": 8
+      }
+    },
+    "9": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 2,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_9",
+      "flow_id": 9,
+      "src": 1,
+      "dst": 2,
+      "bytes": 65536,
+      "tag": 200000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 1,
+        "task_id": 9
+      },
+      "recv_task": {
+        "rank": 2,
+        "task_id": 9
+      }
+    },
+    "10": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 3,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_10",
+      "flow_id": 10,
+      "src": 2,
+      "dst": 3,
+      "bytes": 65536,
+      "tag": 200000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 2,
+        "task_id": 8
+      },
+      "recv_task": {
+        "rank": 3,
+        "task_id": 8
+      }
+    },
+    "11": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 0,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_11",
+      "flow_id": 11,
+      "src": 3,
+      "dst": 0,
+      "bytes": 65536,
+      "tag": 200000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 3,
+        "task_id": 9
+      },
+      "recv_task": {
+        "rank": 0,
+        "task_id": 8
+      }
+    },
+    "12": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_12",
+      "flow_id": 12,
+      "src": 0,
+      "dst": 1,
+      "bytes": 65536,
+      "tag": 300000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 0,
+        "task_id": 12
+      },
+      "recv_task": {
+        "rank": 1,
+        "task_id": 11
+      }
+    },
+    "13": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 1,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_13",
+      "flow_id": 13,
+      "src": 1,
+      "dst": 2,
+      "bytes": 65536,
+      "tag": 300000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 1,
+        "task_id": 12
+      },
+      "recv_task": {
+        "rank": 2,
+        "task_id": 11
+      }
+    },
+    "14": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 2,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_14",
+      "flow_id": 14,
+      "src": 2,
+      "dst": 3,
+      "bytes": 65536,
+      "tag": 300000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 2,
+        "task_id": 12
+      },
+      "recv_task": {
+        "rank": 3,
+        "task_id": 12
+      }
+    },
+    "15": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 3,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_15",
+      "flow_id": 15,
+      "src": 3,
+      "dst": 0,
+      "bytes": 65536,
+      "tag": 300000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 3,
+        "task_id": 11
+      },
+      "recv_task": {
+        "rank": 0,
+        "task_id": 11
+      }
+    },
+    "16": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 3,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_16",
+      "flow_id": 16,
+      "src": 0,
+      "dst": 1,
+      "bytes": 65536,
+      "tag": 400000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 0,
+        "task_id": 14
+      },
+      "recv_task": {
+        "rank": 1,
+        "task_id": 14
+      }
+    },
+    "17": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_17",
+      "flow_id": 17,
+      "src": 1,
+      "dst": 2,
+      "bytes": 65536,
+      "tag": 400000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 1,
+        "task_id": 15
+      },
+      "recv_task": {
+        "rank": 2,
+        "task_id": 14
+      }
+    },
+    "18": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 1,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_18",
+      "flow_id": 18,
+      "src": 2,
+      "dst": 3,
+      "bytes": 65536,
+      "tag": 400000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 2,
+        "task_id": 15
+      },
+      "recv_task": {
+        "rank": 3,
+        "task_id": 14
+      }
+    },
+    "19": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 2,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_19",
+      "flow_id": 19,
+      "src": 3,
+      "dst": 0,
+      "bytes": 65536,
+      "tag": 400000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 3,
+        "task_id": 15
+      },
+      "recv_task": {
+        "rank": 0,
+        "task_id": 15
+      }
+    },
+    "20": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 2,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_20",
+      "flow_id": 20,
+      "src": 0,
+      "dst": 1,
+      "bytes": 65536,
+      "tag": 500000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 0,
+        "task_id": 18
+      },
+      "recv_task": {
+        "rank": 1,
+        "task_id": 18
+      }
+    },
+    "21": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 3,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_21",
+      "flow_id": 21,
+      "src": 1,
+      "dst": 2,
+      "bytes": 65536,
+      "tag": 500000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 1,
+        "task_id": 17
+      },
+      "recv_task": {
+        "rank": 2,
+        "task_id": 17
+      }
+    },
+    "22": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 0,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_22",
+      "flow_id": 22,
+      "src": 2,
+      "dst": 3,
+      "bytes": 65536,
+      "tag": 500000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 2,
+        "task_id": 18
+      },
+      "recv_task": {
+        "rank": 3,
+        "task_id": 17
+      }
+    },
+    "23": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 1,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_23",
+      "flow_id": 23,
+      "src": 3,
+      "dst": 0,
+      "bytes": 65536,
+      "tag": 500000,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 3,
+        "task_id": 18
+      },
+      "recv_task": {
+        "rank": 0,
+        "task_id": 17
+      }
+    },
+    "24": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_24",
+      "flow_id": 24,
+      "src": 5,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 1,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 5,
+        "task_id": 10
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 10
+      }
+    },
+    "25": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_25",
+      "flow_id": 25,
+      "src": 4,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 1,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 4,
+        "task_id": 18
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 14
+      }
+    },
+    "26": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_26",
+      "flow_id": 26,
+      "src": 6,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 1,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 6,
+        "task_id": 2
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 2
+      }
+    },
+    "27": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_27",
+      "flow_id": 27,
+      "src": 4,
+      "dst": 6,
+      "bytes": 65536,
+      "tag": 1,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 4,
+        "task_id": 19
+      },
+      "recv_task": {
+        "rank": 6,
+        "task_id": 6
+      }
+    },
+    "28": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_28",
+      "flow_id": 28,
+      "src": 7,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 1,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 7,
+        "task_id": 2
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 2
+      }
+    },
+    "29": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_29",
+      "flow_id": 29,
+      "src": 5,
+      "dst": 7,
+      "bytes": 65536,
+      "tag": 1,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 5,
+        "task_id": 18
+      },
+      "recv_task": {
+        "rank": 7,
+        "task_id": 6
+      }
+    },
+    "30": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 1,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_30",
+      "flow_id": 30,
+      "src": 5,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 100001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 5,
+        "task_id": 11
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 11
+      }
+    },
+    "31": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 1,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_31",
+      "flow_id": 31,
+      "src": 4,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 100001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 4,
+        "task_id": 20
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 15
+      }
+    },
+    "32": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 1,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_32",
+      "flow_id": 32,
+      "src": 6,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 100001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 6,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 3
+      }
+    },
+    "33": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 1,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_33",
+      "flow_id": 33,
+      "src": 4,
+      "dst": 6,
+      "bytes": 65536,
+      "tag": 100001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 4,
+        "task_id": 21
+      },
+      "recv_task": {
+        "rank": 6,
+        "task_id": 7
+      }
+    },
+    "34": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 1,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_34",
+      "flow_id": 34,
+      "src": 7,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 100001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 7,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 3
+      }
+    },
+    "35": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 1,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_35",
+      "flow_id": 35,
+      "src": 5,
+      "dst": 7,
+      "bytes": 65536,
+      "tag": 100001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 5,
+        "task_id": 19
+      },
+      "recv_task": {
+        "rank": 7,
+        "task_id": 7
+      }
+    },
+    "36": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 2,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_36",
+      "flow_id": 36,
+      "src": 5,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 200001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 5,
+        "task_id": 12
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 12
+      }
+    },
+    "37": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 2,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_37",
+      "flow_id": 37,
+      "src": 4,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 200001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 4,
+        "task_id": 22
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 16
+      }
+    },
+    "38": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 2,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_38",
+      "flow_id": 38,
+      "src": 6,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 200001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 6,
+        "task_id": 4
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 4
+      }
+    },
+    "39": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 2,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_39",
+      "flow_id": 39,
+      "src": 4,
+      "dst": 6,
+      "bytes": 65536,
+      "tag": 200001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 4,
+        "task_id": 23
+      },
+      "recv_task": {
+        "rank": 6,
+        "task_id": 8
+      }
+    },
+    "40": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 2,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_40",
+      "flow_id": 40,
+      "src": 7,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 200001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 7,
+        "task_id": 4
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 4
+      }
+    },
+    "41": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 2,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_41",
+      "flow_id": 41,
+      "src": 5,
+      "dst": 7,
+      "bytes": 65536,
+      "tag": 200001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 5,
+        "task_id": 20
+      },
+      "recv_task": {
+        "rank": 7,
+        "task_id": 8
+      }
+    },
+    "42": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 3,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_42",
+      "flow_id": 42,
+      "src": 5,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 300001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 5,
+        "task_id": 13
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 13
+      }
+    },
+    "43": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 3,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_43",
+      "flow_id": 43,
+      "src": 4,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 300001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 4,
+        "task_id": 24
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 17
+      }
+    },
+    "44": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 3,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_44",
+      "flow_id": 44,
+      "src": 6,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 300001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 6,
+        "task_id": 5
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 5
+      }
+    },
+    "45": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 3,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_45",
+      "flow_id": 45,
+      "src": 4,
+      "dst": 6,
+      "bytes": 65536,
+      "tag": 300001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 4,
+        "task_id": 25
+      },
+      "recv_task": {
+        "rank": 6,
+        "task_id": 9
+      }
+    },
+    "46": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 3,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_46",
+      "flow_id": 46,
+      "src": 7,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 300001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 7,
+        "task_id": 5
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 5
+      }
+    },
+    "47": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 3,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_47",
+      "flow_id": 47,
+      "src": 5,
+      "dst": 7,
+      "bytes": 65536,
+      "tag": 300001,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 5,
+        "task_id": 21
+      },
+      "recv_task": {
+        "rank": 7,
+        "task_id": 9
+      }
+    },
+    "48": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 9,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_48",
+      "flow_id": 48,
+      "src": 8,
+      "dst": 9,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 8,
+        "task_id": 2
+      },
+      "recv_task": {
+        "rank": 9,
+        "task_id": 2
+      }
+    },
+    "49": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 10,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_49",
+      "flow_id": 49,
+      "src": 8,
+      "dst": 10,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 8,
+        "task_id": 4
+      },
+      "recv_task": {
+        "rank": 10,
+        "task_id": 2
+      }
+    },
+    "50": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 3,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 11,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_50",
+      "flow_id": 50,
+      "src": 8,
+      "dst": 11,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 8,
+        "task_id": 6
+      },
+      "recv_task": {
+        "rank": 11,
+        "task_id": 2
+      }
+    },
+    "51": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 8,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_51",
+      "flow_id": 51,
+      "src": 9,
+      "dst": 8,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 9,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 8,
+        "task_id": 3
+      }
+    },
+    "52": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 10,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_52",
+      "flow_id": 52,
+      "src": 9,
+      "dst": 10,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 9,
+        "task_id": 4
+      },
+      "recv_task": {
+        "rank": 10,
+        "task_id": 4
+      }
+    },
+    "53": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 3,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 11,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_53",
+      "flow_id": 53,
+      "src": 9,
+      "dst": 11,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 9,
+        "task_id": 6
+      },
+      "recv_task": {
+        "rank": 11,
+        "task_id": 4
+      }
+    },
+    "54": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 8,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_54",
+      "flow_id": 54,
+      "src": 10,
+      "dst": 8,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 10,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 8,
+        "task_id": 5
+      }
+    },
+    "55": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 9,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_55",
+      "flow_id": 55,
+      "src": 10,
+      "dst": 9,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 10,
+        "task_id": 5
+      },
+      "recv_task": {
+        "rank": 9,
+        "task_id": 5
+      }
+    },
+    "56": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 3,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 11,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_56",
+      "flow_id": 56,
+      "src": 10,
+      "dst": 11,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 10,
+        "task_id": 6
+      },
+      "recv_task": {
+        "rank": 11,
+        "task_id": 6
+      }
+    },
+    "57": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 8,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_57",
+      "flow_id": 57,
+      "src": 11,
+      "dst": 8,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 11,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 8,
+        "task_id": 7
+      }
+    },
+    "58": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 9,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_58",
+      "flow_id": 58,
+      "src": 11,
+      "dst": 9,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 11,
+        "task_id": 5
+      },
+      "recv_task": {
+        "rank": 9,
+        "task_id": 7
+      }
+    },
+    "59": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 10,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "dag_node_id": "flow_59",
+      "flow_id": 59,
+      "src": 11,
+      "dst": 10,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 11,
+        "task_id": 7
+      },
+      "recv_task": {
+        "rank": 10,
+        "task_id": 7
+      },
+      "post_delay": {
+        "node_id": "flow_59_delay_5us",
+        "duration_ns": 5000,
+        "rank": 10,
+        "task_id": 10
+      }
+    }
+  }
+}
