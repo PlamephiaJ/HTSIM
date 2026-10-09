@@ -38,6 +38,18 @@ resolve_from_repo() {
 WORKLOAD_PATH="$(resolve_from_repo "${WORKLOAD}")"
 TOPOLOGY_PATH="$(resolve_from_repo "${TOPOLOGY}")"
 BINARY_PATH="$(resolve_from_repo "${BINARY}")"
+ROUTING_CONFIG_PATH=""
+if [[ -n "${ROUTING_CONFIG:-}" ]]; then
+    ROUTING_CONFIG_PATH="$(resolve_from_repo "${ROUTING_CONFIG}")"
+    if [[ ! -f "${ROUTING_CONFIG_PATH}" ]]; then
+        echo "error: routing config not found: ${ROUTING_CONFIG_PATH}" >&2
+        exit 2
+    fi
+    if [[ "${ROUTING}" != SOURCE ]]; then
+        echo "error: ROUTING_CONFIG requires ROUTING=SOURCE" >&2
+        exit 2
+    fi
+fi
 SUMMARIZER_PATH="${REPO_ROOT}/experiments/common/summarize.py"
 SLACK_ANALYZER_PATH="${REPO_ROOT}/experiments/common/analyze_slack.py"
 RANK_PLACEMENT_PATH=""
@@ -126,6 +138,10 @@ fi
 if [[ -n "${MESSAGELET_CONFIG_PATH}" ]]; then
     cp "${MESSAGELET_CONFIG_PATH}" "${run_dir}/config_snapshot/messagelet_config.json"
     command+=( -messagelet_config "${run_dir}/config_snapshot/messagelet_config.json" )
+fi
+if [[ -n "${ROUTING_CONFIG_PATH}" ]]; then
+    cp "${ROUTING_CONFIG_PATH}" "${run_dir}/config_snapshot/routing_config.json"
+    command+=( -routing_config "${run_dir}/config_snapshot/routing_config.json" )
 fi
 command+=("${SIM_EXTRA_ARGS[@]}")
 

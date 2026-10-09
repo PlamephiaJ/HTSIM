@@ -49,6 +49,7 @@ int main(int argc, char** argv) {
     std::string topo_base_path, tm_file, goal_filename;
     std::string host_table_base_path;
     std::string messagelet_config_file;
+    std::string routing_config_file;
     std::string rank_placement_file;
     mem_b cwnd_b = 0;
     mem_b queuesize = 88;  // Dragonfly default (1x BDP)
@@ -84,6 +85,9 @@ int main(int argc, char** argv) {
             i++;
         } else if (!strcmp(argv[i], "-messagelet_config")) {
             messagelet_config_file = argv[i + 1];
+            i++;
+        } else if (!strcmp(argv[i], "-routing_config")) {
+            routing_config_file = argv[i + 1];
             i++;
         } else if (!strcmp(argv[i], "-rank_placement")) {
             rank_placement_file = argv[i + 1];
@@ -293,12 +297,22 @@ int main(int argc, char** argv) {
         qlf->set_sample_period(timeFromUs(10.0));
     }
 
+    if (!routing_config_file.empty() &&
+        (routing_strategy != DragonflySwitch::SOURCE || goal_filename.empty())) {
+        throw std::logic_error("-routing_config requires -routing SOURCE and -goal");
+    }
+
     // Topology
     DragonflySwitch::set_config(routing_strategy, trim_disable, trim_size);
     DragonflyTopology* topo = new DragonflyTopology(qt, queuesize, qlf, &eventlist);
     topo->load_topology(topo_base_path);
 
-    if (routing_strategy == DragonflySwitch::SOURCE) {
+    if (routing_strategy == DragonflySwitch::SOURCE &&
+        topo->get_a() * uint64_t{topo->get_no_groups()} > 32768) {
+        throw std::logic_error("SOURCE routing supports at most 32768 switches");
+    }
+
+    if (routing_strategy == DragonflySwitch::SOURCE && goal_filename.empty()) {
         if (host_table_base_path.empty())
             host_table_base_path = topo_base_path;
         UecSink::setHostTablePath(host_table_base_path);
@@ -336,6 +350,9 @@ int main(int argc, char** argv) {
         }
         if (!messagelet_config_file.empty()) {
             api->getMessageletRuntime().loadConfig(messagelet_config_file);
+        }
+        if (!routing_config_file.empty()) {
+            api->getMessageletRuntime().loadRoutingConfig(routing_config_file);
         }
         api->setDragonflyTopology(topo);
         api->setMaxRtt(max_rtt);
@@ -395,6 +412,7 @@ int main(int argc, char** argv) {
 
         api->Setup();
         start_lgs(goal_filename, *lgs);
+        api->getMessageletRuntime().validateRoutingComplete();
         return 0;
     }
 

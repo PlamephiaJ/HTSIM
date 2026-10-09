@@ -1,0 +1,3 @@
+queue_id 2 ecn_low 70720 ecn_high 291200
+Chosen filter for metric globalInfo: Filter: regex=.*, enabled=1, downsampling_ratio=1
+Initializing static NSCC parameters: _reference_network_linkspeed=100000000000 _reference_network_rtt=12000000 _reference_network_bdp=150000 _target_Qdelay=5485350 _network_linkspeed=400000000000 _network_rtt=7313800 _network_bdp=365690 _qa_gate=2^3 _qa_threshold=2.19414e+07 _scaling_factor_a=2.43793 _scaling_factor_b=0.457112 _alpha=0.00332859 _fi=49928.9 _eta=1497.87 _qa_scaling=1 _gamma=0.8 _fi_scale=0.609483 _delay_alpha=0.0125 _adjust_period_threshold=7313800 _adjust_bytes_threshold=33280

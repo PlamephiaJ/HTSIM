@@ -120,7 +120,9 @@ class Packet {
         return _pathid;
     }
 
-    inline void set_pathid(uint32_t p) { _pathid = p;}
+    inline void set_pathid(uint32_t p) { _pathid = p; _source_route_waypoint_reached = false; }
+    inline bool source_route_waypoint_reached() const { return _source_route_waypoint_reached; }
+    inline void set_source_route_waypoint_reached() { _source_route_waypoint_reached = true; }
     inline uint32_t hop_count() const { return _hop_count; }
     inline void set_hop_count(uint32_t hop_count) { _hop_count = hop_count; }
     inline void increment_hop_count() { _hop_count++; }
@@ -193,6 +195,7 @@ class Packet {
     uint32_t _src; //used for packets that do not have a route in switched networks.
     uint32_t _dst; //used for packets that do not have a route in switched networks.    
     uint32_t _pathid;  //used for ECMP hashing.
+    bool _source_route_waypoint_reached = false;
     uint32_t _hop_count; //used for low-diameter topologies
     packet_direction _direction; //used to avoid loop in FatTrees.   
 

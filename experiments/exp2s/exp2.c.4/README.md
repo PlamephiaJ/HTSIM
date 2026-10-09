@@ -41,9 +41,12 @@ within that group, and host within that switch; all three endpoint coordinates
 are zero-based. Clear `RANK_PLACEMENT_CONFIG` in `config.env` to omit the
 simulator flag and restore the default sequential rank-to-host placement.
 
-The default `ROUTING=MINIMAL` uses the direct group-0 ↔ group-1 link. Change it
-to `UGAL_L` when the experiment should be allowed to select group 2 as the
-two-global-hop bypass.
+The default `ROUTING=SOURCE` executes the per-flow labels in
+`routing_configs/default.json`. All 60 flows initially have label `minimum`;
+cross-group traffic uses the direct group-0 ↔ group-1 link. Change a flow's label
+to `valiant` to make it detour through group 2. See the
+[shared manual routing guide](../../common/README.md) for generation and editing.
+The runner snapshots the labels and exports `output_metrics/flowRouting.csv`.
 
 ## Messagelet configuration
 

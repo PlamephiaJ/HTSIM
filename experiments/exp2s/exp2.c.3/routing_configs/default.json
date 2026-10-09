@@ -1,0 +1,487 @@
+{
+  "schema_version": 1,
+  "workload_name": "exp2.c.3.flow",
+  "flow_count": 60,
+  "flows": {
+    "0": {
+      "src": 0,
+      "dst": 1,
+      "tag": 0,
+      "bytes": 65536,
+      "send_task_id": 2,
+      "label": "minimum"
+    },
+    "1": {
+      "src": 1,
+      "dst": 2,
+      "tag": 0,
+      "bytes": 65536,
+      "send_task_id": 3,
+      "label": "minimum"
+    },
+    "2": {
+      "src": 2,
+      "dst": 3,
+      "tag": 0,
+      "bytes": 65536,
+      "send_task_id": 3,
+      "label": "minimum"
+    },
+    "3": {
+      "src": 3,
+      "dst": 0,
+      "tag": 0,
+      "bytes": 65536,
+      "send_task_id": 3,
+      "label": "minimum"
+    },
+    "4": {
+      "src": 0,
+      "dst": 1,
+      "tag": 100000,
+      "bytes": 65536,
+      "send_task_id": 6,
+      "label": "minimum"
+    },
+    "5": {
+      "src": 1,
+      "dst": 2,
+      "tag": 100000,
+      "bytes": 65536,
+      "send_task_id": 5,
+      "label": "minimum"
+    },
+    "6": {
+      "src": 2,
+      "dst": 3,
+      "tag": 100000,
+      "bytes": 65536,
+      "send_task_id": 6,
+      "label": "minimum"
+    },
+    "7": {
+      "src": 3,
+      "dst": 0,
+      "tag": 100000,
+      "bytes": 65536,
+      "send_task_id": 6,
+      "label": "minimum"
+    },
+    "8": {
+      "src": 0,
+      "dst": 1,
+      "tag": 200000,
+      "bytes": 65536,
+      "send_task_id": 9,
+      "label": "minimum"
+    },
+    "9": {
+      "src": 1,
+      "dst": 2,
+      "tag": 200000,
+      "bytes": 65536,
+      "send_task_id": 9,
+      "label": "minimum"
+    },
+    "10": {
+      "src": 2,
+      "dst": 3,
+      "tag": 200000,
+      "bytes": 65536,
+      "send_task_id": 8,
+      "label": "minimum"
+    },
+    "11": {
+      "src": 3,
+      "dst": 0,
+      "tag": 200000,
+      "bytes": 65536,
+      "send_task_id": 9,
+      "label": "minimum"
+    },
+    "12": {
+      "src": 0,
+      "dst": 1,
+      "tag": 300000,
+      "bytes": 65536,
+      "send_task_id": 12,
+      "label": "minimum"
+    },
+    "13": {
+      "src": 1,
+      "dst": 2,
+      "tag": 300000,
+      "bytes": 65536,
+      "send_task_id": 12,
+      "label": "minimum"
+    },
+    "14": {
+      "src": 2,
+      "dst": 3,
+      "tag": 300000,
+      "bytes": 65536,
+      "send_task_id": 12,
+      "label": "minimum"
+    },
+    "15": {
+      "src": 3,
+      "dst": 0,
+      "tag": 300000,
+      "bytes": 65536,
+      "send_task_id": 11,
+      "label": "minimum"
+    },
+    "16": {
+      "src": 0,
+      "dst": 1,
+      "tag": 400000,
+      "bytes": 65536,
+      "send_task_id": 14,
+      "label": "minimum"
+    },
+    "17": {
+      "src": 1,
+      "dst": 2,
+      "tag": 400000,
+      "bytes": 65536,
+      "send_task_id": 15,
+      "label": "minimum"
+    },
+    "18": {
+      "src": 2,
+      "dst": 3,
+      "tag": 400000,
+      "bytes": 65536,
+      "send_task_id": 15,
+      "label": "minimum"
+    },
+    "19": {
+      "src": 3,
+      "dst": 0,
+      "tag": 400000,
+      "bytes": 65536,
+      "send_task_id": 15,
+      "label": "minimum"
+    },
+    "20": {
+      "src": 0,
+      "dst": 1,
+      "tag": 500000,
+      "bytes": 65536,
+      "send_task_id": 18,
+      "label": "minimum"
+    },
+    "21": {
+      "src": 1,
+      "dst": 2,
+      "tag": 500000,
+      "bytes": 65536,
+      "send_task_id": 17,
+      "label": "minimum"
+    },
+    "22": {
+      "src": 2,
+      "dst": 3,
+      "tag": 500000,
+      "bytes": 65536,
+      "send_task_id": 18,
+      "label": "minimum"
+    },
+    "23": {
+      "src": 3,
+      "dst": 0,
+      "tag": 500000,
+      "bytes": 65536,
+      "send_task_id": 18,
+      "label": "minimum"
+    },
+    "24": {
+      "src": 5,
+      "dst": 4,
+      "tag": 1,
+      "bytes": 65536,
+      "send_task_id": 10,
+      "label": "minimum"
+    },
+    "25": {
+      "src": 4,
+      "dst": 5,
+      "tag": 1,
+      "bytes": 65536,
+      "send_task_id": 18,
+      "label": "minimum"
+    },
+    "26": {
+      "src": 6,
+      "dst": 4,
+      "tag": 1,
+      "bytes": 65536,
+      "send_task_id": 2,
+      "label": "minimum"
+    },
+    "27": {
+      "src": 4,
+      "dst": 6,
+      "tag": 1,
+      "bytes": 65536,
+      "send_task_id": 19,
+      "label": "minimum"
+    },
+    "28": {
+      "src": 7,
+      "dst": 5,
+      "tag": 1,
+      "bytes": 65536,
+      "send_task_id": 2,
+      "label": "minimum"
+    },
+    "29": {
+      "src": 5,
+      "dst": 7,
+      "tag": 1,
+      "bytes": 65536,
+      "send_task_id": 18,
+      "label": "minimum"
+    },
+    "30": {
+      "src": 5,
+      "dst": 4,
+      "tag": 100001,
+      "bytes": 65536,
+      "send_task_id": 11,
+      "label": "minimum"
+    },
+    "31": {
+      "src": 4,
+      "dst": 5,
+      "tag": 100001,
+      "bytes": 65536,
+      "send_task_id": 20,
+      "label": "minimum"
+    },
+    "32": {
+      "src": 6,
+      "dst": 4,
+      "tag": 100001,
+      "bytes": 65536,
+      "send_task_id": 3,
+      "label": "minimum"
+    },
+    "33": {
+      "src": 4,
+      "dst": 6,
+      "tag": 100001,
+      "bytes": 65536,
+      "send_task_id": 21,
+      "label": "minimum"
+    },
+    "34": {
+      "src": 7,
+      "dst": 5,
+      "tag": 100001,
+      "bytes": 65536,
+      "send_task_id": 3,
+      "label": "minimum"
+    },
+    "35": {
+      "src": 5,
+      "dst": 7,
+      "tag": 100001,
+      "bytes": 65536,
+      "send_task_id": 19,
+      "label": "minimum"
+    },
+    "36": {
+      "src": 5,
+      "dst": 4,
+      "tag": 200001,
+      "bytes": 65536,
+      "send_task_id": 12,
+      "label": "minimum"
+    },
+    "37": {
+      "src": 4,
+      "dst": 5,
+      "tag": 200001,
+      "bytes": 65536,
+      "send_task_id": 22,
+      "label": "minimum"
+    },
+    "38": {
+      "src": 6,
+      "dst": 4,
+      "tag": 200001,
+      "bytes": 65536,
+      "send_task_id": 4,
+      "label": "minimum"
+    },
+    "39": {
+      "src": 4,
+      "dst": 6,
+      "tag": 200001,
+      "bytes": 65536,
+      "send_task_id": 23,
+      "label": "minimum"
+    },
+    "40": {
+      "src": 7,
+      "dst": 5,
+      "tag": 200001,
+      "bytes": 65536,
+      "send_task_id": 4,
+      "label": "minimum"
+    },
+    "41": {
+      "src": 5,
+      "dst": 7,
+      "tag": 200001,
+      "bytes": 65536,
+      "send_task_id": 20,
+      "label": "minimum"
+    },
+    "42": {
+      "src": 5,
+      "dst": 4,
+      "tag": 300001,
+      "bytes": 65536,
+      "send_task_id": 13,
+      "label": "minimum"
+    },
+    "43": {
+      "src": 4,
+      "dst": 5,
+      "tag": 300001,
+      "bytes": 65536,
+      "send_task_id": 24,
+      "label": "minimum"
+    },
+    "44": {
+      "src": 6,
+      "dst": 4,
+      "tag": 300001,
+      "bytes": 65536,
+      "send_task_id": 5,
+      "label": "minimum"
+    },
+    "45": {
+      "src": 4,
+      "dst": 6,
+      "tag": 300001,
+      "bytes": 65536,
+      "send_task_id": 25,
+      "label": "minimum"
+    },
+    "46": {
+      "src": 7,
+      "dst": 5,
+      "tag": 300001,
+      "bytes": 65536,
+      "send_task_id": 5,
+      "label": "minimum"
+    },
+    "47": {
+      "src": 5,
+      "dst": 7,
+      "tag": 300001,
+      "bytes": 65536,
+      "send_task_id": 21,
+      "label": "minimum"
+    },
+    "48": {
+      "src": 8,
+      "dst": 9,
+      "tag": 2,
+      "bytes": 65536,
+      "send_task_id": 2,
+      "label": "minimum"
+    },
+    "49": {
+      "src": 8,
+      "dst": 10,
+      "tag": 2,
+      "bytes": 65536,
+      "send_task_id": 4,
+      "label": "minimum"
+    },
+    "50": {
+      "src": 8,
+      "dst": 11,
+      "tag": 2,
+      "bytes": 65536,
+      "send_task_id": 6,
+      "label": "minimum"
+    },
+    "51": {
+      "src": 9,
+      "dst": 8,
+      "tag": 2,
+      "bytes": 65536,
+      "send_task_id": 3,
+      "label": "minimum"
+    },
+    "52": {
+      "src": 9,
+      "dst": 10,
+      "tag": 2,
+      "bytes": 65536,
+      "send_task_id": 4,
+      "label": "minimum"
+    },
+    "53": {
+      "src": 9,
+      "dst": 11,
+      "tag": 2,
+      "bytes": 65536,
+      "send_task_id": 6,
+      "label": "minimum"
+    },
+    "54": {
+      "src": 10,
+      "dst": 8,
+      "tag": 2,
+      "bytes": 65536,
+      "send_task_id": 3,
+      "label": "minimum"
+    },
+    "55": {
+      "src": 10,
+      "dst": 9,
+      "tag": 2,
+      "bytes": 65536,
+      "send_task_id": 5,
+      "label": "minimum"
+    },
+    "56": {
+      "src": 10,
+      "dst": 11,
+      "tag": 2,
+      "bytes": 65536,
+      "send_task_id": 6,
+      "label": "minimum"
+    },
+    "57": {
+      "src": 11,
+      "dst": 8,
+      "tag": 2,
+      "bytes": 65536,
+      "send_task_id": 3,
+      "label": "minimum"
+    },
+    "58": {
+      "src": 11,
+      "dst": 9,
+      "tag": 2,
+      "bytes": 65536,
+      "send_task_id": 5,
+      "label": "minimum"
+    },
+    "59": {
+      "src": 11,
+      "dst": 10,
+      "tag": 2,
+      "bytes": 65536,
+      "send_task_id": 7,
+      "label": "minimum"
+    }
+  }
+}

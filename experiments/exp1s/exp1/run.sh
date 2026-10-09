@@ -38,6 +38,18 @@ resolve_from_repo() {
 WORKLOAD_PATH="$(resolve_from_repo "${WORKLOAD}")"
 TOPOLOGY_PATH="$(resolve_from_repo "${TOPOLOGY}")"
 BINARY_PATH="$(resolve_from_repo "${BINARY}")"
+ROUTING_CONFIG_PATH=""
+if [[ -n "${ROUTING_CONFIG:-}" ]]; then
+    ROUTING_CONFIG_PATH="$(resolve_from_repo "${ROUTING_CONFIG}")"
+    if [[ ! -f "${ROUTING_CONFIG_PATH}" ]]; then
+        echo "error: routing config not found: ${ROUTING_CONFIG_PATH}" >&2
+        exit 2
+    fi
+    if [[ "${ROUTING}" != SOURCE ]]; then
+        echo "error: ROUTING_CONFIG requires ROUTING=SOURCE" >&2
+        exit 2
+    fi
+fi
 SUMMARIZER_PATH="${REPO_ROOT}/experiments/common/summarize.py"
 
 if [[ ! -f "${WORKLOAD_PATH}" ]]; then
@@ -95,6 +107,10 @@ command=(
     -q "${QUEUE_PACKETS}"
     -cwnd "${CWND_BYTES}"
 )
+if [[ -n "${ROUTING_CONFIG_PATH}" ]]; then
+    cp "${ROUTING_CONFIG_PATH}" "${run_dir}/config_snapshot/routing_config.json"
+    command+=( -routing_config "${run_dir}/config_snapshot/routing_config.json" )
+fi
 command+=("${SIM_EXTRA_ARGS[@]}")
 
 printf '%q ' "${command[@]}" > "${run_dir}/command.txt"

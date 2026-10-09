@@ -1,0 +1,53 @@
+ M experiments/common/summarize.py
+ M experiments/exp1s/exp1.1/config.env
+ M experiments/exp1s/exp1.1/run.sh
+ M experiments/exp1s/exp1.2/config.env
+ M experiments/exp1s/exp1.2/run.sh
+ M experiments/exp1s/exp1.3/config.env
+ M experiments/exp1s/exp1.3/run.sh
+ M experiments/exp1s/exp1.4/config.env
+ M experiments/exp1s/exp1.4/run.sh
+ M experiments/exp1s/exp1.5/config.env
+ M experiments/exp1s/exp1.5/run.sh
+ M experiments/exp1s/exp1/config.env
+ M experiments/exp1s/exp1/run.sh
+ M experiments/exp2s/exp2.a.1/README.md
+ M experiments/exp2s/exp2.a.1/config.env
+ M experiments/exp2s/exp2.a.1/run.sh
+ M experiments/exp2s/exp2.a.2/README.md
+ M experiments/exp2s/exp2.a.2/config.env
+ M experiments/exp2s/exp2.a.2/run.sh
+ M experiments/exp2s/exp2.c.1/README.md
+ M experiments/exp2s/exp2.c.1/config.env
+ M experiments/exp2s/exp2.c.1/run.sh
+ M experiments/exp2s/exp2.c.2/README.md
+ M experiments/exp2s/exp2.c.2/config.env
+ M experiments/exp2s/exp2.c.2/run.sh
+ M experiments/exp2s/exp2.c.3/README.md
+ M experiments/exp2s/exp2.c.3/config.env
+ M experiments/exp2s/exp2.c.3/run.sh
+ M experiments/exp2s/exp2.c.4/README.md
+ M experiments/exp2s/exp2.c.4/config.env
+ M experiments/exp2s/exp2.c.4/run.sh
+ M htsim/sim/CMakeLists.txt
+ M htsim/sim/datacenter/dragonfly_switch.cpp
+ M htsim/sim/datacenter/main_uec_df.cpp
+ M htsim/sim/messagelet_runtime.cpp
+ M htsim/sim/messagelet_runtime.h
+ M htsim/sim/network.h
+ M htsim/sim/uec.h
+?? experiments/common/README.md
+?? experiments/common/__pycache__/
+?? experiments/common/generate_routing_config.py
+?? experiments/common/test_routing_config.py
+?? experiments/exp2s/exp2.a.1/routing_configs/
+?? experiments/exp2s/exp2.a.2/routing_configs/
+?? experiments/exp2s/exp2.c.1/routing_configs/
+?? experiments/exp2s/exp2.c.2/routing_configs/
+?? experiments/exp2s/exp2.c.3/routing_configs/
+?? experiments/exp2s/exp2.c.4/routing_configs/
+?? experiments/exp3s/
+?? htsim/sim/dragonfly_source_route.h
+?? htsim/sim/flow_routing_config.cpp
+?? htsim/sim/flow_routing_config.h
+?? workload/exp3s/

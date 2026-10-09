@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include "config.h"
 #include "dragonfly_topology.h"
+#include "dragonfly_source_route.h"
 
 bool DragonflySwitch::_trim_disable = false;
 uint16_t DragonflySwitch::_trim_size = 0;
@@ -212,6 +213,27 @@ Route* DragonflySwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
     uint32_t dst_switch = _topo->get_host_switch(pkt.dst());
 
     pkt.set_direction(DOWN);
+
+    // Manual valiant SOURCE paths must visit the waypoint even when source
+    // and destination hosts share a switch. Keep the path label unchanged;
+    // the per-packet phase is reset by set_pathid(), including on retransmits.
+    if (_routing_strategy == SOURCE && pkt.type() != UECACK && pkt.type() != UECNACK &&
+        (pkt.pathid() & DragonflySourceRoute::kWaypointFlag)) {
+        const uint32_t waypoint = pkt.pathid() & DragonflySourceRoute::kWaypointMask;
+        if (waypoint >= _a * _no_groups) {
+            throw std::logic_error("Invalid SOURCE waypoint switch");
+        }
+        if (this_switch == waypoint) {
+            pkt.set_source_route_waypoint_reached();
+        }
+        if (!pkt.source_route_waypoint_reached()) {
+            return get_fib_entry(get_next_switch_minimal(this_switch, waypoint))->getEgressPort();
+        }
+        if (this_switch != dst_switch) {
+            return get_fib_entry(get_next_switch_minimal(this_switch, dst_switch))->getEgressPort();
+        }
+        // Waypoint completed; normal host delivery below finishes the path.
+    }
 
     // Next: host directly connected to this switch
     if (this_switch == dst_switch) {

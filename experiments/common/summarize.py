@@ -314,6 +314,7 @@ def main() -> int:
                 else "not available"
             ),
             f"- Messagelet config: `{config.get('MESSAGELET_CONFIG', 'not provided')}`",
+            f"- Flow routing config: `{config.get('ROUTING_CONFIG', 'not provided')}`",
             "",
             "## Rank placement",
             "",
