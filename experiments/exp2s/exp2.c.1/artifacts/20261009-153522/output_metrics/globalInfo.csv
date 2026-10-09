@@ -1,0 +1,2 @@
+linkSpeedGbps,linkDelayNs,packetSizeBytes,sackThresholdBytes,queueSizeBytes,kMinBytes,kMaxBytes,routing,sourceLB
+400.000000,500000:25000:25000,4160,16384,366080,70720,291200,0,RANDOM

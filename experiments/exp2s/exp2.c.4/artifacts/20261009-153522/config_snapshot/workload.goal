@@ -1,0 +1,575 @@
+num_ranks 12
+
+rank 0 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: send 65536b to 1 tag 0 cpu 0 nic 0
+l3: recv 65536b from 3 tag 0 cpu 0 nic 0
+l4: calc 0 cpu 0
+l5: recv 65536b from 3 tag 100000 cpu 0 nic 0
+l6: send 65536b to 1 tag 100000 cpu 0 nic 0
+l7: calc 0 cpu 0
+l8: recv 65536b from 3 tag 200000 cpu 0 nic 0
+l9: send 65536b to 1 tag 200000 cpu 0 nic 0
+l10: calc 0 cpu 0
+l11: recv 65536b from 3 tag 300000 cpu 0 nic 0
+l12: send 65536b to 1 tag 300000 cpu 0 nic 0
+l13: calc 0 cpu 0
+l14: send 65536b to 1 tag 400000 cpu 0 nic 0
+l15: recv 65536b from 3 tag 400000 cpu 0 nic 0
+l16: calc 0 cpu 0
+l17: recv 65536b from 3 tag 500000 cpu 0 nic 0
+l18: send 65536b to 1 tag 500000 cpu 0 nic 0
+l19: calc 0 cpu 0
+l20: calc 0 cpu 0
+l1 requires l0
+l2 requires l1
+l3 requires l1
+l4 requires l3
+l5 requires l1
+l6 requires l4
+l7 requires l5
+l8 requires l1
+l9 requires l7
+l10 requires l8
+l11 requires l1
+l12 requires l10
+l13 requires l11
+l14 requires l13
+l15 requires l1
+l16 requires l15
+l17 requires l1
+l18 requires l16
+l19 requires l2
+l19 requires l3
+l19 requires l4
+l19 requires l5
+l19 requires l6
+l19 requires l7
+l19 requires l8
+l19 requires l9
+l19 requires l10
+l19 requires l11
+l19 requires l12
+l19 requires l13
+l19 requires l14
+l19 requires l15
+l19 requires l16
+l19 requires l17
+l19 requires l18
+l20 requires l19
+}
+
+rank 1 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: recv 65536b from 0 tag 0 cpu 0 nic 0
+l3: send 65536b to 2 tag 0 cpu 0 nic 0
+l4: calc 0 cpu 0
+l5: send 65536b to 2 tag 100000 cpu 0 nic 0
+l6: recv 65536b from 0 tag 100000 cpu 0 nic 0
+l7: calc 0 cpu 0
+l8: recv 65536b from 0 tag 200000 cpu 0 nic 0
+l9: send 65536b to 2 tag 200000 cpu 0 nic 0
+l10: calc 0 cpu 0
+l11: recv 65536b from 0 tag 300000 cpu 0 nic 0
+l12: send 65536b to 2 tag 300000 cpu 0 nic 0
+l13: calc 0 cpu 0
+l14: recv 65536b from 0 tag 400000 cpu 0 nic 0
+l15: send 65536b to 2 tag 400000 cpu 0 nic 0
+l16: calc 0 cpu 0
+l17: send 65536b to 2 tag 500000 cpu 0 nic 0
+l18: recv 65536b from 0 tag 500000 cpu 0 nic 0
+l19: calc 0 cpu 0
+l20: calc 0 cpu 0
+l1 requires l0
+l2 requires l1
+l3 requires l1
+l4 requires l2
+l5 requires l4
+l6 requires l1
+l7 requires l6
+l8 requires l1
+l9 requires l7
+l10 requires l8
+l11 requires l1
+l12 requires l10
+l13 requires l11
+l14 requires l1
+l15 requires l13
+l16 requires l14
+l17 requires l16
+l18 requires l1
+l19 requires l2
+l19 requires l3
+l19 requires l4
+l19 requires l5
+l19 requires l6
+l19 requires l7
+l19 requires l8
+l19 requires l9
+l19 requires l10
+l19 requires l11
+l19 requires l12
+l19 requires l13
+l19 requires l14
+l19 requires l15
+l19 requires l16
+l19 requires l17
+l19 requires l18
+l20 requires l19
+}
+
+rank 2 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: recv 65536b from 1 tag 0 cpu 0 nic 0
+l3: send 65536b to 3 tag 0 cpu 0 nic 0
+l4: calc 0 cpu 0
+l5: recv 65536b from 1 tag 100000 cpu 0 nic 0
+l6: send 65536b to 3 tag 100000 cpu 0 nic 0
+l7: calc 0 cpu 0
+l8: send 65536b to 3 tag 200000 cpu 0 nic 0
+l9: recv 65536b from 1 tag 200000 cpu 0 nic 0
+l10: calc 0 cpu 0
+l11: recv 65536b from 1 tag 300000 cpu 0 nic 0
+l12: send 65536b to 3 tag 300000 cpu 0 nic 0
+l13: calc 0 cpu 0
+l14: recv 65536b from 1 tag 400000 cpu 0 nic 0
+l15: send 65536b to 3 tag 400000 cpu 0 nic 0
+l16: calc 0 cpu 0
+l17: recv 65536b from 1 tag 500000 cpu 0 nic 0
+l18: send 65536b to 3 tag 500000 cpu 0 nic 0
+l19: calc 0 cpu 0
+l20: calc 0 cpu 0
+l1 requires l0
+l2 requires l1
+l3 requires l1
+l4 requires l2
+l5 requires l1
+l6 requires l4
+l7 requires l5
+l8 requires l7
+l9 requires l1
+l10 requires l9
+l11 requires l1
+l12 requires l10
+l13 requires l11
+l14 requires l1
+l15 requires l13
+l16 requires l14
+l17 requires l1
+l18 requires l16
+l19 requires l2
+l19 requires l3
+l19 requires l4
+l19 requires l5
+l19 requires l6
+l19 requires l7
+l19 requires l8
+l19 requires l9
+l19 requires l10
+l19 requires l11
+l19 requires l12
+l19 requires l13
+l19 requires l14
+l19 requires l15
+l19 requires l16
+l19 requires l17
+l19 requires l18
+l20 requires l19
+}
+
+rank 3 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: recv 65536b from 2 tag 0 cpu 0 nic 0
+l3: send 65536b to 0 tag 0 cpu 0 nic 0
+l4: calc 0 cpu 0
+l5: recv 65536b from 2 tag 100000 cpu 0 nic 0
+l6: send 65536b to 0 tag 100000 cpu 0 nic 0
+l7: calc 0 cpu 0
+l8: recv 65536b from 2 tag 200000 cpu 0 nic 0
+l9: send 65536b to 0 tag 200000 cpu 0 nic 0
+l10: calc 0 cpu 0
+l11: send 65536b to 0 tag 300000 cpu 0 nic 0
+l12: recv 65536b from 2 tag 300000 cpu 0 nic 0
+l13: calc 0 cpu 0
+l14: recv 65536b from 2 tag 400000 cpu 0 nic 0
+l15: send 65536b to 0 tag 400000 cpu 0 nic 0
+l16: calc 0 cpu 0
+l17: recv 65536b from 2 tag 500000 cpu 0 nic 0
+l18: send 65536b to 0 tag 500000 cpu 0 nic 0
+l19: calc 0 cpu 0
+l20: calc 0 cpu 0
+l1 requires l0
+l2 requires l1
+l3 requires l1
+l4 requires l2
+l5 requires l1
+l6 requires l4
+l7 requires l5
+l8 requires l1
+l9 requires l7
+l10 requires l8
+l11 requires l10
+l12 requires l1
+l13 requires l12
+l14 requires l1
+l15 requires l13
+l16 requires l14
+l17 requires l1
+l18 requires l16
+l19 requires l2
+l19 requires l3
+l19 requires l4
+l19 requires l5
+l19 requires l6
+l19 requires l7
+l19 requires l8
+l19 requires l9
+l19 requires l10
+l19 requires l11
+l19 requires l12
+l19 requires l13
+l19 requires l14
+l19 requires l15
+l19 requires l16
+l19 requires l17
+l19 requires l18
+l20 requires l19
+}
+
+rank 4 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: recv 65536b from 6 tag 1 cpu 0 nic 0
+l3: recv 65536b from 6 tag 100001 cpu 0 nic 0
+l4: recv 65536b from 6 tag 200001 cpu 0 nic 0
+l5: recv 65536b from 6 tag 300001 cpu 0 nic 0
+l6: calc 0 cpu 0
+l7: calc 0 cpu 0
+l8: calc 0 cpu 0
+l9: calc 0 cpu 0
+l10: recv 65536b from 5 tag 1 cpu 0 nic 0
+l11: recv 65536b from 5 tag 100001 cpu 0 nic 0
+l12: recv 65536b from 5 tag 200001 cpu 0 nic 0
+l13: recv 65536b from 5 tag 300001 cpu 0 nic 0
+l14: calc 0 cpu 0
+l15: calc 0 cpu 0
+l16: calc 0 cpu 0
+l17: calc 0 cpu 0
+l18: send 65536b to 5 tag 1 cpu 0 nic 0
+l19: send 65536b to 6 tag 1 cpu 0 nic 0
+l20: send 65536b to 5 tag 100001 cpu 0 nic 0
+l21: send 65536b to 6 tag 100001 cpu 0 nic 0
+l22: send 65536b to 5 tag 200001 cpu 0 nic 0
+l23: send 65536b to 6 tag 200001 cpu 0 nic 0
+l24: send 65536b to 5 tag 300001 cpu 0 nic 0
+l25: send 65536b to 6 tag 300001 cpu 0 nic 0
+l26: calc 0 cpu 0
+l27: calc 0 cpu 0
+l1 requires l0
+l2 requires l1
+l3 requires l1
+l4 requires l1
+l5 requires l1
+l6 requires l2
+l7 requires l3
+l8 requires l4
+l9 requires l5
+l10 requires l1
+l11 requires l1
+l12 requires l1
+l13 requires l1
+l14 requires l10
+l15 requires l11
+l16 requires l12
+l17 requires l13
+l18 requires l6
+l18 requires l14
+l19 requires l6
+l19 requires l14
+l20 requires l7
+l20 requires l15
+l21 requires l7
+l21 requires l15
+l22 requires l8
+l22 requires l16
+l23 requires l8
+l23 requires l16
+l24 requires l9
+l24 requires l17
+l25 requires l9
+l25 requires l17
+l26 requires l2
+l26 requires l3
+l26 requires l4
+l26 requires l5
+l26 requires l6
+l26 requires l7
+l26 requires l8
+l26 requires l9
+l26 requires l10
+l26 requires l11
+l26 requires l12
+l26 requires l13
+l26 requires l14
+l26 requires l15
+l26 requires l16
+l26 requires l17
+l26 requires l18
+l26 requires l19
+l26 requires l20
+l26 requires l21
+l26 requires l22
+l26 requires l23
+l26 requires l24
+l26 requires l25
+l27 requires l26
+}
+
+rank 5 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: recv 65536b from 7 tag 1 cpu 0 nic 0
+l3: recv 65536b from 7 tag 100001 cpu 0 nic 0
+l4: recv 65536b from 7 tag 200001 cpu 0 nic 0
+l5: recv 65536b from 7 tag 300001 cpu 0 nic 0
+l6: calc 0 cpu 0
+l7: calc 0 cpu 0
+l8: calc 0 cpu 0
+l9: calc 0 cpu 0
+l10: send 65536b to 4 tag 1 cpu 0 nic 0
+l11: send 65536b to 4 tag 100001 cpu 0 nic 0
+l12: send 65536b to 4 tag 200001 cpu 0 nic 0
+l13: send 65536b to 4 tag 300001 cpu 0 nic 0
+l14: recv 65536b from 4 tag 1 cpu 0 nic 0
+l15: recv 65536b from 4 tag 100001 cpu 0 nic 0
+l16: recv 65536b from 4 tag 200001 cpu 0 nic 0
+l17: recv 65536b from 4 tag 300001 cpu 0 nic 0
+l18: send 65536b to 7 tag 1 cpu 0 nic 0
+l19: send 65536b to 7 tag 100001 cpu 0 nic 0
+l20: send 65536b to 7 tag 200001 cpu 0 nic 0
+l21: send 65536b to 7 tag 300001 cpu 0 nic 0
+l22: calc 0 cpu 0
+l23: calc 0 cpu 0
+l1 requires l0
+l2 requires l1
+l3 requires l1
+l4 requires l1
+l5 requires l1
+l6 requires l2
+l7 requires l3
+l8 requires l4
+l9 requires l5
+l10 requires l6
+l11 requires l7
+l12 requires l8
+l13 requires l9
+l14 requires l10
+l15 requires l11
+l16 requires l12
+l17 requires l13
+l18 requires l14
+l19 requires l15
+l20 requires l16
+l21 requires l17
+l22 requires l2
+l22 requires l3
+l22 requires l4
+l22 requires l5
+l22 requires l6
+l22 requires l7
+l22 requires l8
+l22 requires l9
+l22 requires l10
+l22 requires l11
+l22 requires l12
+l22 requires l13
+l22 requires l14
+l22 requires l15
+l22 requires l16
+l22 requires l17
+l22 requires l18
+l22 requires l19
+l22 requires l20
+l22 requires l21
+l23 requires l22
+}
+
+rank 6 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: send 65536b to 4 tag 1 cpu 0 nic 0
+l3: send 65536b to 4 tag 100001 cpu 0 nic 0
+l4: send 65536b to 4 tag 200001 cpu 0 nic 0
+l5: send 65536b to 4 tag 300001 cpu 0 nic 0
+l6: recv 65536b from 4 tag 1 cpu 0 nic 0
+l7: recv 65536b from 4 tag 100001 cpu 0 nic 0
+l8: recv 65536b from 4 tag 200001 cpu 0 nic 0
+l9: recv 65536b from 4 tag 300001 cpu 0 nic 0
+l10: calc 0 cpu 0
+l11: calc 0 cpu 0
+l1 requires l0
+l2 requires l1
+l3 requires l1
+l4 requires l1
+l5 requires l1
+l6 requires l2
+l7 requires l3
+l8 requires l4
+l9 requires l5
+l10 requires l2
+l10 requires l3
+l10 requires l4
+l10 requires l5
+l10 requires l6
+l10 requires l7
+l10 requires l8
+l10 requires l9
+l11 requires l10
+}
+
+rank 7 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: send 65536b to 5 tag 1 cpu 0 nic 0
+l3: send 65536b to 5 tag 100001 cpu 0 nic 0
+l4: send 65536b to 5 tag 200001 cpu 0 nic 0
+l5: send 65536b to 5 tag 300001 cpu 0 nic 0
+l6: recv 65536b from 5 tag 1 cpu 0 nic 0
+l7: recv 65536b from 5 tag 100001 cpu 0 nic 0
+l8: recv 65536b from 5 tag 200001 cpu 0 nic 0
+l9: recv 65536b from 5 tag 300001 cpu 0 nic 0
+l10: calc 0 cpu 0
+l11: calc 0 cpu 0
+l1 requires l0
+l2 requires l1
+l3 requires l1
+l4 requires l1
+l5 requires l1
+l6 requires l2
+l7 requires l3
+l8 requires l4
+l9 requires l5
+l10 requires l2
+l10 requires l3
+l10 requires l4
+l10 requires l5
+l10 requires l6
+l10 requires l7
+l10 requires l8
+l10 requires l9
+l11 requires l10
+}
+
+rank 8 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: send 65536b to 9 tag 2 cpu 0 nic 0
+l3: recv 65536b from 9 tag 2 cpu 0 nic 0
+l4: send 65536b to 10 tag 2 cpu 0 nic 0
+l5: recv 65536b from 10 tag 2 cpu 0 nic 0
+l6: send 65536b to 11 tag 2 cpu 0 nic 0
+l7: recv 65536b from 11 tag 2 cpu 0 nic 0
+l8: calc 0 cpu 0
+l9: calc 0 cpu 0
+l1 requires l0
+l2 requires l1
+l3 requires l2
+l4 requires l3
+l5 requires l4
+l6 requires l5
+l7 requires l6
+l8 requires l2
+l8 requires l3
+l8 requires l4
+l8 requires l5
+l8 requires l6
+l8 requires l7
+l9 requires l8
+}
+
+rank 9 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: recv 65536b from 8 tag 2 cpu 0 nic 0
+l3: send 65536b to 8 tag 2 cpu 0 nic 0
+l4: send 65536b to 10 tag 2 cpu 0 nic 0
+l5: recv 65536b from 10 tag 2 cpu 0 nic 0
+l6: send 65536b to 11 tag 2 cpu 0 nic 0
+l7: recv 65536b from 11 tag 2 cpu 0 nic 0
+l8: calc 0 cpu 0
+l9: calc 0 cpu 0
+l1 requires l0
+l2 requires l1
+l3 requires l2
+l4 requires l3
+l5 requires l4
+l6 requires l5
+l7 requires l6
+l8 requires l2
+l8 requires l3
+l8 requires l4
+l8 requires l5
+l8 requires l6
+l8 requires l7
+l9 requires l8
+}
+
+rank 10 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: recv 65536b from 8 tag 2 cpu 0 nic 0
+l3: send 65536b to 8 tag 2 cpu 0 nic 0
+l4: recv 65536b from 9 tag 2 cpu 0 nic 0
+l5: send 65536b to 9 tag 2 cpu 0 nic 0
+l6: send 65536b to 11 tag 2 cpu 0 nic 0
+l7: recv 65536b from 11 tag 2 cpu 0 nic 0
+l8: calc 0 cpu 0
+l9: calc 0 cpu 0
+l10: calc 5000 cpu 0
+l1 requires l0
+l2 requires l1
+l3 requires l2
+l4 requires l3
+l5 requires l4
+l6 requires l5
+l7 requires l6
+l8 requires l2
+l8 requires l3
+l8 requires l4
+l8 requires l5
+l8 requires l6
+l8 requires l10
+l9 requires l8
+l10 requires l7
+}
+
+rank 11 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: recv 65536b from 8 tag 2 cpu 0 nic 0
+l3: send 65536b to 8 tag 2 cpu 0 nic 0
+l4: recv 65536b from 9 tag 2 cpu 0 nic 0
+l5: send 65536b to 9 tag 2 cpu 0 nic 0
+l6: recv 65536b from 10 tag 2 cpu 0 nic 0
+l7: send 65536b to 10 tag 2 cpu 0 nic 0
+l8: calc 0 cpu 0
+l9: calc 0 cpu 0
+l1 requires l0
+l2 requires l1
+l3 requires l2
+l4 requires l3
+l5 requires l4
+l6 requires l5
+l7 requires l6
+l8 requires l2
+l8 requires l3
+l8 requires l4
+l8 requires l5
+l8 requires l6
+l8 requires l7
+l9 requires l8
+}

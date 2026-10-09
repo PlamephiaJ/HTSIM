@@ -1,0 +1,11 @@
+ M experiments/exp2s/exp2.a.2/artifacts/latest
+ m workload_gen
+?? experiments/exp2s/exp2.a.2/artifacts/20261009-152519/
+?? experiments/exp2s/exp2.c.1/
+?? experiments/exp2s/exp2.c.2/
+?? experiments/exp2s/exp2.c.3/
+?? experiments/exp2s/exp2.c.4/
+?? workload/exp2s/exp2.c.1.flow/
+?? workload/exp2s/exp2.c.2.flow/
+?? workload/exp2s/exp2.c.3.flow/
+?? workload/exp2s/exp2.c.4.flow/
