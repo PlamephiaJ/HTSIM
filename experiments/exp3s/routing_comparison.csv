@@ -1,0 +1,5 @@
+case,experiment,artifact,detour_flow_id,baseline_slack_ns,cct_ns,delta_cct_ns,cct_reduction_pct,critical_ranks,ring_cct_ns,tree_cct_ns,alltoall_cct_ns,baseline_target_duration_ns,target_duration_ns
+E3-0,exp3.a,/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp3s/exp3.a/artifacts/20261009-165502,,,50952,0,0.0,"5,7",46266,50952,47062,,
+E3-1,exp3.a.1,/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp3s/exp3.a.1/artifacts/20261009-170211,0,4686,48418,-2534,4.97330821165018,"5,7",43565,48418,45116,8632,5731
+E3-2,exp3.a.2,/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp3s/exp3.a.2/artifacts/20261009-170211,48,3890,44087,-6865,13.473465222169885,"2,3",44087,41484,41198,8463,5731
+E3-3,exp3.a.3,/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp3s/exp3.a.3/artifacts/20261009-170211,46,0,44633,-6319,12.401868425184487,"5,7",42248,44633,43632,8379,5731

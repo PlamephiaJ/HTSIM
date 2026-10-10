@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "messagelet": {
+    "size_bytes": 0
+  },
+  "routing": {
+    "default": "minimum"
+  },
+  "logging": {
+    "trace_decisions": false
+  }
+}
