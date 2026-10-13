@@ -1,5 +1,26 @@
 // -*- c-basic-offset: 4; indent-tabs-mode: nil -*- 
 #include "network.h"
+#include "queue.h"
+#include <cstdlib>
+#include <iomanip>
+
+namespace {
+// Opt-in causal audit: no events, RNG draws, or packet mutations.
+void tracePacketHop(const Packet& packet, PacketSink* sink) {
+    static const bool enabled = [] {
+        const char* value = std::getenv("HTSIM_TRACE_PACKET_HOPS");
+        return value && value[0] == '1' && value[1] == '\0';
+    }();
+    if (!enabled) return;
+    const BaseQueue* queue = dynamic_cast<const BaseQueue*>(sink);
+    cout << "PacketHop " << EventList::now() << ' ' << packet.flow_id()
+         << ' ' << packet.id() << ' ' << packet.type() << ' ' << packet.size()
+         << ' ' << packet.src() << ' ' << packet.dst() << ' ' << packet.flags()
+         << ' ' << packet.header_only() << ' ' << packet.bounced()
+         << ' ' << (queue ? std::to_string(queue->queuesize()) : "-")
+         << ' ' << std::quoted(sink->nodename()) << '\n';
+}
+}  // namespace
 
 #define DEFAULTDATASIZE 1500
 int Packet::_data_packet_size = DEFAULTDATASIZE;
@@ -80,6 +101,7 @@ Packet::sendOn() {
         assert(0);
     }
     //cout << "sendOn nextsink is: " << nextsink->nodename() << " pathid " << _pathid << endl;
+    tracePacketHop(*this, nextsink);
     nextsink->receivePacket(*this);
     return nextsink;
 }
@@ -105,6 +127,7 @@ Packet::sendOn2(VirtualQueue* crtSink) {
     else {
         assert(0);
     }
+    tracePacketHop(*this, nextsink);
     nextsink->receivePacket(*this,crtSink);
     return nextsink;
 }
