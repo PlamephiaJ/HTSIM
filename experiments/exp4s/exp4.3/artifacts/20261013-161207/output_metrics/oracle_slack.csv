@@ -1,0 +1,3 @@
+flow_id,collective_id,collective_node,algorithm,phase,step,chunk,channel,src,dst,tag,send_rank,send_task_id,recv_rank,recv_task_id,ready_ns,issue_ns,finish_ns,remaining_critical_ns,oracle_slack_ns,ready_to_issue_wait_ns,flow_duration_ns,ordering_domain,downstream_terminal,downstream_terminal_finish_ns
+0,,flow_A,unknown,,,,,0,2,101,0,3,2,3,2,2,5021,15002,13916,0,5019,,task:2:5,20023
+1,,flow_B,unknown,,,,,1,3,201,1,3,3,3,2,2,3937,30002,0,0,3935,,task:3:5,33939

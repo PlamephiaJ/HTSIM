@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "kind": "flow",
+  "name": "exp4.dag1",
+  "world_size": 4,
+  "defaults": {
+    "cpu": 0,
+    "nic": 0,
+    "chunk_bytes": 32768
+  },
+  "nodes": [
+    {
+      "id": "start",
+      "op": "compute",
+      "ranks": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "duration_ns": 0
+    },
+    {
+      "id": "flow_A",
+      "op": "flow",
+      "flow_id": 0,
+      "src": 0,
+      "dst": 2,
+      "bytes": 32768,
+      "tag": 101,
+      "depends_on": [
+        "start"
+      ]
+    },
+    {
+      "id": "tail_A",
+      "op": "compute",
+      "ranks": [
+        2
+      ],
+      "duration_ns": 30000,
+      "depends_on": [
+        "flow_A"
+      ]
+    },
+    {
+      "id": "flow_B",
+      "op": "flow",
+      "flow_id": 1,
+      "src": 1,
+      "dst": 3,
+      "bytes": 32768,
+      "tag": 201,
+      "depends_on": [
+        "start"
+      ]
+    },
+    {
+      "id": "tail_B",
+      "op": "compute",
+      "ranks": [
+        3
+      ],
+      "duration_ns": 15000,
+      "depends_on": [
+        "flow_B"
+      ]
+    },
+    {
+      "id": "sink",
+      "op": "sink",
+      "ranks": [
+        2,
+        3
+      ],
+      "duration_ns": 0,
+      "depends_on": [
+        "tail_A",
+        "tail_B"
+      ]
+    }
+  ]
+}

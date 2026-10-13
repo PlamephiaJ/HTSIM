@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "generator": {
+    "name": "htsim-workload-gen",
+    "version": "0.4.0"
+  },
+  "workload": {
+    "name": "exp4.dag1",
+    "kind": "flow",
+    "world_size": 4,
+    "binary": "workload.bin",
+    "goal_text": "workload.goal",
+    "tasks": 20,
+    "dependency_edges": 16,
+    "p2p_flows": 2
+  },
+  "source_graph": {
+    "defaults": {
+      "cpu": 0,
+      "nic": 0,
+      "chunk_bytes": 32768
+    },
+    "nodes": [
+      {
+        "id": "start",
+        "op": "compute",
+        "ranks": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "duration_ns": 0
+      },
+      {
+        "id": "flow_A",
+        "op": "flow",
+        "flow_id": 0,
+        "src": 0,
+        "dst": 2,
+        "bytes": 32768,
+        "tag": 101,
+        "depends_on": [
+          "start"
+        ]
+      },
+      {
+        "id": "tail_A",
+        "op": "compute",
+        "ranks": [
+          2
+        ],
+        "duration_ns": 30000,
+        "depends_on": [
+          "flow_A"
+        ]
+      },
+      {
+        "id": "flow_B",
+        "op": "flow",
+        "flow_id": 1,
+        "src": 1,
+        "dst": 3,
+        "bytes": 32768,
+        "tag": 201,
+        "depends_on": [
+          "start"
+        ]
+      },
+      {
+        "id": "tail_B",
+        "op": "compute",
+        "ranks": [
+          3
+        ],
+        "duration_ns": 15000,
+        "depends_on": [
+          "flow_B"
+        ]
+      },
+      {
+        "id": "sink",
+        "op": "sink",
+        "ranks": [
+          2,
+          3
+        ],
+        "duration_ns": 0,
+        "depends_on": [
+          "tail_A",
+          "tail_B"
+        ]
+      }
+    ]
+  },
+  "collectives": [],
+  "flows": {
+    "0": {
+      "node_id": "flow_A",
+      "flow_id": 0,
+      "src": 0,
+      "dst": 2,
+      "bytes": 32768,
+      "tag": 101,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 0,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 2,
+        "task_id": 3
+      }
+    },
+    "1": {
+      "node_id": "flow_B",
+      "flow_id": 1,
+      "src": 1,
+      "dst": 3,
+      "bytes": 32768,
+      "tag": 201,
+      "message_sequence": null,
+      "send_task": {
+        "rank": 1,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 3,
+        "task_id": 3
+      }
+    }
+  }
+}

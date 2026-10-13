@@ -1,0 +1,31 @@
+{
+  "controls_valid": true,
+  "network_tradeoff": true,
+  "slack_aligned_lower_cct": true,
+  "decision_reversal": true,
+  "runs": {
+    "ref1": "/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206",
+    "ref2": "/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref2/artifacts/20261013-161206",
+    "1": "/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.1/artifacts/20261013-161207",
+    "2": "/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.2/artifacts/20261013-161207",
+    "3": "/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.3/artifacts/20261013-161207",
+    "4": "/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.4/artifacts/20261013-161207"
+  },
+  "network_audits": [
+    {
+      "assignment": "all-minimal",
+      "events": 198,
+      "sha256": "d76b9af910b6b6b9ca2277c2093bb14ba1a145710b052000a92a6fe2338d2cbc"
+    },
+    {
+      "assignment": "A detour",
+      "events": 222,
+      "sha256": "a86f2e251cddff32e37f0eaae2557678059905e6965d4d567100c14c3e121449"
+    },
+    {
+      "assignment": "B detour",
+      "events": 222,
+      "sha256": "7c027a7a8dafd33537d06615a5b69d08cb290d473dbde8c4c7edc301a9cf250d"
+    }
+  ]
+}

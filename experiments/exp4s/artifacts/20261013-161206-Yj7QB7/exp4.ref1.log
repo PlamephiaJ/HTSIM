@@ -1,0 +1,412 @@
+Run directory: /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206
+Routing: SOURCE
+Command: /home/yuhao/workspace/slack_ws/HTSIM/htsim/sim/build/datacenter/htsim_uec_df -basepath /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206/config_snapshot/topology -goal /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206/config_snapshot/workload.bin -routing SOURCE -sender_cc_algo nscc -load_balancing_algo mixed -paths 64 -q 88 -cwnd 0 -rank_placement /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206/config_snapshot/rank_placement.json -messagelet_config /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206/config_snapshot/messagelet_config.json -routing_config /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206/config_snapshot/routing_config.json 
+queue_id 2 ecn_low 70720 ecn_high 291200
+Chosen filter for metric globalInfo: Filter: regex=.*, enabled=1, downsampling_ratio=1
+Initializing static NSCC parameters: _reference_network_linkspeed=100000000000 _reference_network_rtt=12000000 _reference_network_bdp=150000 _target_Qdelay=5485350 _network_linkspeed=400000000000 _network_rtt=7313800 _network_bdp=365690 _qa_gate=2^3 _qa_threshold=2.19414e+07 _scaling_factor_a=2.43793 _scaling_factor_b=0.457112 _alpha=0.00332859 _fi=49928.9 _eta=1497.87 _qa_scaling=1 _gamma=0.8 _fi_scale=0.609483 _delay_alpha=0.0125 _adjust_period_threshold=7313800 _adjust_bytes_threshold=33280
+No of nodes 9
+filename is /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206/config_snapshot/workload.bin
+[ATLAHS] GOAL rank mapping: gpu-rank (placement=custom, LGS ranks=4, CPUs=1, NICs=1, HTSIM nodes=9)
+Starting 4
+LGS Compute Event - Host 0 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 2 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 3 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 1 - CPU 0 - StartTime 0 - Time 1 - Size 1
+progress: 0 % (4) - 1 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 1 % (4) - 1 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 2 % (4) - 1 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 3 % (4) - 1 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 4 % (8) - 1 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 1 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 3 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 0 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 2 - CPU 0 - StartTime 1 - Time 2 - Size 1
+progress: 5 % (8) - 2 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 6 % (8) - 2 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 7 % (8) - 2 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 8 % (8) - 2 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 9 % (12) - 2 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+Chosen filter for metric flowRouting: Filter: regex=.*, enabled=1, downsampling_ratio=1
+Messagelet route - Src 0 - Dst 3 - Tag 101 - FlowId 0 - Index 0 - Size 32768 - PathId 65536 - Route minimum - hop_one_switch 1 - hop_two_switch 0
+PacketHop 2000 1000000001 0 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+Messagelet route - Src 1 - Dst 4 - Tag 201 - FlowId 1 - Index 0 - Size 32768 - PathId 65536 - Route minimum - hop_one_switch 1 - hop_two_switch 0
+PacketHop 2000 1000000003 0 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 85200 1000000001 0 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 85200 1000000001 1 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+PacketHop 85200 1000000003 0 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 85200 1000000003 1 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 110200 1000000001 0 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 110200 1000000003 0 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 168400 1000000001 1 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 168400 1000000001 2 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+PacketHop 168400 1000000003 1 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 168400 1000000003 2 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 193400 1000000001 1 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 193400 1000000003 1 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 251600 1000000001 2 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 251600 1000000001 3 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+PacketHop 251600 1000000003 2 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 251600 1000000003 3 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 276600 1000000001 2 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 276600 1000000003 2 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 334800 1000000001 3 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 334800 1000000001 4 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+PacketHop 334800 1000000003 3 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 334800 1000000003 4 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 359800 1000000001 3 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 359800 1000000003 3 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 418000 1000000001 4 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 418000 1000000001 5 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+PacketHop 418000 1000000003 4 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 418000 1000000003 5 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 443000 1000000001 4 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 443000 1000000003 4 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 501200 1000000001 5 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 501200 1000000001 6 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+PacketHop 501200 1000000003 5 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 501200 1000000003 6 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 526200 1000000001 5 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 526200 1000000003 5 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 584400 1000000001 6 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 584400 1000000001 7 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+PacketHop 584400 1000000003 6 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 584400 1000000003 7 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 609400 1000000001 6 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 609400 1000000003 6 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 610200 1000000001 0 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 610200 1000000003 0 31 4160 1 4 0 0 0 4160 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 667600 1000000001 7 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 667600 1000000003 7 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 692600 1000000001 7 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 692600 1000000003 7 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 693400 1000000001 0 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 693400 1000000001 1 31 4160 0 3 0 0 0 4160 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 693400 1000000003 1 31 4160 1 4 0 0 0 8320 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 776600 1000000003 0 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 776600 1000000001 2 31 4160 0 3 0 0 0 8320 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 776600 1000000003 2 31 4160 1 4 0 0 0 12480 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 859800 1000000001 1 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 859800 1000000001 3 31 4160 0 3 0 0 0 12480 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 859800 1000000003 3 31 4160 1 4 0 0 0 16640 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 943000 1000000003 1 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 943000 1000000001 4 31 4160 0 3 0 0 0 16640 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 943000 1000000003 4 31 4160 1 4 0 0 0 20800 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 1026200 1000000001 2 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1026200 1000000001 5 31 4160 0 3 0 0 0 20800 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 1026200 1000000003 5 31 4160 1 4 0 0 0 24960 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 1109400 1000000003 2 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 1109400 1000000001 6 31 4160 0 3 0 0 0 24960 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 1109400 1000000003 6 31 4160 1 4 0 0 0 29120 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 1192600 1000000001 3 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1192600 1000000001 7 31 4160 0 3 0 0 0 29120 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 1192600 1000000003 7 31 4160 1 4 0 0 0 33280 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 1193400 1000000001 0 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 1275800 1000000003 3 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 1276600 1000000003 0 31 4160 1 4 0 0 0 - "Switch_1"
+PacketHop 1359000 1000000001 4 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1359800 1000000001 1 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 1442200 1000000003 4 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 1443000 1000000003 1 31 4160 1 4 0 0 0 - "Switch_1"
+progress: 10 % (14) - 1500 [sizes: aq: 0 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+PacketHop 1525400 1000000001 5 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1526200 1000000001 2 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 1608600 1000000003 5 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 1609400 1000000003 2 31 4160 1 4 0 0 0 - "Switch_1"
+PacketHop 1691800 1000000001 6 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1692600 1000000001 3 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 1693400 1000000001 0 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 1775000 1000000003 6 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 1775800 1000000003 3 31 4160 1 4 0 0 0 - "Switch_1"
+PacketHop 1776600 1000000001 0 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1776600 1000000003 0 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 1801600 1000000001 0 31 4160 0 3 0 0 0 - ""
+PacketHop 1801600 1000000002 0 33 64 4294967295 0 0 1 0 0 "queue(400000Mb/s,4160000bytes)SRC3->SW1"
+PacketHop 1802880 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 1827880 1000000002 0 33 64 4294967295 0 0 1 0 - "Switch_1"
+PacketHop 1858200 1000000001 7 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1859000 1000000001 4 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 1859800 1000000003 0 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 1859800 1000000001 1 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 1884800 1000000003 0 31 4160 1 4 0 0 0 - ""
+PacketHop 1884800 1000000004 0 33 64 4294967295 1 0 1 0 0 "queue(400000Mb/s,4160000bytes)SRC4->SW1"
+PacketHop 1886080 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 1911080 1000000004 0 33 64 4294967295 1 0 1 0 - "Switch_1"
+PacketHop 1941400 1000000003 7 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 1942200 1000000003 4 31 4160 1 4 0 0 0 - "Switch_1"
+PacketHop 1943000 1000000001 1 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1943000 1000000003 1 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 1968000 1000000001 1 31 4160 0 3 0 0 0 - ""
+PacketHop 2025400 1000000001 5 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 2026200 1000000003 1 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 2026200 1000000001 2 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 2051200 1000000003 1 31 4160 1 4 0 0 0 - ""
+PacketHop 2108600 1000000003 5 31 4160 1 4 0 0 0 - "Switch_1"
+PacketHop 2109400 1000000001 2 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 2109400 1000000003 2 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 2134400 1000000001 2 31 4160 0 3 0 0 0 - ""
+PacketHop 2191800 1000000001 6 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 2192600 1000000003 2 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 2192600 1000000001 3 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 2217600 1000000003 2 31 4160 1 4 0 0 0 - ""
+PacketHop 2275000 1000000003 6 31 4160 1 4 0 0 0 - "Switch_1"
+PacketHop 2275800 1000000001 3 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 2275800 1000000003 3 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 2300800 1000000001 3 31 4160 0 3 0 0 0 - ""
+PacketHop 2327880 1000000002 0 33 64 4294967295 0 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW1-G->SW0"
+PacketHop 2329160 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 2358200 1000000001 7 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 2359000 1000000003 3 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 2359000 1000000001 4 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 2384000 1000000003 3 31 4160 1 4 0 0 0 - ""
+PacketHop 2411080 1000000004 0 33 64 4294967295 1 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW1-G->SW0"
+PacketHop 2412360 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 2441400 1000000003 7 31 4160 1 4 0 0 0 - "Switch_1"
+PacketHop 2442200 1000000001 4 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 2442200 1000000003 4 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 2467200 1000000001 4 31 4160 0 3 0 0 0 - ""
+PacketHop 2467200 1000000002 0 33 64 4294967295 0 0 1 0 0 "queue(400000Mb/s,4160000bytes)SRC3->SW1"
+PacketHop 2468480 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 2493480 1000000002 0 33 64 4294967295 0 0 1 0 - "Switch_1"
+PacketHop 2525400 1000000003 4 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 2525400 1000000001 5 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 2550400 1000000003 4 31 4160 1 4 0 0 0 - ""
+PacketHop 2550400 1000000004 0 33 64 4294967295 1 0 1 0 0 "queue(400000Mb/s,4160000bytes)SRC4->SW1"
+PacketHop 2551680 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 2576680 1000000004 0 33 64 4294967295 1 0 1 0 - "Switch_1"
+PacketHop 2608600 1000000001 5 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 2608600 1000000003 5 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 2633600 1000000001 5 31 4160 0 3 0 0 0 - ""
+PacketHop 2691800 1000000003 5 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 2691800 1000000001 6 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 2716800 1000000003 5 31 4160 1 4 0 0 0 - ""
+PacketHop 2775000 1000000001 6 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 2775000 1000000003 6 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 2800000 1000000001 6 31 4160 0 3 0 0 0 - ""
+PacketHop 2829160 1000000002 0 33 64 4294967295 0 0 1 0 - "Switch_0"
+PacketHop 2858200 1000000003 6 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 2858200 1000000001 7 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 2883200 1000000003 6 31 4160 1 4 0 0 0 - ""
+PacketHop 2912360 1000000004 0 33 64 4294967295 1 0 1 0 - "Switch_0"
+PacketHop 2941400 1000000001 7 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 2941400 1000000003 7 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 2966400 1000000001 7 31 4160 0 3 0 0 0 - ""
+PacketHop 2966400 1000000002 0 33 64 4294967295 0 0 1 0 0 "queue(400000Mb/s,4160000bytes)SRC3->SW1"
+PacketHop 2967680 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 2992680 1000000002 0 33 64 4294967295 0 0 1 0 - "Switch_1"
+PacketHop 2993480 1000000002 0 33 64 4294967295 0 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW1-G->SW0"
+PacketHop 2994760 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 3024600 1000000003 7 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 3049600 1000000003 7 31 4160 1 4 0 0 0 - ""
+PacketHop 3049600 1000000004 0 33 64 4294967295 1 0 1 0 0 "queue(400000Mb/s,4160000bytes)SRC4->SW1"
+PacketHop 3050880 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 3075880 1000000004 0 33 64 4294967295 1 0 1 0 - "Switch_1"
+PacketHop 3076680 1000000004 0 33 64 4294967295 1 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW1-G->SW0"
+PacketHop 3077960 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 3329160 1000000002 0 33 64 4294967295 0 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW0->DST0"
+PacketHop 3330440 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 3355440 1000000002 0 33 64 4294967295 0 0 1 0 - "uecSrc 9"
+PacketHop 3412360 1000000004 0 33 64 4294967295 1 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW0->DST1"
+PacketHop 3413640 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 3438640 1000000004 0 33 64 4294967295 1 0 1 0 - "uecSrc 10"
+PacketHop 3492680 1000000002 0 33 64 4294967295 0 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW1-G->SW0"
+PacketHop 3493960 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 3494760 1000000002 0 33 64 4294967295 0 0 1 0 - "Switch_0"
+PacketHop 3575880 1000000004 0 33 64 4294967295 1 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW1-G->SW0"
+PacketHop 3577160 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 3577960 1000000004 0 33 64 4294967295 1 0 1 0 - "Switch_0"
+PacketHop 3993960 1000000002 0 33 64 4294967295 0 0 1 0 - "Switch_0"
+PacketHop 3994760 1000000002 0 33 64 4294967295 0 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW0->DST0"
+PacketHop 3996040 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 4021040 1000000002 0 33 64 4294967295 0 0 1 0 - "uecSrc 9"
+PacketHop 4077160 1000000004 0 33 64 4294967295 1 0 1 0 - "Switch_0"
+PacketHop 4077960 1000000004 0 33 64 4294967295 1 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW0->DST1"
+PacketHop 4079240 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 4104240 1000000004 0 33 64 4294967295 1 0 1 0 - "uecSrc 10"
+PacketHop 4493960 1000000002 0 33 64 4294967295 0 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW0->DST0"
+PacketHop 4495240 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 4520240 1000000002 0 33 64 4294967295 0 0 1 0 - "uecSrc 9"
+Flow uec_0_3 flowId 1000000001 uecSrc 9 finished at 4.52024 total messages 1 total packets 8 RTS 0 total bytes 32768 in_flight now 0 fair_inc 0 prop_inc 0 fast_inc 0 eta_inc 0 multi_dec -0 quick_dec -0 nack_dec -0
+Chosen filter for metric flowsInfo: Filter: regex=.*, enabled=1, downsampling_ratio=1
+LGS Flow Event - Host 0 - CPU 0 - StartTime 2 - Time 4520 - Dst 2 - Tag 101 - Size 32768
+progress: 11 % (14) - 4520 [sizes: aq: 1 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 12 % (16) - 4520 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 4520 - Time 4521 - Size 1
+LGS Compute Event - Host 0 - CPU 0 - StartTime 4520 - Time 4521 - Size 1
+progress: 13 % (16) - 4521 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 14 % (16) - 4521 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 15 % (17) - 4521 [sizes: aq: 1 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 4521 - Time 34521 - Size 30000
+PacketHop 4577160 1000000004 0 33 64 4294967295 1 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW0->DST1"
+PacketHop 4578440 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 4603440 1000000004 0 33 64 4294967295 1 0 1 0 - "uecSrc 10"
+Flow uec_1_4 flowId 1000000003 uecSrc 10 finished at 4.60344 total messages 1 total packets 8 RTS 0 total bytes 32768 in_flight now 0 fair_inc 0 prop_inc 0 fast_inc 0 eta_inc 0 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 1 - CPU 0 - StartTime 2 - Time 4603 - Dst 3 - Tag 201 - Size 32768
+progress: 16 % (17) - 4603 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 17 % (19) - 4603 [sizes: aq: 3 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 4603 - Time 4604 - Size 1
+LGS Compute Event - Host 1 - CPU 0 - StartTime 4603 - Time 4604 - Size 1
+progress: 18 % (19) - 4604 [sizes: aq: 3 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 19 % (19) - 4604 [sizes: aq: 3 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 20 % (20) - 4604 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 4604 - Time 19604 - Size 15000
+progress: 21 % (20) - 19604 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 22 % (21) - 19604 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 19604 - Time 19605 - Size 1
+progress: 23 % (21) - 19605 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 24 % (21) - 34521 [sizes: aq: 1 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 25 % (22) - 34521 [sizes: aq: 1 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 34521 - Time 34522 - Size 1
+progress: 26 % (22) - 34522 [sizes: aq: 1 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 27 % (22) - 34522 [sizes: aq: 0 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+It terminates! Htsim time 34522
+PERFORMANCE: Processes: 4 	 Events: 22 	 Time: 0 s 	 Speed: inf ev/s
+Times: 
+Host 0: 4521
+Host 1: 4604
+Host 2: 34522
+Host 3: 19605
+Maximum finishing time at host 2: 34522 (3.4522e-05 s)
+Chosen filter for metric flow_dag_info: Filter: regex=.*, enabled=1, downsampling_ratio=1
+LGS terminates!
+PASS: analyzed 2 flows; C_ref=34522 ns
+PASS: oracle slack min/median/max=0/7458.5/14917 ns
+PASS: wrote analysis to /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206
+
+Final summary: /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206/summary.md
+# exp4.ref1: DAG-1: all-minimal reference — 20261013-161206
+
+**Status:** SUCCESS (exit code `0`)
+
+## Application result
+
+- Computation-graph makespan: **34522 ns (34.522 µs)**
+- Critical GOAL rank: **2**
+- Completed GOAL ranks: **4**
+
+| GOAL rank | Graph finish (ns) | Graph finish (µs) |
+| ---: | ---: | ---: |
+| 0 | 4521 | 4.521 |
+| 1 | 4604 | 4.604 |
+| 2 **(critical)** | 34522 | 34.522 |
+| 3 | 19605 | 19.605 |
+
+## GOAL DAG lifecycle
+
+- Recorded nodes: **20**
+- Completed nodes: **20/20**
+- Operations: **calc=16, recv=2, send=2**
+- Ready-to-issue wait min / average / max: **0 / 0 / 0 ns**
+- Issue-to-finish duration min / average / max: **1 / 3162.6 / 30000 ns**
+
+| Rank | Node offset | Op | Peer | Tag | Size | Ready (ns) | Issue (ns) | Finish (ns) |
+| ---: | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0 | 0 | calc | 0 | 0 | 0 | 0 | 0 | 1 |
+| 0 | 1 | calc | 0 | 0 | 0 | 1 | 1 | 2 |
+| 0 | 2 | calc | 0 | 0 | 0 | 4520 | 4520 | 4521 |
+| 0 | 3 | send | 2 | 101 | 32768 | 2 | 2 | 4520 |
+| 1 | 0 | calc | 0 | 0 | 0 | 0 | 0 | 1 |
+| 1 | 1 | calc | 0 | 0 | 0 | 1 | 1 | 2 |
+| 1 | 2 | calc | 0 | 0 | 0 | 4603 | 4603 | 4604 |
+| 1 | 3 | send | 3 | 201 | 32768 | 2 | 2 | 4603 |
+| 2 | 0 | calc | 0 | 0 | 0 | 0 | 0 | 1 |
+| 2 | 1 | calc | 0 | 0 | 0 | 1 | 1 | 2 |
+| 2 | 2 | calc | 0 | 0 | 0 | 4520 | 4520 | 4521 |
+| 2 | 3 | recv | 0 | 101 | 32768 | 2 | 2 | 4520 |
+| 2 | 4 | calc | 0 | 0 | 30000 | 4521 | 4521 | 34521 |
+| 2 | 5 | calc | 0 | 0 | 0 | 34521 | 34521 | 34522 |
+| 3 | 0 | calc | 0 | 0 | 0 | 0 | 0 | 1 |
+| 3 | 1 | calc | 0 | 0 | 0 | 1 | 1 | 2 |
+| 3 | 2 | calc | 0 | 0 | 0 | 4603 | 4603 | 4604 |
+| 3 | 3 | recv | 1 | 201 | 32768 | 2 | 2 | 4603 |
+| 3 | 4 | calc | 0 | 0 | 15000 | 4604 | 4604 | 19604 |
+| 3 | 5 | calc | 0 | 0 | 0 | 19604 | 19604 | 19605 |
+
+## Configuration
+
+- Started: `2026-10-13T16:12:06-07:00`
+- Finished: `2026-10-13T16:12:06-07:00`
+- Routing: `SOURCE`
+- Workload: `workload/exp4s/exp4.dag1/workload.bin`
+- Topology: `${SCRIPT_DIR}/../topology/p3a1h2`
+- Sender CC: `nscc`
+- Multipath algorithm: `mixed`
+- Path entropy: `64`
+- Initial cwnd: `0 bytes` (`0` means simulator default)
+- Queue: `88` packets
+- Rank placement snapshot: `config_snapshot/rank_placement.json`
+- Messagelet config: `${SCRIPT_DIR}/../messagelet_configs/default.json`
+- Flow routing config: `${SCRIPT_DIR}/routing_configs/default.json`
+
+## Rank placement
+
+Derived from the snapshotted `config_snapshot/rank_placement.json`; no descriptive placement string from `config.env` is used.
+
+- Group 0, switch 0: ranks 0, 1
+- Group 1, switch 0: ranks 2, 3
+
+| GOAL rank | Group | Switch | Host | Physical HTSIM host |
+| ---: | ---: | ---: | ---: | ---: |
+| 0 | 0 | 0 | 0 | 0 |
+| 1 | 0 | 0 | 1 | 1 |
+| 2 | 1 | 0 | 0 | 3 |
+| 3 | 1 | 0 | 1 | 4 |
+
+## Network
+
+- Flow pattern: `A: 0->2, B: 1->3; two simultaneous 32 KiB flows with receiver compute tails`
+- Link speed: `400.000000 Gbps`
+- Link delays (global/local/host): `500/25/25 ns`
+- Packet size: `4160 bytes`
+- Queue size: `366080 bytes`
+- ECN thresholds (low/high): `70720` / `291200 bytes`
+- SACK threshold: `16384 bytes`
+
+## Flow results
+
+The raw `flowsInfo.csv` `srcNode`/`dstNode` values are **physical HTSIM host IDs after rank placement**.
+The GOAL rank endpoints below are reverse-mapped from the snapshotted `rank_placement.json` and Dragonfly topology.
+
+| GOAL rank flow | Physical HTSIM host flow | Size (bytes) | Start (ns) | End (ns) | FCT (ns) | Base RTT (ns) | Packets |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0→2 | 0→3 | 32768 | 2.000000 | 4520.240000 | 4518.240 | 3353.440000 | 8 |
+| 1→3 | 1→4 | 32768 | 2.000000 | 4603.440000 | 4601.440 | 3436.640000 | 8 |
+
+- Completed flows: **2**
+- Total communicated data: **65536 bytes (64 KiB)**
+- Total data packets: **16**
+- Completion order (GOAL rank flows): **0→2 → 1→3**
+- FCT min / average / max: **4518.240 / 4559.840 / 4601.440 ns**
+
+## Reproducibility
+
+- Git revision: `9e599aff08b22662af83668e923e13f2bb342111`
+- Worktree at launch: `dirty`
+- Exact command:
+
+```bash
+/home/yuhao/workspace/slack_ws/HTSIM/htsim/sim/build/datacenter/htsim_uec_df -basepath /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206/config_snapshot/topology -goal /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206/config_snapshot/workload.bin -routing SOURCE -sender_cc_algo nscc -load_balancing_algo mixed -paths 64 -q 88 -cwnd 0 -rank_placement /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206/config_snapshot/rank_placement.json -messagelet_config /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206/config_snapshot/messagelet_config.json -routing_config /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206/config_snapshot/routing_config.json
+```
+
+<details><summary>Worktree changes at launch</summary>
+
+```text
+M htsim/sim/network.cpp
+?? experiments/common/__pycache__/
+?? experiments/exp4s/
+?? workload/exp4s/
+```
+
+</details>
+
+## Files
+
+- Full simulator output: `simulator.log`
+- Per-flow CSV: `output_metrics/flowsInfo.csv`
+- GOAL DAG lifecycle CSV: `output_metrics/flow_dag_info.csv`
+- Global CSV: `output_metrics/globalInfo.csv`
+- Exact input snapshot: `config_snapshot/`
+- Resolved command: `command.txt`
+
+Slack analysis: /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206/slack_analysis.md
+
+Experiment completed: /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206

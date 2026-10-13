@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "placements": [
+    {
+      "rank": 0,
+      "group": 0,
+      "switch": 0,
+      "host": 0
+    },
+    {
+      "rank": 1,
+      "group": 0,
+      "switch": 0,
+      "host": 1
+    },
+    {
+      "rank": 2,
+      "group": 1,
+      "switch": 0,
+      "host": 0
+    },
+    {
+      "rank": 3,
+      "group": 1,
+      "switch": 0,
+      "host": 1
+    }
+  ]
+}

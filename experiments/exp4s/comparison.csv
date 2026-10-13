@@ -1,0 +1,7 @@
+case,dag,detour,alignment,cct_ns,reference_cct_ns,delta_cct_ns,a_fct_ns,b_fct_ns,a_delta_fct_ns,b_delta_fct_ns,artifact
+exp4.ref1,1,reference,reference,34522,34522,0,4518.24,4601.44,0.0,0.0,/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref1/artifacts/20261013-161206
+exp4.ref2,2,reference,reference,34605,34605,0,4518.24,4601.44,0.0,0.0,/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.ref2/artifacts/20261013-161206
+exp4.1,1,A,Misaligned,35023,34522,501,5019.04,3935.84,500.8000000000002,-665.5999999999995,/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.1/artifacts/20261013-161207
+exp4.2,1,B,Slack-aligned,33939,34522,-583,3935.84,5019.04,-582.3999999999996,417.60000000000036,/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.2/artifacts/20261013-161207
+exp4.3,2,A,Slack-aligned,33939,34605,-666,5019.04,3935.84,500.8000000000002,-665.5999999999995,/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.3/artifacts/20261013-161207
+exp4.4,2,B,Misaligned,35023,34605,418,3935.84,5019.04,-582.3999999999996,417.60000000000036,/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.4/artifacts/20261013-161207

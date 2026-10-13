@@ -1,0 +1,2 @@
+ready_window_id,ready_window_start_ns,ready_window_end_exclusive_ns,ready_flow_count,min_slack_ns,max_slack_ns,slack_spread_ns,distinct_collectives
+0,0,100,2,0,15083,15083,1

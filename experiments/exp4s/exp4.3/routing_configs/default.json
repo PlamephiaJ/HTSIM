@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "workload_name": "exp4.dag2",
+  "flow_count": 2,
+  "flows": {
+    "0": {
+      "src": 0,
+      "dst": 2,
+      "tag": 101,
+      "bytes": 32768,
+      "send_task_id": 3,
+      "label": "valiant"
+    },
+    "1": {
+      "src": 1,
+      "dst": 3,
+      "tag": 201,
+      "bytes": 32768,
+      "send_task_id": 3,
+      "label": "minimum"
+    }
+  }
+}

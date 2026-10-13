@@ -1,0 +1,291 @@
+queue_id 2 ecn_low 70720 ecn_high 291200
+Chosen filter for metric globalInfo: Filter: regex=.*, enabled=1, downsampling_ratio=1
+Initializing static NSCC parameters: _reference_network_linkspeed=100000000000 _reference_network_rtt=12000000 _reference_network_bdp=150000 _target_Qdelay=5485350 _network_linkspeed=400000000000 _network_rtt=7313800 _network_bdp=365690 _qa_gate=2^3 _qa_threshold=2.19414e+07 _scaling_factor_a=2.43793 _scaling_factor_b=0.457112 _alpha=0.00332859 _fi=49928.9 _eta=1497.87 _qa_scaling=1 _gamma=0.8 _fi_scale=0.609483 _delay_alpha=0.0125 _adjust_period_threshold=7313800 _adjust_bytes_threshold=33280
+No of nodes 9
+filename is /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp4s/exp4.3/artifacts/20261013-161207/config_snapshot/workload.bin
+[ATLAHS] GOAL rank mapping: gpu-rank (placement=custom, LGS ranks=4, CPUs=1, NICs=1, HTSIM nodes=9)
+Starting 4
+LGS Compute Event - Host 0 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 2 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 3 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 1 - CPU 0 - StartTime 0 - Time 1 - Size 1
+progress: 0 % (4) - 1 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 1 % (4) - 1 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 2 % (4) - 1 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 3 % (4) - 1 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 4 % (8) - 1 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 1 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 3 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 0 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 2 - CPU 0 - StartTime 1 - Time 2 - Size 1
+progress: 5 % (8) - 2 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 6 % (8) - 2 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 7 % (8) - 2 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 8 % (8) - 2 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 9 % (12) - 2 [sizes: aq: 4 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+Chosen filter for metric flowRouting: Filter: regex=.*, enabled=1, downsampling_ratio=1
+Messagelet route - Src 0 - Dst 3 - Tag 101 - FlowId 0 - Index 0 - Size 32768 - PathId 2147483650 - Route valiant - intermediate_group 2 - waypoint_switch 2
+PacketHop 2000 1000000001 0 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+Messagelet route - Src 1 - Dst 4 - Tag 201 - FlowId 1 - Index 0 - Size 32768 - PathId 65536 - Route minimum - hop_one_switch 1 - hop_two_switch 0
+PacketHop 2000 1000000003 0 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 85200 1000000001 0 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 85200 1000000001 1 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+PacketHop 85200 1000000003 0 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 85200 1000000003 1 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 110200 1000000001 0 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 110200 1000000003 0 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 168400 1000000001 1 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 168400 1000000001 2 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+PacketHop 168400 1000000003 1 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 168400 1000000003 2 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 193400 1000000001 1 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 193400 1000000003 1 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 251600 1000000001 2 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 251600 1000000001 3 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+PacketHop 251600 1000000003 2 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 251600 1000000003 3 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 276600 1000000001 2 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 276600 1000000003 2 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 334800 1000000001 3 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 334800 1000000001 4 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+PacketHop 334800 1000000003 3 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 334800 1000000003 4 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 359800 1000000001 3 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 359800 1000000003 3 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 418000 1000000001 4 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 418000 1000000001 5 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+PacketHop 418000 1000000003 4 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 418000 1000000003 5 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 443000 1000000001 4 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 443000 1000000003 4 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 501200 1000000001 5 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 501200 1000000001 6 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+PacketHop 501200 1000000003 5 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 501200 1000000003 6 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 526200 1000000001 5 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 526200 1000000003 5 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 584400 1000000001 6 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 584400 1000000001 7 31 4160 0 3 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC0->SW0"
+PacketHop 584400 1000000003 6 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 584400 1000000003 7 31 4160 1 4 0 0 0 0 "queue(400000Mb/s,4160000bytes)SRC1->SW0"
+PacketHop 609400 1000000001 6 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 609400 1000000003 6 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 610200 1000000001 0 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW2"
+PacketHop 610200 1000000003 0 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 667600 1000000001 7 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 667600 1000000003 7 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 692600 1000000001 7 31 4160 0 3 0 0 0 - "Switch_0"
+PacketHop 692600 1000000003 7 31 4160 1 4 0 0 0 - "Switch_0"
+PacketHop 693400 1000000001 0 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 693400 1000000003 0 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 693400 1000000001 1 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW2"
+PacketHop 693400 1000000003 1 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 776600 1000000001 1 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 776600 1000000003 1 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 776600 1000000001 2 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW2"
+PacketHop 776600 1000000003 2 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 859800 1000000001 2 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 859800 1000000003 2 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 859800 1000000001 3 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW2"
+PacketHop 859800 1000000003 3 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 943000 1000000001 3 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 943000 1000000003 3 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 943000 1000000001 4 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW2"
+PacketHop 943000 1000000003 4 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 1026200 1000000001 4 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1026200 1000000003 4 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 1026200 1000000001 5 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW2"
+PacketHop 1026200 1000000003 5 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 1109400 1000000001 5 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1109400 1000000003 5 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 1109400 1000000001 6 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW2"
+PacketHop 1109400 1000000003 6 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 1192600 1000000001 6 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1192600 1000000003 6 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 1192600 1000000001 7 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW2"
+PacketHop 1192600 1000000003 7 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW0-G->SW1"
+PacketHop 1193400 1000000001 0 31 4160 0 3 0 0 0 - "Switch_2"
+PacketHop 1193400 1000000003 0 31 4160 1 4 0 0 0 - "Switch_1"
+PacketHop 1275800 1000000001 7 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1275800 1000000003 7 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 1276600 1000000001 1 31 4160 0 3 0 0 0 - "Switch_2"
+PacketHop 1276600 1000000003 1 31 4160 1 4 0 0 0 - "Switch_1"
+PacketHop 1359800 1000000001 2 31 4160 0 3 0 0 0 - "Switch_2"
+PacketHop 1359800 1000000003 2 31 4160 1 4 0 0 0 - "Switch_1"
+PacketHop 1443000 1000000001 3 31 4160 0 3 0 0 0 - "Switch_2"
+PacketHop 1443000 1000000003 3 31 4160 1 4 0 0 0 - "Switch_1"
+progress: 10 % (14) - 1500 [sizes: aq: 0 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+PacketHop 1526200 1000000001 4 31 4160 0 3 0 0 0 - "Switch_2"
+PacketHop 1526200 1000000003 4 31 4160 1 4 0 0 0 - "Switch_1"
+PacketHop 1609400 1000000001 5 31 4160 0 3 0 0 0 - "Switch_2"
+PacketHop 1609400 1000000003 5 31 4160 1 4 0 0 0 - "Switch_1"
+PacketHop 1692600 1000000001 6 31 4160 0 3 0 0 0 - "Switch_2"
+PacketHop 1692600 1000000003 6 31 4160 1 4 0 0 0 - "Switch_1"
+PacketHop 1693400 1000000001 0 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW2-G->SW1"
+PacketHop 1693400 1000000003 0 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 1775800 1000000001 7 31 4160 0 3 0 0 0 - "Switch_2"
+PacketHop 1775800 1000000003 7 31 4160 1 4 0 0 0 - "Switch_1"
+PacketHop 1776600 1000000001 0 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1776600 1000000001 1 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW2-G->SW1"
+PacketHop 1776600 1000000003 0 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 1776600 1000000003 1 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 1801600 1000000003 0 31 4160 1 4 0 0 0 - ""
+PacketHop 1801600 1000000004 0 33 64 4294967295 1 0 1 0 0 "queue(400000Mb/s,4160000bytes)SRC4->SW1"
+PacketHop 1802880 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 1827880 1000000004 0 33 64 4294967295 1 0 1 0 - "Switch_1"
+PacketHop 1859800 1000000001 1 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1859800 1000000001 2 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW2-G->SW1"
+PacketHop 1859800 1000000003 1 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 1859800 1000000003 2 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 1884800 1000000003 1 31 4160 1 4 0 0 0 - ""
+PacketHop 1943000 1000000001 2 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 1943000 1000000001 3 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW2-G->SW1"
+PacketHop 1943000 1000000003 2 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 1943000 1000000003 3 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 1968000 1000000003 2 31 4160 1 4 0 0 0 - ""
+PacketHop 2026200 1000000001 3 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 2026200 1000000001 4 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW2-G->SW1"
+PacketHop 2026200 1000000003 3 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 2026200 1000000003 4 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 2051200 1000000003 3 31 4160 1 4 0 0 0 - ""
+PacketHop 2109400 1000000001 4 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 2109400 1000000001 5 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW2-G->SW1"
+PacketHop 2109400 1000000003 4 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 2109400 1000000003 5 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 2134400 1000000003 4 31 4160 1 4 0 0 0 - ""
+PacketHop 2134400 1000000004 0 33 64 4294967295 1 0 1 0 0 "queue(400000Mb/s,4160000bytes)SRC4->SW1"
+PacketHop 2135680 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 2160680 1000000004 0 33 64 4294967295 1 0 1 0 - "Switch_1"
+PacketHop 2192600 1000000001 5 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 2192600 1000000001 6 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW2-G->SW1"
+PacketHop 2192600 1000000003 5 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 2192600 1000000003 6 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 2217600 1000000003 5 31 4160 1 4 0 0 0 - ""
+PacketHop 2275800 1000000001 6 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 2275800 1000000001 7 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW2-G->SW1"
+PacketHop 2275800 1000000003 6 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 2275800 1000000003 7 31 4160 1 4 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST4"
+PacketHop 2276600 1000000001 0 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 2300800 1000000003 6 31 4160 1 4 0 0 0 - ""
+PacketHop 2327880 1000000004 0 33 64 4294967295 1 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW1-G->SW0"
+PacketHop 2329160 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 2359000 1000000001 7 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 2359000 1000000003 7 31 4160 1 4 0 0 0 - "pipe(0us)"
+PacketHop 2359800 1000000001 1 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 2384000 1000000003 7 31 4160 1 4 0 0 0 - ""
+PacketHop 2384000 1000000004 0 33 64 4294967295 1 0 1 0 0 "queue(400000Mb/s,4160000bytes)SRC4->SW1"
+PacketHop 2385280 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 2410280 1000000004 0 33 64 4294967295 1 0 1 0 - "Switch_1"
+PacketHop 2443000 1000000001 2 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 2526200 1000000001 3 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 2609400 1000000001 4 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 2660680 1000000004 0 33 64 4294967295 1 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW1-G->SW0"
+PacketHop 2661960 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 2692600 1000000001 5 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 2775800 1000000001 6 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 2776600 1000000001 0 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 2829160 1000000004 0 33 64 4294967295 1 0 1 0 - "Switch_0"
+PacketHop 2859000 1000000001 7 31 4160 0 3 0 0 0 - "Switch_1"
+PacketHop 2859800 1000000001 0 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 2859800 1000000001 1 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 2884800 1000000001 0 31 4160 0 3 0 0 0 - ""
+PacketHop 2884800 1000000002 0 33 64 4294967295 0 0 1 0 0 "queue(400000Mb/s,4160000bytes)SRC3->SW1"
+PacketHop 2886080 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 2910280 1000000004 0 33 64 4294967295 1 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW1-G->SW0"
+PacketHop 2911080 1000000002 0 33 64 4294967295 0 0 1 0 - "Switch_1"
+PacketHop 2911560 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 2943000 1000000001 1 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 2943000 1000000001 2 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 2968000 1000000001 1 31 4160 0 3 0 0 0 - ""
+PacketHop 3026200 1000000001 2 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 3026200 1000000001 3 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 3051200 1000000001 2 31 4160 0 3 0 0 0 - ""
+PacketHop 3109400 1000000001 3 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 3109400 1000000001 4 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 3134400 1000000001 3 31 4160 0 3 0 0 0 - ""
+PacketHop 3161960 1000000004 0 33 64 4294967295 1 0 1 0 - "Switch_0"
+PacketHop 3192600 1000000001 4 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 3192600 1000000001 5 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 3217600 1000000001 4 31 4160 0 3 0 0 0 - ""
+PacketHop 3217600 1000000002 0 33 64 4294967295 0 0 1 0 0 "queue(400000Mb/s,4160000bytes)SRC3->SW1"
+PacketHop 3218880 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 3243880 1000000002 0 33 64 4294967295 0 0 1 0 - "Switch_1"
+PacketHop 3275800 1000000001 5 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 3275800 1000000001 6 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 3300800 1000000001 5 31 4160 0 3 0 0 0 - ""
+PacketHop 3329160 1000000004 0 33 64 4294967295 1 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW0->DST1"
+PacketHop 3330440 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 3355440 1000000004 0 33 64 4294967295 1 0 1 0 - "uecSrc 10"
+PacketHop 3359000 1000000001 6 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 3359000 1000000001 7 31 4160 0 3 0 0 0 0 "compqueue(400000Mb/s,366080bytes)SW1->DST3"
+PacketHop 3384000 1000000001 6 31 4160 0 3 0 0 0 - ""
+PacketHop 3411080 1000000002 0 33 64 4294967295 0 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW1-G->SW0"
+PacketHop 3411560 1000000004 0 33 64 4294967295 1 0 1 0 - "Switch_0"
+PacketHop 3412360 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 3442200 1000000001 7 31 4160 0 3 0 0 0 - "pipe(0us)"
+PacketHop 3467200 1000000001 7 31 4160 0 3 0 0 0 - ""
+PacketHop 3467200 1000000002 0 33 64 4294967295 0 0 1 0 0 "queue(400000Mb/s,4160000bytes)SRC3->SW1"
+PacketHop 3468480 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 3493480 1000000002 0 33 64 4294967295 0 0 1 0 - "Switch_1"
+PacketHop 3661960 1000000004 0 33 64 4294967295 1 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW0->DST1"
+PacketHop 3663240 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 3688240 1000000004 0 33 64 4294967295 1 0 1 0 - "uecSrc 10"
+PacketHop 3743880 1000000002 0 33 64 4294967295 0 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW1-G->SW0"
+PacketHop 3745160 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 3911560 1000000004 0 33 64 4294967295 1 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW0->DST1"
+PacketHop 3912360 1000000002 0 33 64 4294967295 0 0 1 0 - "Switch_0"
+PacketHop 3912840 1000000004 0 33 64 4294967295 1 0 1 0 - "pipe(0us)"
+PacketHop 3937840 1000000004 0 33 64 4294967295 1 0 1 0 - "uecSrc 10"
+Flow uec_1_4 flowId 1000000003 uecSrc 10 finished at 3.93784 total messages 1 total packets 8 RTS 0 total bytes 32768 in_flight now 0 fair_inc 0 prop_inc 0 fast_inc 0 eta_inc 0 multi_dec -0 quick_dec -0 nack_dec -0
+Chosen filter for metric flowsInfo: Filter: regex=.*, enabled=1, downsampling_ratio=1
+LGS Flow Event - Host 1 - CPU 0 - StartTime 2 - Time 3937 - Dst 3 - Tag 201 - Size 32768
+progress: 11 % (14) - 3937 [sizes: aq: 1 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 12 % (16) - 3937 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 3937 - Time 3938 - Size 1
+LGS Compute Event - Host 1 - CPU 0 - StartTime 3937 - Time 3938 - Size 1
+progress: 13 % (16) - 3938 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 14 % (16) - 3938 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 15 % (17) - 3938 [sizes: aq: 1 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 3938 - Time 33938 - Size 30000
+PacketHop 3993480 1000000002 0 33 64 4294967295 0 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW1-G->SW0"
+PacketHop 3994760 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 4245160 1000000002 0 33 64 4294967295 0 0 1 0 - "Switch_0"
+PacketHop 4412360 1000000002 0 33 64 4294967295 0 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW0->DST0"
+PacketHop 4413640 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 4438640 1000000002 0 33 64 4294967295 0 0 1 0 - "uecSrc 9"
+PacketHop 4494760 1000000002 0 33 64 4294967295 0 0 1 0 - "Switch_0"
+PacketHop 4745160 1000000002 0 33 64 4294967295 0 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW0->DST0"
+PacketHop 4746440 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 4771440 1000000002 0 33 64 4294967295 0 0 1 0 - "uecSrc 9"
+PacketHop 4994760 1000000002 0 33 64 4294967295 0 0 1 0 0 "compqueue(400000Mb/s,366080bytes)SW0->DST0"
+PacketHop 4996040 1000000002 0 33 64 4294967295 0 0 1 0 - "pipe(0us)"
+PacketHop 5021040 1000000002 0 33 64 4294967295 0 0 1 0 - "uecSrc 9"
+Flow uec_0_3 flowId 1000000001 uecSrc 9 finished at 5.02104 total messages 1 total packets 8 RTS 0 total bytes 32768 in_flight now 0 fair_inc 0 prop_inc 0 fast_inc 0 eta_inc 0 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 0 - CPU 0 - StartTime 2 - Time 5021 - Dst 2 - Tag 101 - Size 32768
+progress: 16 % (17) - 5021 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 17 % (19) - 5021 [sizes: aq: 3 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 5021 - Time 5022 - Size 1
+LGS Compute Event - Host 0 - CPU 0 - StartTime 5021 - Time 5022 - Size 1
+progress: 18 % (19) - 5022 [sizes: aq: 3 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 19 % (19) - 5022 [sizes: aq: 3 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 20 % (20) - 5022 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 5022 - Time 20022 - Size 15000
+progress: 21 % (20) - 20022 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 22 % (21) - 20022 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 20022 - Time 20023 - Size 1
+progress: 23 % (21) - 20023 [sizes: aq: 2 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 24 % (21) - 33938 [sizes: aq: 1 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 25 % (22) - 33938 [sizes: aq: 1 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 33938 - Time 33939 - Size 1
+progress: 26 % (22) - 33939 [sizes: aq: 1 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+progress: 27 % (22) - 33939 [sizes: aq: 0 max rq: 1 max uq: 0: reinserts: (0, 0, 0)]
+It terminates! Htsim time 33939
+PERFORMANCE: Processes: 4 	 Events: 22 	 Time: 0 s 	 Speed: inf ev/s
+Times: 
+Host 0: 5022
+Host 1: 3938
+Host 2: 20023
+Host 3: 33939
+Maximum finishing time at host 3: 33939 (3.3939e-05 s)
+Chosen filter for metric flow_dag_info: Filter: regex=.*, enabled=1, downsampling_ratio=1
+LGS terminates!
