@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "runtime": {
+    "mode": "transparent"
+  },
+  "routing": {
+    "network_decision": "none"
+  },
+  "logging": {
+    "trace_decisions": true
+  }
+}

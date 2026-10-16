@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "reference_experiment": "/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp5s/exp5.1",
+  "input_sha256": {
+    "workload.bin": "e28f63ad3f57a34c8cbbeb0a738f20f8fef9e890947126489e79dca940e5ab49",
+    "workload.goal": "5b7f4f2a07299daa574bd9ed9f35567e8578f72607a3a9b946783e09c39e677b",
+    "workload.meta.json": "70715b07edf471062eb596862cd8b0132daed4a3950daf3f8b762df5ce3a00ed",
+    "rank_placement.json": "d9447a9ff58a3257c85698711cdbc0b39c1532a9751658ff3ecd4d2c4cf1b94d",
+    "topology/dragonfly.topo": "5ae8eaef66940924d16913bde5d6cfe5a7ded4ff99464a63e7f0d6485a7aff36"
+  },
+  "runtime_mode": "transparent",
+  "switch_routing": "UGAL_L",
+  "runtime_decisions": 0,
+  "cct_ns": 41799,
+  "completed_flows": 60,
+  "completed_tasks": 200,
+  "packet_hop_records": 12177,
+  "data_packet_attempts": 960,
+  "delivered_data_packets": 960,
+  "minimum_data_packets": 666,
+  "detoured_data_packets": 294
+}

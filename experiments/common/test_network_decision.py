@@ -1,6 +1,7 @@
 """GOAL integration tests for messagelet network decisions; build htsim_uec_df first."""
 
 import json
+import os
 import re
 import subprocess
 import tempfile
@@ -37,7 +38,7 @@ class NetworkDecisionTests(unittest.TestCase):
         self.temp.cleanup()
 
     def run_flow(self, dst_group=3, dst_switch=0, strategy="ugal_l", size=8192,
-                 routing="SOURCE", extra=(), granularity=None):
+                 routing="SOURCE", extra=(), granularity=None, mode=None, trace_hops=False):
         placement = self.root / "placement.json"
         placement.write_text(json.dumps({"schema_version": 1, "placements": [
             {"rank": 0, "group": 0, "switch": 0, "host": 0},
@@ -49,14 +50,18 @@ class NetworkDecisionTests(unittest.TestCase):
             settings["messagelet"] = {"size_bytes": size}
         if granularity is not None:
             settings["runtime"] = {"granularity": granularity}
+        if mode is not None:
+            settings.setdefault("runtime", {})["mode"] = mode
         config.write_text(json.dumps(settings))
         run = self.root / f"run-{len(list(self.root.iterdir()))}"
         run.mkdir()
+        self.last_run = run
         return subprocess.run([str(BINARY), "-basepath", str(self.topology),
                                "-goal", str(self.workload), "-routing", routing,
                                "-rank_placement", str(placement),
                                "-messagelet_config", str(config), *extra],
-                              cwd=run, capture_output=True, text=True, timeout=30)
+                              cwd=run, capture_output=True, text=True, timeout=30,
+                              env={**os.environ, "HTSIM_TRACE_PACKET_HOPS": "1" if trace_hops else "0"})
 
     def test_ugal_at_each_boundary_cross_group_same_group_and_local(self):
         for group, switch in ((3, 0), (0, 2), (0, 0)):
@@ -134,6 +139,37 @@ class NetworkDecisionTests(unittest.TestCase):
                                    strategy="none", routing="UGAL_L")
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertNotIn(" - policy ugal_l", result.stdout)
+
+    def test_transparent_matches_native_switch_hops_and_completion(self):
+        for routing in ("MINIMAL", "UGAL_L", "VALIANT"):
+            for extra in ((), ("-receiver_cc_only",)):
+                with self.subTest(routing=routing, extra=extra):
+                    native = self.run_flow(size=0, strategy="none", routing=routing,
+                                           extra=extra, trace_hops=True)
+                    native_metrics = {path.name: path.read_bytes() for path in
+                                      (self.last_run / "output_metrics").glob("*.csv")}
+                    transparent = self.run_flow(size=0, strategy="none", routing=routing,
+                                                mode="transparent", extra=extra, trace_hops=True)
+                    for result in (native, transparent):
+                        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                    hops = lambda result: [line for line in result.stdout.splitlines()
+                                           if line.startswith("PacketHop ")]
+                    self.assertGreater(len(hops(native)), 0)
+                    self.assertEqual(hops(native), hops(transparent))
+                    self.assertNotIn("Messagelet route -", transparent.stdout)
+                    for name, content in native_metrics.items():
+                        self.assertEqual(content, (self.last_run / "output_metrics" / name).read_bytes(), name)
+
+    def test_transparent_rejects_source_runtime_policy_and_unknown_mode(self):
+        result = self.run_flow(size=0, strategy="none", mode="transparent")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Transparent runtime requires", result.stderr)
+        result = self.run_flow(size=0, mode="transparent", routing="UGAL_L")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("requires routing.network_decision = 'none'", result.stderr)
+        result = self.run_flow(size=0, strategy="none", mode="unknown")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Unsupported runtime mode", result.stderr)
 
     def test_invalid_strategy_and_non_source_are_rejected(self):
         result = self.run_flow(strategy="unknown")

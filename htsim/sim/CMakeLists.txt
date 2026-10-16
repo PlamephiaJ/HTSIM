@@ -157,6 +157,8 @@ if (ENABLE_TESTS OR ENABLE_NETWORK_DECISION_TESTS)
         add_test(NAME network_decision_${GRANULARITY}_test COMMAND network_decision_test ${GRANULARITY})
         set_tests_properties(network_decision_${GRANULARITY}_test PROPERTIES TIMEOUT 30)
     endforeach()
+    add_test(NAME network_decision_transparent_test COMMAND network_decision_test transparent)
+    set_tests_properties(network_decision_transparent_test PROPERTIES TIMEOUT 30)
 endif()
 
 if ( ENABLE_TESTS )

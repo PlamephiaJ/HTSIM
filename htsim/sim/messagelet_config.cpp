@@ -37,6 +37,15 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
     uint32_t schema_version = kSchemaVersion;
     MessageletConfig config;
     readOptional(tree, "schema_version", schema_version, filename);
+    std::string mode = "label";
+    readOptional(tree, "runtime.mode", mode, filename);
+    if (mode == "label") {
+        config.runtime.mode = Mode::Label;
+    } else if (mode == "transparent") {
+        config.runtime.mode = Mode::Transparent;
+    } else {
+        throw std::invalid_argument("Unsupported runtime mode '" + mode + "'");
+    }
     readOptional(tree, "messagelet.size_bytes", config.messagelet.size_bytes, filename);
     // Legacy configs select granularity through size_bytes alone.
     std::string granularity = config.messagelet.size_bytes == 0 ? "flow" : "messagelet";
@@ -64,6 +73,12 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
 }
 
 void MessageletConfig::validate() const {
+    if (runtime.mode != Mode::Label && runtime.mode != Mode::Transparent) {
+        throw std::invalid_argument("Unsupported runtime mode");
+    }
+    if (runtime.mode == Mode::Transparent && routing.network_decision != "none") {
+        throw std::invalid_argument("runtime.mode 'transparent' requires routing.network_decision = 'none'");
+    }
     granularityName(runtime.granularity);
     if (runtime.granularity == Granularity::Flow && messagelet.size_bytes != 0) {
         throw std::invalid_argument("runtime.granularity 'flow' requires messagelet.size_bytes = 0");

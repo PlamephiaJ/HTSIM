@@ -54,6 +54,7 @@ public:
     }
     static uint16_t get_trim_disable() { return _trim_disable; }
     static uint16_t get_trim_size() { return _trim_size; }
+    static RoutingStrategy get_routing_strategy() { return _routing_strategy; }
 
 private:
     SwitchType _type;
