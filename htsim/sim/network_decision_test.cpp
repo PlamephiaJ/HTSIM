@@ -149,10 +149,20 @@ public:
     std::vector<uint64_t>& calls;
 };
 
-void checkRuntimeFreezingAndRetransmission(MessageletRuntime::Granularity granularity) {
+class CountingMultipath : public UecMultipath {
+public:
+    explicit CountingMultipath(uint32_t& calls) : UecMultipath(false), calls(calls) {}
+    uint32_t nextEntropy(uint64_t, uint64_t) override { return calls++; }
+    void processEv(uint32_t, PathFeedback) override {}
+    uint32_t& calls;
+};
+
+void checkRuntimeFreezingAndRetransmission(MessageletRuntime::Granularity granularity,
+                                          bool transparent = false) {
     auto& events = EventList::getTheEventList();
     events.setEndtime(timeFromMs(10));
-    DragonflySwitch::set_config(DragonflySwitch::SOURCE, false, 64);
+    const auto routing = transparent ? DragonflySwitch::UGAL_L : DragonflySwitch::SOURCE;
+    DragonflySwitch::set_config(routing, false, 64);
     DragonflyTopology topology(COMPOSITE, 1000000, nullptr, &events);
     topology.construct_topology(2, 4, 2);
     CaptureQueue capture(events, *topology.queues_host_switch[0][0]);
@@ -163,7 +173,7 @@ void checkRuntimeFreezingAndRetransmission(MessageletRuntime::Granularity granul
     api.setEventList(&events);
     api.linkspeed = topology.get_linkspeed();
     api.total_nodes = topology.get_no_hosts();
-    const auto rtt = topology.get_max_rtt(DragonflySwitch::SOURCE, UecSrc::_mtu, 64);
+    const auto rtt = topology.get_max_rtt(routing, UecSrc::_mtu, 64);
     api.setMaxRtt(rtt);
     UecSrc::_sender_based_cc = true;
     UecSrc::_receiver_based_cc = false;
@@ -172,7 +182,12 @@ void checkRuntimeFreezingAndRetransmission(MessageletRuntime::Granularity granul
     LogSimInterface lgs(nullptr, nullptr, events, nullptr, nullptr);
     lgs.set_protocol(UEC_PROTOCOL);
     api.setLogSimInterface(&lgs);
-    api.setMultipathFactory([]() { return std::make_unique<UecMpOblivious>(64, false); });
+    uint32_t entropy_calls = 0;
+    api.setMultipathFactory([&]() -> std::unique_ptr<UecMultipath> {
+        if (transparent)
+            return std::make_unique<CountingMultipath>(entropy_calls);
+        return std::make_unique<UecMpOblivious>(64, false);
+    });
     api.Setup();
 
     auto& runtime = api.getMessageletRuntime();
@@ -182,18 +197,55 @@ void checkRuntimeFreezingAndRetransmission(MessageletRuntime::Granularity granul
     close(config_fd);
     {
         std::ofstream config(config_path);
-        config << "{\"runtime\":{\"granularity\":\""
+        config << "{\"runtime\":{\"mode\":\"" << (transparent ? "transparent" : "label")
+               << "\",\"granularity\":\""
                << MessageletConfig::granularityName(granularity) << "\"},\"messagelet\":{\"size_bytes\":"
                << (granularity == MessageletRuntime::Granularity::Messagelet ? 8192 : 0) << "}}";
     }
     runtime.loadConfig(config_path);
     std::remove(config_path);
     std::vector<uint64_t> calls;
-    runtime.setNetworkDecision(std::make_unique<AlternatingPolicy>(calls));
+    if (!transparent)
+        runtime.setNetworkDecision(std::make_unique<AlternatingPolicy>(calls));
     runtime.submit(SendEvent(0, 16, 1000000, 7, 0), graph_node_properties{});
     assert(events.doNextEvent());
     assert(!api.uec_nics[0]->_active_srcs.empty());
     auto& source = *api.uec_nics[0]->_active_srcs.front();
+    if (transparent) {
+        assert(runtime.transparent());
+        assert(source._messagelet_runtime == nullptr);
+        assert(calls.empty() && entropy_calls == 1);
+        unsigned rejected = 0;
+        try {
+            runtime.pathIdForMessagelet(source, 0);
+        } catch (const std::logic_error&) { ++rejected; }
+        try {
+            runtime.setMessageletRoute(source, 0, {});
+        } catch (const std::logic_error&) { ++rejected; }
+        try {
+            runtime.setNetworkDecision(std::make_unique<AlternatingPolicy>(calls));
+        } catch (const std::logic_error&) { ++rejected; }
+        assert(rejected == 3);
+        bool saw_retransmission = false;
+        for (unsigned step = 0; step < 200000 && events.doNextEvent(); ++step) {
+            const auto& last = capture.records.back();
+            if (last.seqno == 0 && last.retransmitted) {
+                // The original transport asks multipath for fresh entropy on
+                // retransmission. The switch, rather than this value, routes it.
+                assert(last.path_id != capture.records.front().path_id);
+                saw_retransmission = true;
+                break;
+            }
+        }
+        assert(saw_retransmission);
+        assert(capture.records.size() == entropy_calls);
+        for (size_t packet = 0; packet < capture.records.size(); ++packet)
+            assert(capture.records[packet].path_id == packet);
+        const auto& state = runtime.flowState(source);
+        assert(state.messagelet_routes.empty() && state.finalized_routes.empty());
+        assert(state.default_route.description == "transparent");
+        return;
+    }
     assert(runtime.granularity(source) == granularity);
     assert(calls == std::vector<uint64_t>{0});
     const uint32_t original = runtime.pathIdForMessagelet(source, 0);
@@ -275,6 +327,7 @@ int main(int argc, char** argv) {
         granularity = MessageletRuntime::Granularity::Flow;
     if (argc > 1 && std::string(argv[1]) == "packet")
         granularity = MessageletRuntime::Granularity::Packet;
-    checkRuntimeFreezingAndRetransmission(granularity);
+    const bool transparent = argc > 1 && std::string(argv[1]) == "transparent";
+    checkRuntimeFreezingAndRetransmission(granularity, transparent);
     std::cout << "Network decision tests passed\n";
 }

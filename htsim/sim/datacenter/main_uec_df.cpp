@@ -303,6 +303,10 @@ int main(int argc, char** argv) {
     }
     if (!messagelet_config_file.empty()) {
         const auto config = MessageletConfig::loadFromFile(messagelet_config_file);
+        if (config.runtime.mode == MessageletConfig::Mode::Transparent &&
+            (routing_strategy == DragonflySwitch::SOURCE || goal_filename.empty())) {
+            throw std::logic_error("Transparent runtime requires -goal and switch routing MINIMAL, VALIANT or UGAL_L");
+        }
         if (config.routing.network_decision != "none" &&
             (routing_strategy != DragonflySwitch::SOURCE || goal_filename.empty())) {
             throw std::logic_error("Messagelet network decision requires -routing SOURCE and -goal");

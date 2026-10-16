@@ -36,6 +36,9 @@ void MessageletRuntime::submit(const SendEvent& event, graph_node_properties nod
     if (!topology) {
         throw std::logic_error("Dragonfly topology not set");
     }
+    if (transparent() && DragonflySwitch::get_routing_strategy() == DragonflySwitch::SOURCE) {
+        throw std::logic_error("Transparent runtime requires switch routing MINIMAL, VALIANT or UGAL_L");
+    }
 
     int to = event.getTo();
     int from = event.getFrom();
@@ -85,7 +88,9 @@ void MessageletRuntime::submit(const SendEvent& event, graph_node_properties nod
     uec_src->tag = tag;
     uec_src->send_size = size;
     uec_src->_atlahs_api = &_goal_runtime;
-    uec_src->_messagelet_runtime = this;
+    // A null routing hook selects UecSrc's original entropy, retransmission
+    // and control-packet paths. GOAL completion still uses _atlahs_api.
+    uec_src->_messagelet_runtime = transparent() ? nullptr : this;
     registerFlow(*uec_src, size, from, to, tag, routing);
 
     UecSink* uec_sink = new UecSink(traffic_logger,
@@ -124,9 +129,11 @@ void MessageletRuntime::submit(const SendEvent& event, graph_node_properties nod
 
     uec_src->connectPort(
         0, *srctotor, *dsttotor, *uec_sink, _goal_runtime.getEventList()->now());
-    // GOAL SOURCE flows compute both directions from topology, without .lt files.
-    // Receiver credit packets always use a minimum return path.
-    uec_sink->setReturnPath(minimumRoute(to, from).path_id);
+    if (!transparent()) {
+        // GOAL SOURCE flows compute both directions without .lt files.
+        // Transparent mode keeps the sink's native control-packet entropy.
+        uec_sink->setReturnPath(minimumRoute(to, from).path_id);
+    }
 
     topology->switches[src_switch]->addHostPort(
         from, uec_sink->flowId(), uec_src->getPort(0));
@@ -143,14 +150,23 @@ void MessageletRuntime::loadConfig(const std::string& filename) {
         throw std::logic_error("Messagelet config must be loaded before submitting flows");
     }
     auto config = MessageletConfig::loadFromFile(filename);
+    if (config.runtime.mode == MessageletConfig::Mode::Transparent && _routing_config_loaded) {
+        throw std::logic_error("Transparent runtime cannot be combined with a static routing config");
+    }
     auto decision = makeNetworkDecision(config.routing.network_decision);
-    setNetworkDecision(std::move(decision));
+    if (decision && _routing_config_loaded) {
+        throw std::logic_error("Network decision policy cannot be combined with a static routing config");
+    }
     _config = std::move(config);
+    _network_decision = std::move(decision);
 }
 
 void MessageletRuntime::loadRoutingConfig(const std::string& filename) {
     if (!_flows.empty()) {
         throw std::logic_error("Routing config must be loaded before submitting flows");
+    }
+    if (transparent()) {
+        throw std::logic_error("Transparent runtime cannot be combined with a static routing config");
     }
     if (_network_decision) {
         throw std::logic_error("Static routing config cannot be combined with a network decision policy");
@@ -175,6 +191,9 @@ MessageletRuntime::Granularity MessageletRuntime::granularity(const UecSrc& sour
 
 uint32_t MessageletRuntime::pathIdForMessagelet(const UecSrc& source,
                                                 uint64_t messagelet_index) {
+    if (transparent()) {
+        throw std::logic_error("Transparent runtime does not assign messagelet routes");
+    }
     FlowState& state = mutableFlowState(source);
     if (state.finalized_routes.count(messagelet_index)) {
         return state.messagelet_routes.at(messagelet_index).path_id;
@@ -216,6 +235,9 @@ uint32_t MessageletRuntime::pathIdForMessagelet(const UecSrc& source,
 }
 
 void MessageletRuntime::setNetworkDecision(std::unique_ptr<NetworkDecision> decision) {
+    if (decision && transparent()) {
+        throw std::logic_error("Transparent runtime cannot install a network decision policy");
+    }
     if (decision && _routing_config_loaded) {
         throw std::logic_error("Network decision policy cannot be combined with a static routing config");
     }
@@ -241,6 +263,9 @@ void MessageletRuntime::setMessageletSize(const UecSrc& source, uint64_t size) {
 void MessageletRuntime::setMessageletRoute(const UecSrc& source,
                                            uint64_t messagelet_index,
                                            RouteInfo route_info) {
+    if (transparent()) {
+        throw std::logic_error("Transparent runtime does not assign messagelet routes");
+    }
     FlowState& state = mutableFlowState(source);
     if (state.finalized_routes.count(messagelet_index)) {
         throw std::logic_error("Cannot change a messagelet route after it has been labelled");
@@ -273,7 +298,11 @@ void MessageletRuntime::registerFlow(UecSrc& source,
     state.flow_size = flow_size;
     state.granularity = _config.runtime.granularity;
     state.messagelet_size = routingUnitSize(state.granularity, flow_size, _config.messagelet.size_bytes);
-    state.default_route = minimumRoute(from, to);
+    if (transparent()) {
+        state.default_route.description = "transparent";
+    } else {
+        state.default_route = minimumRoute(from, to);
+    }
     if (routing) {
         state.flow_id = routing->flow_id;
         state.has_flow_id = true;

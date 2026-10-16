@@ -8,8 +8,11 @@ struct MessageletConfig {
     static constexpr uint32_t kSchemaVersion = 1;
 
     enum class Granularity { Flow, Messagelet, Packet };
+    enum class Mode { Label, Transparent };
 
     struct RuntimeSettings {
+        // Transparent mode bypasses runtime routing and granularity handling.
+        Mode mode = Mode::Label;
         Granularity granularity = Granularity::Flow;
     } runtime;
 

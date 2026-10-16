@@ -20,9 +20,9 @@ class graph_node_properties;
 
 // Boundary between the GOAL scheduler and Dragonfly's HTSim transport.
 //
-// One GOAL send owns one UecSrc and one FlowState. UecSrc groups new packets
-// into messagelets and consults this runtime only at messagelet boundaries;
-// completion events are forwarded to GOAL unchanged.
+// One GOAL send owns one UecSrc and one FlowState. In label mode, UecSrc
+// consults this runtime at messagelet boundaries. Transparent mode uses the
+// original UEC routing hooks. Both preserve GOAL completion handling.
 class MessageletRuntime {
 public:
     using RouteInfo = NetworkRoute;
@@ -52,6 +52,7 @@ public:
     void loadRoutingConfig(const std::string& filename);
     void validateRoutingComplete() const;
     const MessageletConfig& config() const { return _config; }
+    bool transparent() const { return _config.runtime.mode == MessageletConfig::Mode::Transparent; }
 
     uint64_t messageletSize(const UecSrc& source) const;
     Granularity granularity(const UecSrc& source) const;
