@@ -116,12 +116,14 @@ uint32_t DragonflySwitch::get_next_switch_valiant(uint32_t this_switch,
     // Next: route to intermediate switch within G_s (G_i = G_s = G_d) => RVAL improvement
     if (this_group == src_group && src_group == dst_group) {
         if (this_switch == src_switch) {
+            // There is no third switch to sample when a == 2. The old
+            // fallback after the rejection loop was unreachable (and omitted
+            // the group offset). The only available next hop is dst_switch.
+            if (_a == 2)
+                return dst_switch;
             do {
                 next_switch = (this_group * _a) + _dist_a(_generator);
             } while (next_switch == this_switch || next_switch == dst_switch);
-
-            if (_a == 2)
-                next_switch = (this_switch + 1) % _a;
             return next_switch;
         }
         return dst_switch;
@@ -207,6 +209,59 @@ FibEntry* DragonflySwitch::get_fib_entry(uint32_t next_switch) {
     return fib_entry;
 }
 
+DragonflySwitch::UgalDecision DragonflySwitch::ugalDecision(uint32_t src_switch,
+                                                          uint32_t dst_switch) {
+    UgalDecision decision;
+    if (_id == dst_switch) {
+        return decision;
+    }
+    decision.next_min = get_next_switch_minimal(_id, dst_switch);
+    decision.next_val = get_next_switch_valiant(_id, src_switch, dst_switch);
+    decision.next_switch = decision.next_min;
+
+    if (decision.next_min != decision.next_val) {
+        decision.compared = true;
+        Queue* q_min = _topo->queues_switch_switch[_id][decision.next_min];
+        Queue* q_val = _topo->queues_switch_switch[_id][decision.next_val];
+
+        // Keep HTSim's hop-count walk and RNG draw order. In particular, the
+        // Valiant walk may sample a global link after the first local hop.
+        uint32_t tmp_switch = decision.next_min;
+        decision.h_min = 1;
+        while (tmp_switch != dst_switch) {
+            tmp_switch = get_next_switch_minimal(tmp_switch, dst_switch);
+            decision.h_min++;
+        }
+
+        tmp_switch = decision.next_val;
+        decision.h_val = 1;
+        uint32_t val_second = 0;
+        while (tmp_switch != dst_switch) {
+            tmp_switch = get_next_switch_valiant(tmp_switch, src_switch, dst_switch);
+            if (decision.h_val == 1)
+                val_second = tmp_switch;
+            decision.h_val++;
+        }
+
+        decision.q_min = q_min->queuesize();
+        decision.q_val = q_val->queuesize();
+        // Strict inequality: equal costs select minimal, without a bias,
+        // threshold, normalized utilization, or remote queue observations.
+        decision.use_valiant = decision.q_min * decision.h_min >
+                               decision.q_val * decision.h_val;
+        if (decision.use_valiant) {
+            decision.next_switch = decision.next_val;
+            decision.second_switch = val_second;
+            return decision;
+        }
+    }
+
+    if (decision.next_switch != dst_switch) {
+        decision.second_switch = get_next_switch_minimal(decision.next_switch, dst_switch);
+    }
+    return decision;
+}
+
 Route* DragonflySwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
     uint32_t this_switch = _id;
     uint32_t src_switch = _topo->get_host_switch(pkt.src());
@@ -260,36 +315,8 @@ Route* DragonflySwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
         }
 
         case UGAL_L: {
-            uint32_t next_switch_min = get_next_switch_minimal(this_switch, dst_switch);
-            uint32_t next_switch_val = get_next_switch_valiant(this_switch, src_switch, dst_switch);
-
-            if (next_switch_min == next_switch_val)
-                return get_fib_entry(next_switch_min)->getEgressPort();
-
-            Queue* q_min = _topo->queues_switch_switch[this_switch][next_switch_min];
-            Queue* q_val = _topo->queues_switch_switch[this_switch][next_switch_val];
-
-            // Calculate path hop-count
-            uint32_t tmp_switch;
-            uint32_t h_min = 1;
-            uint32_t h_val = 1;
-
-            tmp_switch = next_switch_min;
-            while (tmp_switch != dst_switch) {
-                tmp_switch = get_next_switch_minimal(tmp_switch, dst_switch);
-                h_min++;
-            }
-
-            tmp_switch = next_switch_val;
-            while (tmp_switch != dst_switch) {
-                tmp_switch = get_next_switch_valiant(tmp_switch, src_switch, dst_switch);
-                h_val++;
-            }
-
-            if (q_min->queuesize() * h_min > q_val->queuesize() * h_val)
-                return get_fib_entry(next_switch_val)->getEgressPort();
-
-            return get_fib_entry(next_switch_min)->getEgressPort();
+            const auto decision = ugalDecision(src_switch, dst_switch);
+            return get_fib_entry(decision.next_switch)->getEgressPort();
         }
 
         case SOURCE: {

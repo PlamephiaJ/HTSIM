@@ -2316,7 +2316,9 @@ uint32_t UecSrc::messageletPathIdForNewPacket(UecDataPacket::seq_t seqno,
     }
 
     ensureMessageletRoute();
-    if (_messagelet_bytes_sent >= _current_messagelet_size) {
+    if (!_current_messagelet_is_flow &&
+        ((_current_messagelet_is_packet && _messagelet_bytes_sent > 0) ||
+         _messagelet_bytes_sent >= _current_messagelet_size)) {
         _messagelet_index++;
         _messagelet_route_valid = false;
         ensureMessageletRoute();
@@ -2356,6 +2358,10 @@ void UecSrc::ensureMessageletRoute() {
     }
 
     _current_messagelet_size = _messagelet_runtime->messageletSize(*this);
+    _current_messagelet_is_flow = _messagelet_runtime->granularity(*this) ==
+                                 MessageletRuntime::Granularity::Flow;
+    _current_messagelet_is_packet = _messagelet_runtime->granularity(*this) ==
+                                   MessageletRuntime::Granularity::Packet;
     if (_current_messagelet_size == 0) {
         throw std::logic_error("Messagelet runtime returned a zero messagelet size");
     }

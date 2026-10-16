@@ -38,7 +38,20 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
     MessageletConfig config;
     readOptional(tree, "schema_version", schema_version, filename);
     readOptional(tree, "messagelet.size_bytes", config.messagelet.size_bytes, filename);
+    // Legacy configs select granularity through size_bytes alone.
+    std::string granularity = config.messagelet.size_bytes == 0 ? "flow" : "messagelet";
+    readOptional(tree, "runtime.granularity", granularity, filename);
+    if (granularity == "flow") {
+        config.runtime.granularity = Granularity::Flow;
+    } else if (granularity == "messagelet") {
+        config.runtime.granularity = Granularity::Messagelet;
+    } else if (granularity == "packet") {
+        config.runtime.granularity = Granularity::Packet;
+    } else {
+        throw std::invalid_argument("Unsupported runtime granularity '" + granularity + "'");
+    }
     readOptional(tree, "routing.default", config.routing.default_route, filename);
+    readOptional(tree, "routing.network_decision", config.routing.network_decision, filename);
     readOptional(tree, "logging.trace_decisions", config.logging.trace_decisions, filename);
 
     if (schema_version != kSchemaVersion) {
@@ -51,8 +64,31 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
 }
 
 void MessageletConfig::validate() const {
+    granularityName(runtime.granularity);
+    if (runtime.granularity == Granularity::Flow && messagelet.size_bytes != 0) {
+        throw std::invalid_argument("runtime.granularity 'flow' requires messagelet.size_bytes = 0");
+    }
+    if (runtime.granularity == Granularity::Messagelet && messagelet.size_bytes == 0) {
+        throw std::invalid_argument("runtime.granularity 'messagelet' requires messagelet.size_bytes > 0");
+    }
+    if (runtime.granularity == Granularity::Packet && messagelet.size_bytes != 0) {
+        throw std::invalid_argument("runtime.granularity 'packet' requires messagelet.size_bytes = 0");
+    }
+    if (routing.network_decision != "none" && routing.network_decision != "ugal_l") {
+        throw std::invalid_argument("Unsupported network decision strategy '" +
+                                    routing.network_decision + "'");
+    }
     if (routing.default_route != "minimum") {
         throw std::invalid_argument("Unsupported default messagelet route '" +
                                     routing.default_route + "'");
     }
+}
+
+const char* MessageletConfig::granularityName(Granularity granularity) {
+    switch (granularity) {
+        case Granularity::Flow: return "flow";
+        case Granularity::Messagelet: return "messagelet";
+        case Granularity::Packet: return "packet";
+    }
+    throw std::invalid_argument("Unsupported runtime granularity");
 }

@@ -13,6 +13,21 @@
 #include "data_collector.h"
 #include "uec.h"
 
+namespace {
+uint64_t routingUnitSize(MessageletConfig::Granularity granularity,
+                         uint64_t flow_size, uint64_t messagelet_size) {
+    switch (granularity) {
+        case MessageletConfig::Granularity::Flow:
+            return std::max<uint64_t>(flow_size, 1);
+        case MessageletConfig::Granularity::Messagelet:
+            return messagelet_size;
+        case MessageletConfig::Granularity::Packet:
+            return Packet::data_packet_size();
+    }
+    throw std::invalid_argument("Unsupported runtime granularity");
+}
+} // namespace
+
 MessageletRuntime::MessageletRuntime(AtlahsDragonflyApi& goal_runtime)
     : _goal_runtime(goal_runtime) {}
 
@@ -127,12 +142,18 @@ void MessageletRuntime::loadConfig(const std::string& filename) {
     if (!_flows.empty()) {
         throw std::logic_error("Messagelet config must be loaded before submitting flows");
     }
-    _config = MessageletConfig::loadFromFile(filename);
+    auto config = MessageletConfig::loadFromFile(filename);
+    auto decision = makeNetworkDecision(config.routing.network_decision);
+    setNetworkDecision(std::move(decision));
+    _config = std::move(config);
 }
 
 void MessageletRuntime::loadRoutingConfig(const std::string& filename) {
     if (!_flows.empty()) {
         throw std::logic_error("Routing config must be loaded before submitting flows");
+    }
+    if (_network_decision) {
+        throw std::logic_error("Static routing config cannot be combined with a network decision policy");
     }
     _routing_config = FlowRoutingConfig::loadFromFile(filename);
     _routing_config_loaded = true;
@@ -148,12 +169,29 @@ uint64_t MessageletRuntime::messageletSize(const UecSrc& source) const {
     return flowState(source).messagelet_size;
 }
 
+MessageletRuntime::Granularity MessageletRuntime::granularity(const UecSrc& source) const {
+    return flowState(source).granularity;
+}
+
 uint32_t MessageletRuntime::pathIdForMessagelet(const UecSrc& source,
                                                 uint64_t messagelet_index) {
     FlowState& state = mutableFlowState(source);
+    if (state.finalized_routes.count(messagelet_index)) {
+        return state.messagelet_routes.at(messagelet_index).path_id;
+    }
     if (messagelet_index >= state.messagelet_routes.size()) {
         state.messagelet_routes.resize(messagelet_index + 1, state.default_route);
     }
+    if (_network_decision && !state.route_overrides.count(messagelet_index)) {
+        auto* topology = _goal_runtime.getDragonflyTopology();
+        if (!topology) {
+            throw std::logic_error("Dragonfly topology not set");
+        }
+        state.messagelet_routes[messagelet_index] = _network_decision->decide(
+            {*topology, state.from, state.to, state.tag, state.flow_size,
+             state.messagelet_size, messagelet_index});
+    }
+    state.finalized_routes.insert(messagelet_index);
     const RouteInfo& route = state.messagelet_routes[messagelet_index];
     if (_config.logging.trace_decisions) {
         std::cout << "Messagelet route - Src " << state.from
@@ -161,9 +199,14 @@ uint32_t MessageletRuntime::pathIdForMessagelet(const UecSrc& source,
                   << " - Tag " << state.tag
                   << " - FlowId " << (state.has_flow_id ? std::to_string(state.flow_id) : "unassigned")
                   << " - Index " << messagelet_index
+                  << " - Granularity " << MessageletConfig::granularityName(state.granularity)
                   << " - Size " << state.messagelet_size
                   << " - PathId " << route.path_id
-                  << " - Route " << route.description;
+                  << " - Route " << route.description
+                  << " - TransportFlowId " << source.flowId();
+        if (source.lgs_node) {
+            std::cout << " - SendTaskId " << source.lgs_node->offset;
+        }
         for (const auto& item : route.log_info) {
             std::cout << " - " << item.first << " " << item.second;
         }
@@ -172,21 +215,41 @@ uint32_t MessageletRuntime::pathIdForMessagelet(const UecSrc& source,
     return route.path_id;
 }
 
-void MessageletRuntime::setMessageletSize(const UecSrc& source, uint64_t size) {
-    if (size == 0) {
-        throw std::invalid_argument("Messagelet size must be greater than zero");
+void MessageletRuntime::setNetworkDecision(std::unique_ptr<NetworkDecision> decision) {
+    if (decision && _routing_config_loaded) {
+        throw std::logic_error("Network decision policy cannot be combined with a static routing config");
     }
-    mutableFlowState(source).messagelet_size = size;
+    _network_decision = std::move(decision);
+}
+
+void MessageletRuntime::setGranularity(const UecSrc& source,
+                                      Granularity granularity,
+                                      uint64_t size_bytes) {
+    MessageletConfig settings;
+    settings.runtime.granularity = granularity;
+    settings.messagelet.size_bytes = size_bytes;
+    settings.validate();
+    auto& state = mutableFlowState(source);
+    state.granularity = granularity;
+    state.messagelet_size = routingUnitSize(granularity, state.flow_size, size_bytes);
+}
+
+void MessageletRuntime::setMessageletSize(const UecSrc& source, uint64_t size) {
+    setGranularity(source, Granularity::Messagelet, size);
 }
 
 void MessageletRuntime::setMessageletRoute(const UecSrc& source,
                                            uint64_t messagelet_index,
                                            RouteInfo route_info) {
     FlowState& state = mutableFlowState(source);
+    if (state.finalized_routes.count(messagelet_index)) {
+        throw std::logic_error("Cannot change a messagelet route after it has been labelled");
+    }
     if (messagelet_index >= state.messagelet_routes.size()) {
         state.messagelet_routes.resize(messagelet_index + 1, state.default_route);
     }
     state.messagelet_routes[messagelet_index] = std::move(route_info);
+    state.route_overrides.insert(messagelet_index);
 }
 
 const MessageletRuntime::FlowState& MessageletRuntime::flowState(const UecSrc& source) const {
@@ -208,9 +271,8 @@ void MessageletRuntime::registerFlow(UecSrc& source,
     state.to = to;
     state.tag = tag;
     state.flow_size = flow_size;
-    state.messagelet_size = _config.messagelet.size_bytes == 0
-                                ? std::max<uint64_t>(flow_size, 1)
-                                : _config.messagelet.size_bytes;
+    state.granularity = _config.runtime.granularity;
+    state.messagelet_size = routingUnitSize(state.granularity, flow_size, _config.messagelet.size_bytes);
     state.default_route = minimumRoute(from, to);
     if (routing) {
         state.flow_id = routing->flow_id;
