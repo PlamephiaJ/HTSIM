@@ -1,0 +1,6 @@
+{
+  "name": "messagelet_15pkt",
+  "granularity": "messagelet",
+  "packets_per_messagelet": 15,
+  "size_bytes": 62400
+}

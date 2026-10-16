@@ -1,0 +1,6 @@
+{
+  "name": "packet",
+  "granularity": "packet",
+  "packets_per_messagelet": 1,
+  "size_bytes": 0
+}
