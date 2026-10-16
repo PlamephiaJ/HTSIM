@@ -1,94 +1,126 @@
-# exp5.3s — Source UGAL-L runtime 粒度 sweep
+# exp5.3s — Source UGAL-L 粒度 sweep：多种子平均
 
-批次：`20261016-163734`；18 个点，全部校验 **PASS**。
+批次：`20261016-165020`；**18 个粒度 × 5 个种子 = 90 次仿真**，**32 路并行**，全部校验 **PASS**。
 
-本批最小 CCT 为 **39.909 µs**（messagelet_10pkt），相对同批 flow 的 **45.676 µs** 改变 **-5.767 µs**，降低 **12.63%**。
+种子对 `(simulation seed, routing seed)`：(13, 33), (14, 34), (15, 35), (16, 36), (17, 37)。每个种子对都覆盖所有粒度。
 
-所有点均为 `runtime.mode=label`、`routing.network_decision=ugal_l`、`-routing SOURCE`。改变的只有 runtime 粒度和对应 messagelet 字节预算；未混入 transparent / 原生交换机 UGAL-L。
+平均 CCT 最低为 **40.509 ± 0.755 µs**（messagelet_04pkt）。flow 为 **45.132 ± 1.518 µs**，按均值之比降低 **10.24%**。
 
-## CCT、FCT 和乱序
+所有运行都是相同 source UGAL-L：`runtime.mode=label`、`routing.network_decision=ugal_l`、`-routing SOURCE`。每个种子内部只改变粒度；计算图、拓扑、placement、binary、CC 和 queue 等控制保持一致。
 
-| Sweep point | Budget (wire bytes) | CCT (µs) | ΔCCT vs flow (µs) | Mean FCT (µs) | P95 FCT (µs) | OOO packets |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| [packet](artifacts/20261016-163734/cases/packet/summary.md) | — | **45.289** | -0.387 | 5.853 | 6.959 | 271 |
-| [messagelet_01pkt](artifacts/20261016-163734/cases/messagelet_01pkt/summary.md) | 4160 | **45.289** | -0.387 | 5.853 | 6.959 | 271 |
-| [messagelet_02pkt](artifacts/20261016-163734/cases/messagelet_02pkt/summary.md) | 8320 | **40.606** | -5.070 | 5.769 | 7.237 | 245 |
-| [messagelet_03pkt](artifacts/20261016-163734/cases/messagelet_03pkt/summary.md) | 12480 | **40.086** | -5.590 | 5.904 | 7.469 | 162 |
-| [messagelet_04pkt](artifacts/20261016-163734/cases/messagelet_04pkt/summary.md) | 16640 | **40.148** | -5.528 | 5.622 | 6.716 | 192 |
-| [messagelet_05pkt](artifacts/20261016-163734/cases/messagelet_05pkt/summary.md) | 20800 | **40.304** | -5.372 | 5.815 | 7.277 | 122 |
-| [messagelet_06pkt](artifacts/20261016-163734/cases/messagelet_06pkt/summary.md) | 24960 | **44.650** | -1.026 | 5.818 | 7.277 | 120 |
-| [messagelet_07pkt](artifacts/20261016-163734/cases/messagelet_07pkt/summary.md) | 29120 | **44.678** | -0.998 | 5.949 | 7.803 | 85 |
-| [messagelet_08pkt](artifacts/20261016-163734/cases/messagelet_08pkt/summary.md) | 33280 | **45.420** | -0.256 | 5.708 | 7.549 | 63 |
-| [messagelet_09pkt](artifacts/20261016-163734/cases/messagelet_09pkt/summary.md) | 37440 | **44.212** | -1.464 | 5.838 | 7.271 | 55 |
-| [messagelet_10pkt](artifacts/20261016-163734/cases/messagelet_10pkt/summary.md) | 41600 | **39.909** | -5.767 | 5.776 | 6.944 | 107 |
-| [messagelet_11pkt](artifacts/20261016-163734/cases/messagelet_11pkt/summary.md) | 45760 | **43.594** | -2.082 | 5.876 | 7.356 | 84 |
-| [messagelet_12pkt](artifacts/20261016-163734/cases/messagelet_12pkt/summary.md) | 49920 | **45.638** | -0.038 | 5.781 | 7.130 | 81 |
-| [messagelet_13pkt](artifacts/20261016-163734/cases/messagelet_13pkt/summary.md) | 54080 | **40.381** | -5.295 | 5.919 | 7.447 | 70 |
-| [messagelet_14pkt](artifacts/20261016-163734/cases/messagelet_14pkt/summary.md) | 58240 | **42.463** | -3.213 | 6.197 | 8.220 | 39 |
-| [messagelet_15pkt](artifacts/20261016-163734/cases/messagelet_15pkt/summary.md) | 62400 | **44.012** | -1.664 | 6.287 | 8.954 | 21 |
-| [messagelet_16pkt](artifacts/20261016-163734/cases/messagelet_16pkt/summary.md) | 66560 | **45.676** | +0.000 | 6.426 | 9.518 | 0 |
-| [flow](artifacts/20261016-163734/cases/flow/summary.md) | — | **45.676** | +0.000 | 6.426 | 9.518 | 0 |
+## 平均性能与波动
 
-CCT 是 12 个 GOAL rank graph finish 的最大值；FCT 来自 `flowsInfo.csv`。P95 使用排序后线性插值；OOO 是各 flow 的 `oooCount` 之和，不表示重传数。
+| 粒度 | Budget (wire bytes) | CCT mean ± SD (µs) | CCT min–max (µs) | ΔCCT vs 同 seed flow mean (µs) | Mean FCT (µs) | Mean seed P95 FCT (µs) | Mean OOO |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| packet | — | **44.364 ± 1.589** | 41.570–45.402 | -0.767 | 5.842 | 7.019 | 284.0 |
+| messagelet_01pkt | 4160 | **44.364 ± 1.589** | 41.570–45.402 | -0.767 | 5.842 | 7.019 | 284.0 |
+| messagelet_02pkt | 8320 | **42.296 ± 2.244** | 40.239–44.884 | -2.835 | 5.724 | 7.011 | 250.8 |
+| messagelet_03pkt | 12480 | **41.139 ± 2.046** | 39.430–44.641 | -3.993 | 5.859 | 7.127 | 199.8 |
+| messagelet_04pkt | 16640 | **40.509 ± 0.755** | 39.566–41.327 | -4.623 | 5.800 | 7.022 | 153.6 |
+| messagelet_05pkt | 20800 | **40.736 ± 1.746** | 38.916–42.754 | -4.396 | 5.868 | 7.071 | 151.8 |
+| messagelet_06pkt | 24960 | **42.997 ± 1.738** | 40.543–44.691 | -2.135 | 5.818 | 7.297 | 123.8 |
+| messagelet_07pkt | 29120 | **43.567 ± 2.553** | 40.923–47.067 | -1.565 | 5.917 | 7.987 | 95.6 |
+| messagelet_08pkt | 33280 | **44.565 ± 1.335** | 43.023–46.026 | -0.566 | 5.796 | 7.303 | 70.6 |
+| messagelet_09pkt | 37440 | **43.618 ± 0.934** | 42.011–44.333 | -1.514 | 5.789 | 7.192 | 64.6 |
+| messagelet_10pkt | 41600 | **43.578 ± 2.641** | 39.909–46.246 | -1.554 | 5.790 | 6.982 | 76.2 |
+| messagelet_11pkt | 45760 | **42.707 ± 1.896** | 40.531–45.430 | -2.424 | 5.818 | 7.252 | 76.2 |
+| messagelet_12pkt | 49920 | **41.997 ± 2.526** | 39.568–45.638 | -3.135 | 5.835 | 7.325 | 68.8 |
+| messagelet_13pkt | 54080 | **42.380 ± 2.645** | 40.381–46.780 | -2.751 | 5.874 | 7.628 | 56.2 |
+| messagelet_14pkt | 58240 | **44.709 ± 2.681** | 41.933–48.145 | -0.423 | 6.103 | 8.198 | 37.8 |
+| messagelet_15pkt | 62400 | **44.512 ± 2.188** | 42.745–48.208 | -0.620 | 6.315 | 9.005 | 21.8 |
+| messagelet_16pkt | 66560 | **45.132 ± 1.518** | 43.456–46.540 | +0.000 | 6.350 | 9.473 | 0.0 |
+| flow | — | **45.132 ± 1.518** | 43.456–46.540 | +0.000 | 6.350 | 9.473 | 0.0 |
 
-## 决策频率与选路
+均值等权汇总 5 个 seed；SD 为 seed 间样本标准差（n−1），不是置信区间。CCT 为最大 GOAL rank graph finish。FCT 先在每次运行的 60 条 flow 上统计，表中 P95 是各 seed 的 P95 再取均值，不是混合 300 条 flow 的 P95。OOO 为每次运行的 `oooCount` 总和再取均值。
 
-| Sweep point | Decisions | Mean packets / decision | Valiant decisions | Valiant decision % | New packets on Valiant | Packet-weighted Valiant % |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| packet | 960 | 1.00 | 300 | 31.25% | 300 / 960 | 31.25% |
-| messagelet_01pkt | 960 | 1.00 | 300 | 31.25% | 300 / 960 | 31.25% |
-| messagelet_02pkt | 480 | 2.00 | 151 | 31.46% | 302 / 960 | 31.46% |
-| messagelet_03pkt | 360 | 2.67 | 119 | 33.06% | 309 / 960 | 32.19% |
-| messagelet_04pkt | 240 | 4.00 | 71 | 29.58% | 284 / 960 | 29.58% |
-| messagelet_05pkt | 240 | 4.00 | 72 | 30.00% | 252 / 960 | 26.25% |
-| messagelet_06pkt | 180 | 5.33 | 46 | 25.56% | 236 / 960 | 24.58% |
-| messagelet_07pkt | 180 | 5.33 | 47 | 26.11% | 244 / 960 | 25.42% |
-| messagelet_08pkt | 120 | 8.00 | 34 | 28.33% | 272 / 960 | 28.33% |
-| messagelet_09pkt | 120 | 8.00 | 33 | 27.50% | 251 / 960 | 26.15% |
-| messagelet_10pkt | 120 | 8.00 | 34 | 28.33% | 264 / 960 | 27.50% |
-| messagelet_11pkt | 120 | 8.00 | 36 | 30.00% | 264 / 960 | 27.50% |
-| messagelet_12pkt | 120 | 8.00 | 33 | 27.50% | 228 / 960 | 23.75% |
-| messagelet_13pkt | 120 | 8.00 | 34 | 28.33% | 252 / 960 | 26.25% |
-| messagelet_14pkt | 120 | 8.00 | 40 | 33.33% | 260 / 960 | 27.08% |
-| messagelet_15pkt | 120 | 8.00 | 40 | 33.33% | 236 / 960 | 24.58% |
-| messagelet_16pkt | 60 | 16.00 | 15 | 25.00% | 240 / 960 | 25.00% |
-| flow | 60 | 16.00 | 15 | 25.00% | 240 / 960 | 25.00% |
+## 每个种子的 CCT
 
-每条 flow 的 64 KiB payload 对应 16 个完整的 4160-byte 包（含 64-byte header）。messagelet 预算按完整 packet 的 wire bytes 设置为 `N × 4160`。N 不整除 16 时，末组较短，因此同时报告决策占比和按逻辑新数据包数加权的选路占比；重传保留原包标签，不触发新决策。
+| 粒度 | 13/33 (µs) | 14/34 (µs) | 15/35 (µs) | 16/36 (µs) | 17/37 (µs) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| packet | 45.289 | 41.570 | 45.402 | 44.840 | 44.721 |
+| messagelet_01pkt | 45.289 | 41.570 | 45.402 | 44.840 | 44.721 |
+| messagelet_02pkt | 40.606 | 44.563 | 44.884 | 41.190 | 40.239 |
+| messagelet_03pkt | 40.086 | 40.473 | 41.065 | 44.641 | 39.430 |
+| messagelet_04pkt | 40.148 | 40.264 | 41.239 | 41.327 | 39.566 |
+| messagelet_05pkt | 40.304 | 42.368 | 39.337 | 38.916 | 42.754 |
+| messagelet_06pkt | 44.650 | 42.723 | 44.691 | 40.543 | 42.378 |
+| messagelet_07pkt | 44.678 | 40.923 | 43.936 | 41.231 | 47.067 |
+| messagelet_08pkt | 45.420 | 43.023 | 43.287 | 45.070 | 46.026 |
+| messagelet_09pkt | 44.212 | 42.011 | 43.798 | 44.333 | 43.734 |
+| messagelet_10pkt | 39.909 | 46.246 | 44.659 | 45.291 | 41.784 |
+| messagelet_11pkt | 43.594 | 40.531 | 42.450 | 45.430 | 41.532 |
+| messagelet_12pkt | 45.638 | 39.568 | 43.568 | 40.688 | 40.521 |
+| messagelet_13pkt | 40.381 | 46.780 | 42.916 | 40.793 | 41.032 |
+| messagelet_14pkt | 42.463 | 41.933 | 44.287 | 48.145 | 46.715 |
+| messagelet_15pkt | 44.012 | 48.208 | 43.060 | 44.535 | 42.745 |
+| messagelet_16pkt | 45.676 | 46.423 | 46.540 | 43.563 | 43.456 |
+| flow | 45.676 | 46.423 | 46.540 | 43.563 | 43.456 |
 
-## 各 collective 的 graph finish
+## 平均决策与选路
 
-| Sweep point | Ring all-reduce (µs) | Tree all-reduce (µs) | Direct all-to-all (µs) |
+| 粒度 | Decisions / seed | Mean packets / decision | Mean Valiant decision % | Mean packet-weighted Valiant % | Distinct routing outcomes |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| packet | 960 | 1.00 | 31.19% | 31.19% | 5 |
+| messagelet_01pkt | 960 | 1.00 | 31.19% | 31.19% | 5 |
+| messagelet_02pkt | 480 | 2.00 | 30.08% | 30.08% | 5 |
+| messagelet_03pkt | 360 | 2.67 | 31.83% | 30.77% | 5 |
+| messagelet_04pkt | 240 | 4.00 | 29.83% | 29.83% | 5 |
+| messagelet_05pkt | 240 | 4.00 | 29.75% | 27.85% | 5 |
+| messagelet_06pkt | 180 | 5.33 | 28.56% | 27.17% | 5 |
+| messagelet_07pkt | 180 | 5.33 | 28.89% | 25.73% | 5 |
+| messagelet_08pkt | 120 | 8.00 | 30.17% | 30.17% | 5 |
+| messagelet_09pkt | 120 | 8.00 | 29.83% | 28.65% | 5 |
+| messagelet_10pkt | 120 | 8.00 | 30.17% | 28.38% | 5 |
+| messagelet_11pkt | 120 | 8.00 | 30.83% | 27.65% | 5 |
+| messagelet_12pkt | 120 | 8.00 | 30.50% | 26.58% | 5 |
+| messagelet_13pkt | 120 | 8.00 | 31.00% | 26.62% | 5 |
+| messagelet_14pkt | 120 | 8.00 | 31.50% | 24.88% | 5 |
+| messagelet_15pkt | 120 | 8.00 | 32.67% | 24.50% | 5 |
+| messagelet_16pkt | 60 | 16.00 | 23.67% | 23.67% | 5 |
+| flow | 60 | 16.00 | 23.67% | 23.67% | 5 |
+
+messagelet 预算为 N × 4160 bytes；每条 flow 是 16 包，末组可以较短。按新数据包数加权的 Valiant 占比反映不等长分组；重传沿用原标签，不触发新决策。
+
+## 平均 collective graph finish
+
+| 粒度 | Ring all-reduce (µs) | Tree all-reduce (µs) | Direct all-to-all (µs) |
 | --- | ---: | ---: | ---: |
-| packet | 38.499 | 45.289 | 39.178 |
-| messagelet_01pkt | 38.499 | 45.289 | 39.178 |
-| messagelet_02pkt | 36.845 | 40.606 | 39.887 |
-| messagelet_03pkt | 38.917 | 40.085 | 40.086 |
-| messagelet_04pkt | 35.210 | 39.423 | 40.148 |
-| messagelet_05pkt | 38.067 | 40.304 | 39.788 |
-| messagelet_06pkt | 38.661 | 44.650 | 37.860 |
-| messagelet_07pkt | 39.455 | 44.678 | 40.798 |
-| messagelet_08pkt | 39.959 | 45.420 | 40.293 |
-| messagelet_09pkt | 40.828 | 44.212 | 40.078 |
-| messagelet_10pkt | 39.909 | 39.159 | 36.496 |
-| messagelet_11pkt | 37.558 | 43.594 | 41.188 |
-| messagelet_12pkt | 39.261 | 45.638 | 37.585 |
-| messagelet_13pkt | 40.381 | 38.870 | 40.213 |
-| messagelet_14pkt | 42.463 | 41.052 | 42.121 |
-| messagelet_15pkt | 43.011 | 43.262 | 44.012 |
-| messagelet_16pkt | 45.676 | 43.962 | 42.790 |
-| flow | 45.676 | 43.962 | 42.790 |
+| packet | 38.249 | 44.364 | 39.349 |
+| messagelet_01pkt | 38.249 | 44.364 | 39.349 |
+| messagelet_02pkt | 36.947 | 42.296 | 39.093 |
+| messagelet_03pkt | 38.239 | 41.139 | 39.561 |
+| messagelet_04pkt | 37.578 | 40.275 | 39.295 |
+| messagelet_05pkt | 38.559 | 40.543 | 39.208 |
+| messagelet_06pkt | 38.062 | 42.997 | 39.524 |
+| messagelet_07pkt | 38.977 | 43.567 | 40.783 |
+| messagelet_08pkt | 38.801 | 44.565 | 38.903 |
+| messagelet_09pkt | 39.105 | 43.618 | 38.265 |
+| messagelet_10pkt | 38.735 | 43.428 | 37.388 |
+| messagelet_11pkt | 38.042 | 42.707 | 38.597 |
+| messagelet_12pkt | 38.880 | 41.746 | 38.783 |
+| messagelet_13pkt | 38.888 | 41.646 | 39.954 |
+| messagelet_14pkt | 40.393 | 44.426 | 41.374 |
+| messagelet_15pkt | 42.780 | 44.253 | 43.354 |
+| messagelet_16pkt | 43.459 | 44.363 | 42.500 |
+| flow | 43.459 | 44.363 | 42.500 |
 
-## 控制与复现
+## 校验与原始记录
 
-- 同一 simulator SHA-256：`14057d3ba4d44f8a044a92399460ea095c5c1a68f58e210750a352a65fd2ac9e`。
-- 所有点的 workload binary/GOAL/metadata、拓扑和 placement 哈希一致，并与 exp5.1 输入一致。
-- 实际 simulator 参数和 `globalInfo.csv` 一致；SOURCE 路径策略、nscc/mixed、queue、cwnd 与 path entropy 均固定。
-- 每个点全部 60 条 flow 和 200 个 GOAL task 完成；metadata send 与 transport ID、决策 index、预算和 UGAL-L 代价规则均已核对。
-- 每个点独立重启进程：simulator seed 13 / per-switch UGAL RNG seed 33。粒度改变后 RNG 消耗与队列演化也会改变，这是本次策略粒度变化的一部分。
-- Slack 仅在每次仿真后离线分析，不进入 policy。
+- 全部运行使用同一 binary SHA-256：`4935169c33cdc71f1084d2d6bd823625ce76a9cf2180be744376c71cc68ec7ad`。
+- 两个独立参数分别初始化全局 RNG 和每个 Dragonfly switch 的候选采样 RNG；默认仍是 13/33，UGAL-L 比较规则未改动。
+- 实际执行种子记录于每次运行的 `randomSeeds.csv`；packet 点观测到 **5** 种路由结果。
+- 输入哈希、网络控制、flow/DAG 完成、messagelet index/预算、UGAL-L cost 规则全部通过核对。
+- 每个 seed 的 1 包 messagelet == packet、16 包 messagelet == flow 端点等价校验通过。
+- 每次仿真在独立进程和目录中运行；并行不共享 RNG、输出文件或仿真时钟。Slack 只做离线分析。
 
-- **PASS**：`messagelet_01pkt == packet` 的每组路径以及 flow/DAG/network metrics 完全一致。
-- **PASS**：`messagelet_16pkt == flow` 的每组路径以及 flow/DAG/network metrics 完全一致。
+| Seed pair | 每点原始记录 |
+| --- | --- |
+| 13/33 | [18 个粒度点](artifacts/20261016-165020/seeds/seed_13/cases) |
+| 14/34 | [18 个粒度点](artifacts/20261016-165020/seeds/seed_14/cases) |
+| 15/35 | [18 个粒度点](artifacts/20261016-165020/seeds/seed_15/cases) |
+| 16/36 | [18 个粒度点](artifacts/20261016-165020/seeds/seed_16/cases) |
+| 17/37 | [18 个粒度点](artifacts/20261016-165020/seeds/seed_17/cases) |
 
-这是当前 DAG、拓扑和固定 seed 的单次 sweep；对粒度优劣的解释限于本批结果。完整逐 flow / messagelet 记录见各点的 `output_metrics/network_decisions.csv`，输入快照和固定批次路径见 `manifest.json` 与 `validation.json`。
+`comparison.csv` 包含均值、样本标准差、min/max 与同 seed 配对变化；`per_seed.csv` 保留每次运行的指标。配对百分比先对同 seed flow 求改善率再取均值，与均值之比的改善率分别记录。旧单种子报告保留于旧 artifact。
+
+当前是 5 个 seed 的实测统计，结论限于此计算图、拓扑和种子集合。

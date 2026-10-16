@@ -1,0 +1,477 @@
+queue_id 2 ecn_low 70720 ecn_high 291200
+Chosen filter for metric randomSeeds: Filter: regex=.*, enabled=1, downsampling_ratio=1
+Chosen filter for metric globalInfo: Filter: regex=.*, enabled=1, downsampling_ratio=1
+Initializing static NSCC parameters: _reference_network_linkspeed=100000000000 _reference_network_rtt=12000000 _reference_network_bdp=150000 _target_Qdelay=5485350 _network_linkspeed=400000000000 _network_rtt=7313800 _network_bdp=365690 _qa_gate=2^3 _qa_threshold=2.19414e+07 _scaling_factor_a=2.43793 _scaling_factor_b=0.457112 _alpha=0.00332859 _fi=49928.9 _eta=1497.87 _qa_scaling=1 _gamma=0.8 _fi_scale=0.609483 _delay_alpha=0.0125 _adjust_period_threshold=7313800 _adjust_bytes_threshold=33280
+No of nodes 18
+filename is /home/yuhao/workspace/slack_ws/HTSIM/experiments/exp5s/exp5.3s/artifacts/20261016-165020/seeds/seed_16/cases/messagelet_08pkt/config_snapshot/workload.bin
+[ATLAHS] GOAL rank mapping: gpu-rank (placement=custom, LGS ranks=12, CPUs=1, NICs=1, HTSIM nodes=18)
+Starting 12
+LGS Compute Event - Host 0 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 2 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 6 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 11 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 5 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 1 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 4 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 10 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 9 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 3 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 8 - CPU 0 - StartTime 0 - Time 1 - Size 1
+LGS Compute Event - Host 7 - CPU 0 - StartTime 0 - Time 1 - Size 1
+progress: 0 % (12) - 1 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 1 % (12) - 1 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 2 % (12) - 1 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 3 % (12) - 1 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 4 % (12) - 1 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 5 % (12) - 1 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 6 % (24) - 1 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 1 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 5 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 0 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 9 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 11 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 2 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 6 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 8 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 10 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 7 - CPU 0 - StartTime 1 - Time 2 - Size 1
+LGS Compute Event - Host 3 - CPU 0 - StartTime 1 - Time 2 - Size 1
+progress: 7 % (24) - 2 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 8 % (24) - 2 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 9 % (24) - 2 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 10 % (24) - 2 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 11 % (24) - 2 [sizes: aq: 12 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+progress: 12 % (76) - 2 [sizes: aq: 52 max rq: 0 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 7 - Dst 0 - Tag 0 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000001 - SendTaskId 4 - compared true - h_min 1 - h_val 2 - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 0
+Messagelet route - Src 3 - Dst 8 - Tag 300001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000003 - SendTaskId 9 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Messagelet route - Src 4 - Dst 10 - Tag 2 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000005 - SendTaskId 3 - compared true - h_min 1 - h_val 2 - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 0
+Messagelet route - Src 6 - Dst 1 - Tag 0 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000007 - SendTaskId 4 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 9 - Dst 2 - Tag 300001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000009 - SendTaskId 9 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 1 - Dst 7 - Tag 0 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000011 - SendTaskId 4 - compared true - h_min 1 - h_val 2 - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 0
+Messagelet route - Src 0 - Dst 6 - Tag 0 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000013 - SendTaskId 3 - compared true - h_min 1 - h_val 2 - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 0
+Messagelet route - Src 7 - Dst 0 - Tag 0 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000001 - SendTaskId 4 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 3 - Dst 8 - Tag 300001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000003 - SendTaskId 9 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Messagelet route - Src 4 - Dst 10 - Tag 2 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000005 - SendTaskId 3 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 16640 - q_val_bytes 0
+Messagelet route - Src 6 - Dst 1 - Tag 0 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000007 - SendTaskId 4 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 12480 - q_val_bytes 0
+Messagelet route - Src 9 - Dst 2 - Tag 300001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000009 - SendTaskId 9 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 1 - Dst 7 - Tag 0 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000011 - SendTaskId 4 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Messagelet route - Src 0 - Dst 6 - Tag 0 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000013 - SendTaskId 3 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+progress: 13 % (83) - 2831 [sizes: aq: 6 max rq: 8 max uq: 0: reinserts: (0, 6, 0)]
+Messagelet route - Src 3 - Dst 8 - Tag 200001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000015 - SendTaskId 7 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 124800 - q_val_bytes 0
+Messagelet route - Src 9 - Dst 2 - Tag 100001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000017 - SendTaskId 5 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 58240 - q_val_bytes 0
+Messagelet route - Src 3 - Dst 8 - Tag 200001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000015 - SendTaskId 7 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 91584 - q_val_bytes 4160
+Messagelet route - Src 9 - Dst 2 - Tag 100001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000017 - SendTaskId 5 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 25024 - q_val_bytes 4160
+progress: 14 % (85) - 5660 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 4, 0)]
+Messagelet route - Src 3 - Dst 8 - Tag 1 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000019 - SendTaskId 3 - compared true - h_min 1 - h_val 2 - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 0
+Messagelet route - Src 9 - Dst 2 - Tag 1 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000021 - SendTaskId 3 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Flow uec_6_1 flowId 1000000007 uecSrc 21 finished at 5.89376 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2182 fast_inc 0 eta_inc 0 multi_dec -0 quick_dec -0 nack_dec -0
+Chosen filter for metric flowsInfo: Filter: regex=.*, enabled=1, downsampling_ratio=1
+LGS Flow Event - Host 1 - CPU 0 - StartTime 2 - Time 5893 - Dst 2 - Tag 0 - Size 65536
+progress: 15 % (87) - 5893 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 2, 0)]
+progress: 16 % (88) - 5893 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 5893 - Time 5894 - Size 1
+progress: 17 % (88) - 5894 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 18 % (89) - 5894 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 1 - Dst 7 - Tag 100000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000023 - SendTaskId 6 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Flow uec_4_10 flowId 1000000005 uecSrc 20 finished at 5.93592 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2172 fast_inc 0 eta_inc 0 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 8 - CPU 0 - StartTime 2 - Time 5935 - Dst 9 - Tag 2 - Size 65536
+progress: 19 % (90) - 5935 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 20 % (92) - 5935 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 10 - Dst 4 - Tag 2 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000025 - SendTaskId 4 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 3 - Dst 8 - Tag 1 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000019 - SendTaskId 3 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 4160 - q_val_bytes 0
+Messagelet route - Src 9 - Dst 2 - Tag 1 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000021 - SendTaskId 3 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Flow uec_7_0 flowId 1000000001 uecSrc 18 finished at 6.526 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2235 fast_inc 0 eta_inc 0 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 3 - CPU 0 - StartTime 2 - Time 6526 - Dst 0 - Tag 0 - Size 65536
+progress: 21 % (93) - 6526 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 22 % (94) - 6526 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 0 - CPU 0 - StartTime 6526 - Time 6527 - Size 1
+progress: 23 % (94) - 6527 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 24 % (95) - 6527 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 0 - Dst 6 - Tag 100000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000027 - SendTaskId 5 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 8320 - q_val_bytes 0
+Messagelet route - Src 1 - Dst 7 - Tag 100000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000023 - SendTaskId 6 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Messagelet route - Src 10 - Dst 4 - Tag 2 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000025 - SendTaskId 4 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 8320 - q_val_bytes 0
+Flow uec_9_2 flowId 1000000009 uecSrc 22 finished at 6.6092 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2148 fast_inc 0 eta_inc 0 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 6 - CPU 0 - StartTime 2 - Time 6609 - Dst 4 - Tag 300001 - Size 65536
+progress: 25 % (96) - 6609 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 26 % (98) - 6609 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 6609 - Time 6610 - Size 1
+progress: 27 % (98) - 6610 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 0 - Dst 6 - Tag 100000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000027 - SendTaskId 5 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 24960 - q_val_bytes 8320
+Flow uec_1_7 flowId 1000000011 uecSrc 23 finished at 7.88072 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2200 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 2 - CPU 0 - StartTime 2 - Time 7880 - Dst 3 - Tag 0 - Size 65536
+progress: 28 % (98) - 7880 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 29 % (99) - 7880 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 7880 - Time 7881 - Size 1
+progress: 30 % (99) - 7881 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 31 % (100) - 7881 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 7 - Dst 0 - Tag 100000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000029 - SendTaskId 6 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Flow uec_0_6 flowId 1000000013 uecSrc 24 finished at 7.9652 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2140 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 0 - CPU 0 - StartTime 2 - Time 7965 - Dst 1 - Tag 0 - Size 65536
+progress: 32 % (101) - 7965 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 33 % (102) - 7965 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 1 - CPU 0 - StartTime 7965 - Time 7966 - Size 1
+progress: 34 % (102) - 7966 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 35 % (103) - 7966 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 6 - Dst 1 - Tag 100000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000031 - SendTaskId 6 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Flow uec_3_8 flowId 1000000003 uecSrc 19 finished at 8.04968 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1494 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 7 - CPU 0 - StartTime 2 - Time 8049 - Dst 5 - Tag 300001 - Size 65536
+progress: 36 % (104) - 8049 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 37 % (106) - 8049 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 5 - CPU 0 - StartTime 8049 - Time 8050 - Size 1
+progress: 38 % (106) - 8050 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 39 % (107) - 8050 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 8 - Dst 2 - Tag 300001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000033 - SendTaskId 18 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 12480 - q_val_bytes 0
+progress: 40 % (108) - 8489 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 9 - Dst 2 - Tag 200001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000035 - SendTaskId 7 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 3 - Dst 8 - Tag 100001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000037 - SendTaskId 5 - compared true - h_min 1 - h_val 2 - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 24960
+Flow uec_9_2 flowId 1000000017 uecSrc 26 finished at 8.5476 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3610 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 6 - CPU 0 - StartTime 2831 - Time 8547 - Dst 4 - Tag 100001 - Size 65536
+progress: 41 % (110) - 8547 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 42 % (112) - 8547 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 8547 - Time 8548 - Size 1
+Messagelet route - Src 7 - Dst 0 - Tag 100000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000029 - SendTaskId 6 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+progress: 43 % (112) - 8548 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 6 - Dst 1 - Tag 100000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000031 - SendTaskId 6 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 8 - Dst 2 - Tag 300001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000033 - SendTaskId 18 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 12480 - q_val_bytes 4160
+progress: 44 % (112) - 8723 [sizes: aq: 0 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 45 % (112) - 8764 [sizes: aq: 0 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_3_8 flowId 1000000015 uecSrc 25 finished at 8.80232 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3468 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 7 - CPU 0 - StartTime 2831 - Time 8802 - Dst 5 - Tag 200001 - Size 65536
+progress: 46 % (112) - 8802 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 47 % (114) - 8802 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 5 - CPU 0 - StartTime 8802 - Time 8803 - Size 1
+progress: 48 % (114) - 8803 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 49 % (115) - 8803 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 9 - Dst 2 - Tag 200001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000035 - SendTaskId 7 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 3 - Dst 8 - Tag 100001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000037 - SendTaskId 5 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 4160 - q_val_bytes 0
+progress: 50 % (115) - 9356 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 1, 0)]
+progress: 51 % (115) - 10710 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 52 % (115) - 10795 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 53 % (115) - 10879 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 8 - Dst 2 - Tag 200001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000039 - SendTaskId 13 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 83200 - q_val_bytes 0
+Flow uec_9_2 flowId 1000000021 uecSrc 28 finished at 10.9386 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3601 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 6 - CPU 0 - StartTime 5660 - Time 10938 - Dst 4 - Tag 1 - Size 65536
+progress: 54 % (116) - 10938 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 55 % (118) - 10938 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 10938 - Time 10939 - Size 1
+progress: 56 % (118) - 10939 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_1_7 flowId 1000000023 uecSrc 29 finished at 11.0189 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3518 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 2 - CPU 0 - StartTime 5894 - Time 11018 - Dst 3 - Tag 100000 - Size 65536
+progress: 57 % (118) - 11018 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 58 % (119) - 11018 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 11018 - Time 11019 - Size 1
+progress: 59 % (119) - 11019 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 7 - Dst 0 - Tag 200000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000041 - SendTaskId 8 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+progress: 60 % (121) - 11318 [sizes: aq: 0 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 8 - Dst 2 - Tag 200001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000039 - SendTaskId 13 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 49920 - q_val_bytes 4160
+Flow uec_10_4 flowId 1000000025 uecSrc 30 finished at 11.6206 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3305 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 9 - CPU 0 - StartTime 5935 - Time 11620 - Dst 8 - Tag 2 - Size 65536
+progress: 61 % (123) - 11620 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 4 - Dst 5 - Tag 2 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000043 - SendTaskId 4 - policy ugal_l
+Messagelet route - Src 10 - Dst 5 - Tag 2 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000045 - SendTaskId 5 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 7 - Dst 0 - Tag 200000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000041 - SendTaskId 8 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Flow uec_3_8 flowId 1000000019 uecSrc 27 finished at 11.7741 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3303 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 7 - CPU 0 - StartTime 5660 - Time 11774 - Dst 5 - Tag 1 - Size 65536
+progress: 62 % (125) - 11774 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 63 % (127) - 11774 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 5 - CPU 0 - StartTime 11774 - Time 11775 - Size 1
+Messagelet route - Src 4 - Dst 5 - Tag 2 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000043 - SendTaskId 4 - policy ugal_l
+Messagelet route - Src 10 - Dst 5 - Tag 2 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000045 - SendTaskId 5 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 49920 - q_val_bytes 4160
+Flow uec_0_6 flowId 1000000027 uecSrc 31 finished at 12.6957 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2707 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 0 - CPU 0 - StartTime 6527 - Time 12695 - Dst 1 - Tag 100000 - Size 65536
+progress: 64 % (129) - 12695 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 1, 0)]
+LGS Compute Event - Host 1 - CPU 0 - StartTime 12695 - Time 12696 - Size 1
+Messagelet route - Src 6 - Dst 1 - Tag 200000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000047 - SendTaskId 8 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 70720 - q_val_bytes 4160
+Messagelet route - Src 6 - Dst 1 - Tag 200000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000047 - SendTaskId 8 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 58240 - q_val_bytes 8320
+progress: 65 % (131) - 13708 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 8 - Dst 2 - Tag 1 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000049 - SendTaskId 3 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 41600 - q_val_bytes 16640
+Flow uec_4_5 flowId 1000000043 uecSrc 39 finished at 14.1375 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 9492 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 8 - CPU 0 - StartTime 11620 - Time 14137 - Dst 10 - Tag 2 - Size 65536
+Flow uec_8_2 flowId 1000000033 uecSrc 34 finished at 14.151 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2804 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 8050 - Time 14151 - Dst 4 - Tag 300001 - Size 65536
+progress: 66 % (136) - 14151 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 14151 - Time 14152 - Size 1
+Messagelet route - Src 5 - Dst 4 - Tag 2 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000051 - SendTaskId 5 - policy ugal_l
+progress: 67 % (137) - 14152 [sizes: aq: 1 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 68 % (139) - 14152 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 2 - Dst 8 - Tag 300001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000053 - SendTaskId 22 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Flow uec_3_8 flowId 1000000037 uecSrc 36 finished at 14.1972 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3390 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 7 - CPU 0 - StartTime 8489 - Time 14197 - Dst 5 - Tag 100001 - Size 65536
+progress: 69 % (140) - 14197 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 1, 0)]
+progress: 70 % (142) - 14197 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 5 - CPU 0 - StartTime 14197 - Time 14198 - Size 1
+progress: 71 % (143) - 14198 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 8 - Dst 2 - Tag 1 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000049 - SendTaskId 3 - compared true - h_min 1 - h_val 2 - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 8320 - q_val_bytes 20800
+Flow uec_7_0 flowId 1000000029 uecSrc 32 finished at 14.4147 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2404 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 3 - CPU 0 - StartTime 7881 - Time 14414 - Dst 0 - Tag 100000 - Size 65536
+LGS Compute Event - Host 0 - CPU 0 - StartTime 14414 - Time 14415 - Size 1
+progress: 72 % (145) - 14415 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 1, 0)]
+Messagelet route - Src 0 - Dst 6 - Tag 200000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000055 - SendTaskId 7 - compared true - h_min 1 - h_val 2 - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 0
+Flow uec_6_1 flowId 1000000031 uecSrc 33 finished at 14.5811 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2329 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 1 - CPU 0 - StartTime 7966 - Time 14581 - Dst 2 - Tag 100000 - Size 65536
+progress: 73 % (147) - 14581 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 14581 - Time 14582 - Size 1
+Messagelet route - Src 1 - Dst 7 - Tag 200000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000057 - SendTaskId 8 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Messagelet route - Src 5 - Dst 4 - Tag 2 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000051 - SendTaskId 5 - policy ugal_l
+Messagelet route - Src 2 - Dst 8 - Tag 300001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000053 - SendTaskId 22 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 4160 - q_val_bytes 0
+Messagelet route - Src 0 - Dst 6 - Tag 200000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000055 - SendTaskId 7 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Flow uec_9_2 flowId 1000000035 uecSrc 35 finished at 15.1635 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1762 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 6 - CPU 0 - StartTime 8489 - Time 15163 - Dst 4 - Tag 200001 - Size 65536
+progress: 74 % (149) - 15163 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 75 % (151) - 15163 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 15163 - Time 15164 - Size 1
+Messagelet route - Src 1 - Dst 7 - Tag 200000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000057 - SendTaskId 8 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 20800 - q_val_bytes 0
+Messagelet route - Src 8 - Dst 2 - Tag 100001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000059 - SendTaskId 8 - compared true - h_min 1 - h_val 2 - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 0
+Flow uec_8_2 flowId 1000000039 uecSrc 37 finished at 16.6262 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2898 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 10879 - Time 16626 - Dst 4 - Tag 200001 - Size 65536
+progress: 76 % (154) - 16626 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 16626 - Time 16627 - Size 1
+progress: 77 % (156) - 16627 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_5_4 flowId 1000000051 uecSrc 43 finished at 16.6705 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 9444 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 10 - CPU 0 - StartTime 14151 - Time 16670 - Dst 8 - Tag 2 - Size 65536
+progress: 78 % (158) - 16670 [sizes: aq: 5 max rq: 8 max uq: 0: reinserts: (0, 2, 0)]
+Messagelet route - Src 4 - Dst 11 - Tag 2 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000061 - SendTaskId 5 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 41600 - q_val_bytes 8320
+progress: 79 % (159) - 16980 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 2 - Dst 8 - Tag 200001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000063 - SendTaskId 16 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Messagelet route - Src 8 - Dst 2 - Tag 100001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000059 - SendTaskId 8 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Flow uec_7_0 flowId 1000000041 uecSrc 38 finished at 17.2969 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2943 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 3 - CPU 0 - StartTime 11019 - Time 17296 - Dst 0 - Tag 200000 - Size 65536
+progress: 80 % (161) - 17296 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 2, 0)]
+LGS Compute Event - Host 0 - CPU 0 - StartTime 17296 - Time 17297 - Size 1
+Messagelet route - Src 0 - Dst 6 - Tag 300000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000065 - SendTaskId 9 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Messagelet route - Src 4 - Dst 11 - Tag 2 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000061 - SendTaskId 5 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+progress: 81 % (163) - 17411 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_10_5 flowId 1000000045 uecSrc 40 finished at 17.6322 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2761 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 9 - CPU 0 - StartTime 11620 - Time 17632 - Dst 10 - Tag 2 - Size 65536
+progress: 82 % (165) - 17632 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 5 - Dst 10 - Tag 2 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000067 - SendTaskId 6 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Messagelet route - Src 2 - Dst 8 - Tag 200001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000063 - SendTaskId 16 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Messagelet route - Src 0 - Dst 6 - Tag 300000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000065 - SendTaskId 9 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Messagelet route - Src 5 - Dst 10 - Tag 2 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000067 - SendTaskId 6 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 49920 - q_val_bytes 0
+Flow uec_6_1 flowId 1000000047 uecSrc 41 finished at 18.9496 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2725 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 1 - CPU 0 - StartTime 12696 - Time 18949 - Dst 2 - Tag 200000 - Size 65536
+progress: 83 % (167) - 18949 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 18949 - Time 18950 - Size 1
+Messagelet route - Src 1 - Dst 7 - Tag 300000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000069 - SendTaskId 10 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+progress: 84 % (169) - 19366 [sizes: aq: 2 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Flow uec_8_2 flowId 1000000049 uecSrc 42 finished at 19.4513 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3104 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 13708 - Time 19451 - Dst 4 - Tag 1 - Size 65536
+progress: 85 % (171) - 19451 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 19451 - Time 19452 - Size 1
+progress: 86 % (173) - 19452 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 1 - Dst 7 - Tag 300000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000069 - SendTaskId 10 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 104000 - q_val_bytes 0
+Messagelet route - Src 2 - Dst 9 - Tag 300001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000071 - SendTaskId 24 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Flow uec_2_8 flowId 1000000053 uecSrc 44 finished at 20.0069 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3329 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 14152 - Time 20006 - Dst 5 - Tag 300001 - Size 65536
+progress: 87 % (175) - 20006 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 5, 0)]
+Messagelet route - Src 8 - Dst 3 - Tag 300001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000073 - SendTaskId 21 - compared true - h_min 1 - h_val 2 - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 0
+Flow uec_0_6 flowId 1000000055 uecSrc 45 finished at 20.1077 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3231 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 0 - CPU 0 - StartTime 14415 - Time 20107 - Dst 1 - Tag 200000 - Size 65536
+progress: 88 % (177) - 20107 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 1 - CPU 0 - StartTime 20107 - Time 20108 - Size 1
+Messagelet route - Src 6 - Dst 1 - Tag 300000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000075 - SendTaskId 10 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+progress: 89 % (179) - 20126 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 2 - Dst 9 - Tag 300001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000071 - SendTaskId 24 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 95680 - q_val_bytes 4160
+Flow uec_1_7 flowId 1000000057 uecSrc 46 finished at 20.5061 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3083 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 2 - CPU 0 - StartTime 14582 - Time 20506 - Dst 3 - Tag 200000 - Size 65536
+LGS Compute Event - Host 3 - CPU 0 - StartTime 20506 - Time 20507 - Size 1
+progress: 90 % (181) - 20507 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 7 - Dst 0 - Tag 300000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000077 - SendTaskId 10 - compared true - h_min 1 - h_val 2 - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 0
+Messagelet route - Src 8 - Dst 3 - Tag 300001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000073 - SendTaskId 21 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 6 - Dst 1 - Tag 300000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000075 - SendTaskId 10 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 7 - Dst 0 - Tag 300000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000077 - SendTaskId 10 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Flow uec_8_2 flowId 1000000059 uecSrc 47 finished at 21.2868 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3804 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 16537 - Time 21286 - Dst 4 - Tag 100001 - Size 65536
+progress: 91 % (184) - 21286 [sizes: aq: 5 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 21286 - Time 21287 - Size 1
+progress: 92 % (186) - 21287 [sizes: aq: 5 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 2 - Dst 9 - Tag 1 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000079 - SendTaskId 6 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 16640 - q_val_bytes 0
+progress: 93 % (187) - 22835 [sizes: aq: 4 max rq: 8 max uq: 0: reinserts: (0, 6, 0)]
+Flow uec_4_11 flowId 1000000061 uecSrc 48 finished at 22.9815 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3091 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 8 - CPU 0 - StartTime 16670 - Time 22981 - Dst 11 - Tag 2 - Size 65536
+progress: 94 % (189) - 22981 [sizes: aq: 6 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 11 - Dst 4 - Tag 2 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000081 - SendTaskId 6 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 2 - Dst 9 - Tag 1 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000079 - SendTaskId 6 - compared true - h_min 1 - h_val 2 - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 4160
+Messagelet route - Src 11 - Dst 4 - Tag 2 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000081 - SendTaskId 6 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Flow uec_5_10 flowId 1000000067 uecSrc 51 finished at 23.9044 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2830 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 10 - CPU 0 - StartTime 17632 - Time 23904 - Dst 9 - Tag 2 - Size 65536
+progress: 95 % (192) - 23904 [sizes: aq: 6 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 10 - Dst 11 - Tag 2 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000083 - SendTaskId 6 - policy ugal_l
+Messagelet route - Src 5 - Dst 11 - Tag 2 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000085 - SendTaskId 7 - compared true - h_min 1 - h_val 2 - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 4160
+Flow uec_2_8 flowId 1000000063 uecSrc 49 finished at 23.9889 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3255 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 16981 - Time 23988 - Dst 5 - Tag 200001 - Size 65536
+progress: 96 % (194) - 23988 [sizes: aq: 5 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+progress: 97 % (195) - 23988 [sizes: aq: 5 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 8 - Dst 3 - Tag 200001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000087 - SendTaskId 16 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Flow uec_0_6 flowId 1000000065 uecSrc 50 finished at 24.3255 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2796 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 0 - CPU 0 - StartTime 17297 - Time 24325 - Dst 1 - Tag 300000 - Size 65536
+progress: 98 % (197) - 24325 [sizes: aq: 5 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 1 - CPU 0 - StartTime 24325 - Time 24326 - Size 1
+Messagelet route - Src 6 - Dst 1 - Tag 400000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000089 - SendTaskId 12 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 54080 - q_val_bytes 0
+Messagelet route - Src 10 - Dst 11 - Tag 2 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000083 - SendTaskId 6 - policy ugal_l
+Messagelet route - Src 5 - Dst 11 - Tag 2 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000085 - SendTaskId 7 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 8320 - q_val_bytes 0
+Messagelet route - Src 8 - Dst 3 - Tag 200001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000087 - SendTaskId 16 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 6 - Dst 1 - Tag 400000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000089 - SendTaskId 12 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Flow uec_1_7 flowId 1000000069 uecSrc 52 finished at 25.3316 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2305 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 2 - CPU 0 - StartTime 18950 - Time 25331 - Dst 3 - Tag 300000 - Size 65536
+progress: 99 % (199) - 25331 [sizes: aq: 5 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 25331 - Time 25332 - Size 1
+progress: 100 % (201) - 25332 [sizes: aq: 5 max rq: 8 max uq: 0: reinserts: (0, 0, 0)]
+Messagelet route - Src 7 - Dst 0 - Tag 400000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000091 - SendTaskId 12 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 70720 - q_val_bytes 4160
+Messagelet route - Src 2 - Dst 9 - Tag 100001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000093 - SendTaskId 12 - compared true - h_min 1 - h_val 2 - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 4160
+progress: 101 % (203) - 25810 [sizes: aq: 3 max rq: 8 max uq: 0: reinserts: (0, 3, 0)]
+Messagelet route - Src 7 - Dst 0 - Tag 400000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000091 - SendTaskId 12 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 2 - Dst 9 - Tag 100001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000093 - SendTaskId 12 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Flow uec_2_9 flowId 1000000071 uecSrc 53 finished at 26.1687 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2406 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 19810 - Time 26168 - Dst 6 - Tag 300001 - Size 65536
+Flow uec_10_11 flowId 1000000083 uecSrc 59 finished at 26.5878 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 9492 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 9 - CPU 0 - StartTime 23904 - Time 26587 - Dst 11 - Tag 2 - Size 65536
+Flow uec_8_3 flowId 1000000073 uecSrc 54 finished at 26.6294 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3295 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 20006 - Time 26629 - Dst 7 - Tag 300001 - Size 65536
+Flow uec_6_1 flowId 1000000075 uecSrc 55 finished at 26.8816 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2270 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 1 - CPU 0 - StartTime 20108 - Time 26881 - Dst 2 - Tag 300000 - Size 65536
+LGS Compute Event - Host 2 - CPU 0 - StartTime 26881 - Time 26882 - Size 1
+progress: 102 % (205) - 26882 [sizes: aq: 4 max rq: 8 max uq: 1: reinserts: (0, 0, 0)]
+Messagelet route - Src 1 - Dst 7 - Tag 400000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000095 - SendTaskId 12 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 4160 - q_val_bytes 0
+Flow uec_7_0 flowId 1000000077 uecSrc 56 finished at 27.3534 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2711 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 3 - CPU 0 - StartTime 20507 - Time 27353 - Dst 0 - Tag 300000 - Size 65536
+progress: 103 % (207) - 27353 [sizes: aq: 4 max rq: 8 max uq: 1: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 0 - CPU 0 - StartTime 27353 - Time 27354 - Size 1
+Messagelet route - Src 0 - Dst 6 - Tag 400000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 131073 - Route valiant - TransportFlowId 1000000097 - SendTaskId 11 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 1 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 4160 - q_val_bytes 0
+Messagelet route - Src 1 - Dst 7 - Tag 400000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000095 - SendTaskId 12 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Flow uec_2_9 flowId 1000000079 uecSrc 57 finished at 27.9262 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2701 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 22639 - Time 27926 - Dst 6 - Tag 1 - Size 65536
+progress: 104 % (209) - 27926 [sizes: aq: 4 max rq: 8 max uq: 1: reinserts: (0, 0, 0)]
+Messagelet route - Src 0 - Dst 6 - Tag 400000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000097 - SendTaskId 11 - compared true - h_min 1 - h_val 2 - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 8320
+Messagelet route - Src 2 - Dst 8 - Tag 100001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000099 - SendTaskId 10 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Flow uec_11_4 flowId 1000000081 uecSrc 58 finished at 28.8886 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2929 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 11 - CPU 0 - StartTime 22981 - Time 28888 - Dst 8 - Tag 2 - Size 65536
+progress: 105 % (212) - 28888 [sizes: aq: 4 max rq: 8 max uq: 1: reinserts: (0, 2, 0)]
+LGS Compute Event - Host 8 - CPU 0 - StartTime 28888 - Time 28889 - Size 1
+progress: 106 % (214) - 28888 [sizes: aq: 5 max rq: 8 max uq: 1: reinserts: (0, 0, 0)]
+Messagelet route - Src 11 - Dst 10 - Tag 2 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000101 - SendTaskId 7 - policy ugal_l
+progress: 107 % (215) - 28889 [sizes: aq: 3 max rq: 8 max uq: 1: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 8 - CPU 0 - StartTime 28889 - Time 28890 - Size 1
+Messagelet route - Src 2 - Dst 8 - Tag 100001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000099 - SendTaskId 10 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Messagelet route - Src 11 - Dst 10 - Tag 2 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000101 - SendTaskId 7 - policy ugal_l
+Flow uec_5_11 flowId 1000000085 uecSrc 60 finished at 29.5978 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3300 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 10 - CPU 0 - StartTime 23904 - Time 29597 - Dst 11 - Tag 2 - Size 65536
+Flow uec_2_9 flowId 1000000093 uecSrc 64 finished at 30.0746 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3864 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 25468 - Time 30074 - Dst 6 - Tag 100001 - Size 65536
+Flow uec_8_3 flowId 1000000087 uecSrc 61 finished at 30.3564 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 1077 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 23988 - Time 30356 - Dst 7 - Tag 200001 - Size 65536
+Flow uec_6_1 flowId 1000000089 uecSrc 62 finished at 30.7724 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2748 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 1 - CPU 0 - StartTime 24326 - Time 30772 - Dst 2 - Tag 400000 - Size 65536
+progress: 108 % (217) - 30772 [sizes: aq: 3 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 30772 - Time 30773 - Size 1
+Messagelet route - Src 1 - Dst 7 - Tag 500000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000103 - SendTaskId 14 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+progress: 109 % (219) - 31126 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+Messagelet route - Src 2 - Dst 9 - Tag 200001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000105 - SendTaskId 18 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Flow uec_7_0 flowId 1000000091 uecSrc 63 finished at 31.3625 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2783 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 3 - CPU 0 - StartTime 25332 - Time 31362 - Dst 0 - Tag 400000 - Size 65536
+progress: 110 % (221) - 31362 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 1, 0)]
+LGS Compute Event - Host 0 - CPU 0 - StartTime 31362 - Time 31363 - Size 1
+Messagelet route - Src 0 - Dst 6 - Tag 500000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000107 - SendTaskId 13 - compared true - h_min 1 - h_val 2 - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 0
+Flow uec_11_10 flowId 1000000101 uecSrc 68 finished at 31.4056 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 9492 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 11 - CPU 0 - StartTime 28888 - Time 31405 - Dst 9 - Tag 2 - Size 65536
+progress: 111 % (223) - 31405 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+progress: 112 % (225) - 31405 [sizes: aq: 3 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 9 - CPU 0 - StartTime 31405 - Time 31406 - Size 1
+progress: 113 % (227) - 31405 [sizes: aq: 4 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 9 - CPU 0 - StartTime 31406 - Time 31407 - Size 1
+Messagelet route - Src 1 - Dst 7 - Tag 500000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000103 - SendTaskId 14 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Messagelet route - Src 11 - Dst 5 - Tag 2 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000109 - SendTaskId 8 - compared true - h_min 1 - h_val 2 - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 0
+Messagelet route - Src 2 - Dst 9 - Tag 200001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000105 - SendTaskId 18 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Messagelet route - Src 0 - Dst 6 - Tag 500000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000107 - SendTaskId 13 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Flow uec_1_7 flowId 1000000095 uecSrc 65 finished at 32.156 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3532 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 2 - CPU 0 - StartTime 26882 - Time 32156 - Dst 3 - Tag 400000 - Size 65536
+progress: 114 % (229) - 32156 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 1, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 32156 - Time 32157 - Size 1
+progress: 115 % (231) - 32157 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+Messagelet route - Src 7 - Dst 0 - Tag 500000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000111 - SendTaskId 14 - compared true - h_min 1 - h_val 2 - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 0
+Messagelet route - Src 11 - Dst 5 - Tag 2 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000109 - SendTaskId 8 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 4160 - q_val_bytes 0
+Messagelet route - Src 7 - Dst 0 - Tag 500000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000111 - SendTaskId 14 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 8320 - q_val_bytes 0
+Flow uec_0_6 flowId 1000000097 uecSrc 66 finished at 32.8255 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3393 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 0 - CPU 0 - StartTime 27354 - Time 32825 - Dst 1 - Tag 400000 - Size 65536
+progress: 116 % (233) - 32825 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 1 - CPU 0 - StartTime 32825 - Time 32826 - Size 1
+Messagelet route - Src 6 - Dst 1 - Tag 500000 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000113 - SendTaskId 14 - compared false - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 0 - policy ugal_l
+Messagelet route - Src 6 - Dst 1 - Tag 500000 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000113 - SendTaskId 14 - compared true - h_min 1 - h_val 2 - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 12544 - q_val_bytes 8320
+Flow uec_2_8 flowId 1000000099 uecSrc 67 finished at 33.5192 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3400 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 28297 - Time 33519 - Dst 5 - Tag 100001 - Size 65536
+progress: 117 % (235) - 33519 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+Messagelet route - Src 8 - Dst 3 - Tag 100001 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000115 - SendTaskId 11 - compared true - h_min 1 - h_val 2 - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 16704 - q_val_bytes 12480
+progress: 118 % (237) - 33602 [sizes: aq: 1 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+Messagelet route - Src 2 - Dst 8 - Tag 1 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000117 - SendTaskId 4 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Messagelet route - Src 8 - Dst 3 - Tag 100001 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000115 - SendTaskId 11 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 16704 - q_val_bytes 8320
+Messagelet route - Src 2 - Dst 8 - Tag 1 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 65536 - Route minimum - TransportFlowId 1000000117 - SendTaskId 4 - compared false - hop_one_switch 1 - hop_two_switch 0 - next_min 1 - next_val 1 - policy ugal_l
+Flow uec_1_7 flowId 1000000103 uecSrc 69 finished at 36.957 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3447 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 2 - CPU 0 - StartTime 30773 - Time 36956 - Dst 3 - Tag 500000 - Size 65536
+Flow uec_11_5 flowId 1000000109 uecSrc 72 finished at 37.5817 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3404 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 11 - CPU 0 - StartTime 31717 - Time 37581 - Dst 10 - Tag 2 - Size 65536
+progress: 119 % (240) - 37581 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 10 - CPU 0 - StartTime 37581 - Time 37582 - Size 1
+LGS Compute Event - Host 11 - CPU 0 - StartTime 37581 - Time 37582 - Size 1
+progress: 120 % (242) - 37582 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 11 - CPU 0 - StartTime 37582 - Time 37583 - Size 1
+LGS Compute Event - Host 10 - CPU 0 - StartTime 37582 - Time 37583 - Size 1
+Flow uec_2_9 flowId 1000000105 uecSrc 70 finished at 37.7928 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3039 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 31126 - Time 37792 - Dst 6 - Tag 200001 - Size 65536
+progress: 121 % (243) - 37792 [sizes: aq: 1 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 6 - CPU 0 - StartTime 37792 - Time 37793 - Size 1
+LGS Compute Event - Host 6 - CPU 0 - StartTime 37793 - Time 37794 - Size 1
+Flow uec_0_6 flowId 1000000107 uecSrc 71 finished at 38.0424 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 2781 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 0 - CPU 0 - StartTime 31363 - Time 38042 - Dst 1 - Tag 500000 - Size 65536
+Flow uec_7_0 flowId 1000000111 uecSrc 73 finished at 38.0685 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3277 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 3 - CPU 0 - StartTime 32157 - Time 38068 - Dst 0 - Tag 500000 - Size 65536
+progress: 122 % (246) - 38068 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 0 - CPU 0 - StartTime 38068 - Time 38069 - Size 1
+LGS Compute Event - Host 3 - CPU 0 - StartTime 38068 - Time 38069 - Size 1
+progress: 123 % (248) - 38069 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 3 - CPU 0 - StartTime 38069 - Time 38070 - Size 1
+LGS Compute Event - Host 0 - CPU 0 - StartTime 38069 - Time 38070 - Size 1
+Flow uec_6_1 flowId 1000000113 uecSrc 74 finished at 38.2448 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3557 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 1 - CPU 0 - StartTime 32826 - Time 38244 - Dst 2 - Tag 500000 - Size 65536
+progress: 124 % (250) - 38244 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 2 - CPU 0 - StartTime 38244 - Time 38245 - Size 1
+LGS Compute Event - Host 1 - CPU 0 - StartTime 38244 - Time 38245 - Size 1
+progress: 125 % (252) - 38245 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 1 - CPU 0 - StartTime 38245 - Time 38246 - Size 1
+LGS Compute Event - Host 2 - CPU 0 - StartTime 38245 - Time 38246 - Size 1
+Flow uec_8_3 flowId 1000000115 uecSrc 75 finished at 39.2038 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3170 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 33519 - Time 39203 - Dst 7 - Tag 100001 - Size 65536
+Flow uec_2_8 flowId 1000000117 uecSrc 76 finished at 39.3838 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3125 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 4 - CPU 0 - StartTime 33955 - Time 39383 - Dst 5 - Tag 1 - Size 65536
+progress: 126 % (254) - 39383 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 39383 - Time 39384 - Size 1
+Messagelet route - Src 8 - Dst 3 - Tag 1 - FlowId unassigned - Index 0 - Granularity messagelet - Size 33280 - PathId 0 - Route minimum - TransportFlowId 1000000119 - SendTaskId 6 - compared true - h_min 1 - h_val 2 - hop_one_switch 0 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 0 - q_val_bytes 0
+progress: 127 % (255) - 39384 [sizes: aq: 1 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 4 - CPU 0 - StartTime 39384 - Time 39385 - Size 1
+Messagelet route - Src 8 - Dst 3 - Tag 1 - FlowId unassigned - Index 1 - Granularity messagelet - Size 33280 - PathId 131072 - Route valiant - TransportFlowId 1000000119 - SendTaskId 6 - compared true - h_min 1 - h_val 2 - hop_one_switch 2 - hop_two_switch 0 - next_min 0 - next_val 2 - policy ugal_l - q_min_bytes 4160 - q_val_bytes 0
+Flow uec_8_3 flowId 1000000119 uecSrc 77 finished at 45.0685 total messages 1 total packets 16 RTS 0 total bytes 65536 in_flight now 0 fair_inc 0 prop_inc 3409 fast_inc 0 eta_inc 1497 multi_dec -0 quick_dec -0 nack_dec -0
+LGS Flow Event - Host 5 - CPU 0 - StartTime 39383 - Time 45068 - Dst 7 - Tag 1 - Size 65536
+progress: 128 % (258) - 45068 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 7 - CPU 0 - StartTime 45068 - Time 45069 - Size 1
+LGS Compute Event - Host 5 - CPU 0 - StartTime 45068 - Time 45069 - Size 1
+progress: 129 % (260) - 45069 [sizes: aq: 2 max rq: 8 max uq: 2: reinserts: (0, 0, 0)]
+LGS Compute Event - Host 5 - CPU 0 - StartTime 45069 - Time 45070 - Size 1
+LGS Compute Event - Host 7 - CPU 0 - StartTime 45069 - Time 45070 - Size 1
+It terminates! Htsim time 45070
+PERFORMANCE: Processes: 12 	 Events: 260 	 Time: 0 s 	 Speed: inf ev/s
+Times: 
+Host 0: 38070
+Host 1: 38246
+Host 2: 38246
+Host 3: 38070
+Host 4: 39385
+Host 5: 45070
+Host 6: 37794
+Host 7: 45070
+Host 8: 28890
+Host 9: 31407
+Host 10: 37583
+Host 11: 37583
+Maximum finishing time at host 5: 45070 (4.507e-05 s)
+Chosen filter for metric flow_dag_info: Filter: regex=.*, enabled=1, downsampling_ratio=1
+LGS terminates!

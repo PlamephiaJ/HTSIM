@@ -1,0 +1,6 @@
+{
+  "name": "flow",
+  "granularity": "flow",
+  "packets_per_messagelet": null,
+  "size_bytes": 0
+}

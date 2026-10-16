@@ -1,11 +1,19 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "reference_experiment": "experiments/exp5s/exp5.1",
   "workload": "workload/exp2s/exp2a1_collective_internal_slack/workload.bin",
   "binary": "htsim/sim/build/datacenter/htsim_uec_df",
   "packet_size_bytes": 4160,
   "header_size_bytes": 64,
   "messagelet_packets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+  "seeds": [
+    {"simulation": 13, "routing": 33},
+    {"simulation": 14, "routing": 34},
+    {"simulation": 15, "routing": 35},
+    {"simulation": 16, "routing": 36},
+    {"simulation": 17, "routing": 37}
+  ],
+  "parallel_jobs": 32,
   "network": {
     "sender_cc_algo": "nscc",
     "load_balancing_algo": "mixed",
@@ -13,7 +21,7 @@
     "queue_packets": 88,
     "cwnd_bytes": 0
   },
-  "build_jobs": 4,
+  "build_jobs": 16,
   "slack_ready_window_ns": 100,
   "simulation_timeout_seconds": 60
 }

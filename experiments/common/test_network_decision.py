@@ -179,6 +179,29 @@ class NetworkDecisionTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("requires -routing SOURCE and -goal", result.stderr)
 
+    def test_seed_flags_preserve_defaults_repeat_and_change_routing(self):
+        outputs = []
+        for extra in ((), ("-seed", "13", "-routing_seed", "33"),
+                      ("-seed", "13", "-routing_seed", "33"),
+                      ("-seed", "14", "-routing_seed", "34")):
+            result = self.run_flow(extra=extra)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            outputs.append(([line for line in result.stdout.splitlines() if line.startswith("Messagelet route -")],
+                            {path.name: path.read_bytes() for path in (self.last_run / "output_metrics").glob("*.csv")}))
+        self.assertEqual(outputs[0], outputs[1])
+        self.assertEqual(outputs[1], outputs[2])
+        self.assertNotEqual(outputs[1][0], outputs[3][0])
+        self.assertIn(b"14,34", outputs[3][1]["randomSeeds.csv"])
+
+    def test_seed_flags_reject_invalid_values(self):
+        for option, value in (("-seed", "-1"), ("-routing_seed", "4294967296"), ("-seed", "13x")):
+            result = self.run_flow(extra=(option, value))
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("Seed must be an unsigned 32-bit integer", result.stderr)
+        result = self.run_flow(extra=("-routing_seed",))
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Missing value for seed option", result.stderr)
+
     def test_manual_routing_conflict_is_explicit(self):
         metadata = json.loads(self.workload.with_suffix(".meta.json").read_text())
         routing = self.root / "routing.json"

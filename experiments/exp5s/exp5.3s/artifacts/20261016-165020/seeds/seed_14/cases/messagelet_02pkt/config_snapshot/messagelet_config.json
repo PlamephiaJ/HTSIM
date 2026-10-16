@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "runtime": {
+    "mode": "label",
+    "granularity": "messagelet"
+  },
+  "messagelet": {
+    "size_bytes": 8320
+  },
+  "routing": {
+    "default": "minimum",
+    "network_decision": "ugal_l"
+  },
+  "logging": {
+    "trace_decisions": true
+  }
+}

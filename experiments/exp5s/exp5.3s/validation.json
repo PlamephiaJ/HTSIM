@@ -1,7 +1,7 @@
 {
   "status": "PASS",
-  "batch": "/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp5s/exp5.3s/artifacts/20261016-163734",
-  "binary_sha256": "14057d3ba4d44f8a044a92399460ea095c5c1a68f58e210750a352a65fd2ac9e",
+  "batch": "/home/yuhao/workspace/slack_ws/HTSIM/experiments/exp5s/exp5.3s/artifacts/20261016-165020",
+  "binary_sha256": "4935169c33cdc71f1084d2d6bd823625ce76a9cf2180be744376c71cc68ec7ad",
   "input_sha256": {
     "workload.bin": "e28f63ad3f57a34c8cbbeb0a738f20f8fef9e890947126489e79dca940e5ab49",
     "workload.goal": "5b7f4f2a07299daa574bd9ed9f35567e8578f72607a3a9b946783e09c39e677b",
@@ -10,11 +10,54 @@
     "topology/dragonfly.topo": "5ae8eaef66940924d16913bde5d6cfe5a7ded4ff99464a63e7f0d6485a7aff36"
   },
   "case_count": 18,
-  "equivalent_endpoints": {
-    "messagelet_01pkt == packet": "PASS",
-    "messagelet_16pkt == flow": "PASS"
+  "run_count": 90,
+  "seed_pairs": [
+    {
+      "simulation": 13,
+      "routing": 33
+    },
+    {
+      "simulation": 14,
+      "routing": 34
+    },
+    {
+      "simulation": 15,
+      "routing": 35
+    },
+    {
+      "simulation": 16,
+      "routing": 36
+    },
+    {
+      "simulation": 17,
+      "routing": 37
+    }
+  ],
+  "parallel_jobs": 32,
+  "equivalent_endpoints_by_seed": {
+    "13": {
+      "messagelet_01pkt == packet": "PASS",
+      "messagelet_16pkt == flow": "PASS"
+    },
+    "14": {
+      "messagelet_01pkt == packet": "PASS",
+      "messagelet_16pkt == flow": "PASS"
+    },
+    "15": {
+      "messagelet_01pkt == packet": "PASS",
+      "messagelet_16pkt == flow": "PASS"
+    },
+    "16": {
+      "messagelet_01pkt == packet": "PASS",
+      "messagelet_16pkt == flow": "PASS"
+    },
+    "17": {
+      "messagelet_01pkt == packet": "PASS",
+      "messagelet_16pkt == flow": "PASS"
+    }
   },
+  "distinct_packet_routing_outcomes": 5,
   "best_cases": [
-    "messagelet_10pkt"
+    "messagelet_04pkt"
   ]
 }

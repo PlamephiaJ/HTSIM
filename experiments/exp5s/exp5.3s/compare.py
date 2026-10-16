@@ -58,8 +58,13 @@ def p95(values):
     return ordered[low] + (ordered[high] - ordered[low]) * (position - low)
 
 
-def read_case(batch, manifest, case):
-    run = batch / "cases" / case["name"]
+def case_path(batch, case, seed=None):
+    parent = batch if seed is None else batch / "seeds" / f"seed_{seed['simulation']}"
+    return parent / "cases" / case["name"]
+
+
+def read_case(batch, manifest, case, seed=None):
+    run = case_path(batch, case, seed)
     snapshot, metrics = run / "config_snapshot", run / "output_metrics"
     require((run / "exit_code.txt").read_text().strip() == "0", f"Failed case: {case['name']}")
     require((run / "binary-sha256.txt").read_text().split()[0] == manifest["binary_sha256"], "Binary hash differs")
@@ -73,10 +78,15 @@ def read_case(batch, manifest, case):
     require(json.loads((snapshot / "messagelet_config.json").read_text()) == expected_config,
             "Configuration differs beyond the swept granularity")
     require(not (snapshot / "routing_config.json").exists(), "Unexpected static route config")
+    seed_args = [] if seed is None else ["-seed", str(seed["simulation"]), "-routing_seed", str(seed["routing"])]
     expected_command = [manifest["binary"], "-basepath", str(snapshot / "topology"), "-goal", str(snapshot / "workload.bin"),
-                        *manifest["network_args"], "-rank_placement", str(snapshot / "rank_placement.json"),
+                        *manifest["network_args"], *seed_args, "-rank_placement", str(snapshot / "rank_placement.json"),
                         "-messagelet_config", str(snapshot / "messagelet_config.json")]
     require(shlex.split((run / "command.txt").read_text()) == expected_command, "Simulator arguments changed")
+    if seed is not None:
+        require(json.loads((snapshot / "seed.json").read_text()) == seed, "Seed snapshot differs")
+        require(read_csv(metrics / "randomSeeds.csv") == [{"simulationSeed": str(seed["simulation"]),
+                                                          "routingSeed": str(seed["routing"])}], "Executed seeds differ")
     globals_ = read_csv(metrics / "globalInfo.csv")
     require(len(globals_) == 1 and globals_[0]["routing"] == "3", "Expected SOURCE routing")
     mtu, header = manifest["settings"]["packet_size_bytes"], manifest["settings"]["header_size_bytes"]
@@ -168,12 +178,36 @@ def read_case(batch, manifest, case):
               "mean_packets_per_decision": new_packets / len(all_decisions), "completed_flows": len(flows), "completed_tasks": len(life)}
     for collective in metadata["collectives"]:
         result[collective["node_id"] + "_finish_ns"] = max(rank_finishes[rank] for rank in collective["ranks"])
+    if seed is not None:
+        result.update(simulation_seed=seed["simulation"], routing_seed=seed["routing"])
+        routes = [(row["flow_id"], row["messagelet_index"], row["route"], row["path_id"])
+                  for row in sorted(all_decisions, key=lambda row: (row["flow_id"], row["messagelet_index"]))]
+        result["routing_sha256"] = hashlib.sha256(json.dumps(routes).encode()).hexdigest()
     with (metrics / "network_decisions.csv").open("w", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=list(all_decisions[0]))
         writer.writeheader()
         writer.writerows(sorted(all_decisions, key=lambda row: (row["flow_id"], row["messagelet_index"])))
     (run / "granularity_validation.json").write_text(json.dumps({"status": "PASS", **result}, indent=2) + "\n")
     return result, globals_, grouped
+
+
+def check_endpoints(batch, rows, grouped_by_case, seed=None):
+    endpoint_checks = {}
+    for other, baseline in (("messagelet_01pkt", "packet"), ("messagelet_16pkt", "flow")):
+        if other not in rows:
+            continue
+        expected = grouped_by_case[baseline]
+        actual = grouped_by_case[other]
+        equivalent = all([(row["route"], row["path_id"], row["new_data_packets"]) for row in actual[fid].values()] ==
+                         [(row["route"], row["path_id"], row["new_data_packets"]) for row in expected[fid].values()] for fid in expected)
+        # Only assert 16-packet equivalence when it actually covers every flow.
+        if other == "messagelet_16pkt" and rows[other]["decisions"] != rows[baseline]["decisions"]:
+            continue
+        for name in ("flow_dag_info.csv", "flowsInfo.csv", "globalInfo.csv"):
+            equivalent = equivalent and (case_path(batch, {"name": other}, seed) / "output_metrics" / name).read_bytes() == (case_path(batch, {"name": baseline}, seed) / "output_metrics" / name).read_bytes()
+        require(equivalent, f"Equivalent routing units produced different results: {other}, {baseline}")
+        endpoint_checks[f"{other} == {baseline}"] = "PASS"
+    return endpoint_checks
 
 
 def analyze(batch):
@@ -189,21 +223,7 @@ def analyze(batch):
         grouped_by_case[case["name"]] = grouped
     rows = {row["case"]: row for row in results}
     require(len(rows) == len(results) and "packet" in rows and "flow" in rows, "Missing or duplicate sweep endpoints")
-    endpoint_checks = {}
-    for other, baseline in (("messagelet_01pkt", "packet"), ("messagelet_16pkt", "flow")):
-        if other not in rows:
-            continue
-        expected = grouped_by_case[baseline]
-        actual = grouped_by_case[other]
-        equivalent = all([(row["route"], row["path_id"], row["new_data_packets"]) for row in actual[fid].values()] ==
-                         [(row["route"], row["path_id"], row["new_data_packets"]) for row in expected[fid].values()] for fid in expected)
-        # Only assert 16-packet equivalence when it actually covers every flow.
-        if other == "messagelet_16pkt" and rows[other]["decisions"] != rows[baseline]["decisions"]:
-            continue
-        for name in ("flow_dag_info.csv", "flowsInfo.csv", "globalInfo.csv"):
-            equivalent = equivalent and (batch / "cases" / other / "output_metrics" / name).read_bytes() == (batch / "cases" / baseline / "output_metrics" / name).read_bytes()
-        require(equivalent, f"Equivalent routing units produced different results: {other}, {baseline}")
-        endpoint_checks[f"{other} == {baseline}"] = "PASS"
+    endpoint_checks = check_endpoints(batch, rows, grouped_by_case)
     flow_cct = rows["flow"]["cct_ns"]
     for row in results:
         row["delta_cct_vs_flow_ns"] = row["cct_ns"] - flow_cct
@@ -270,14 +290,145 @@ def write_report(directory, batch, results, validation, manifest):
     (directory / "comparison.md").write_text("\n".join(lines))
 
 
+def analyze_multiseed(batch, manifest):
+    seeds = manifest["seeds"]
+    require(seeds and len({seed['simulation'] for seed in seeds}) == len(seeds), "Missing or duplicate seeds")
+    raw, checks, common_globals = [], {}, None
+    for seed in seeds:
+        results, grouped_by_case = [], {}
+        for case in manifest["cases"]:
+            result, globals_, grouped = read_case(batch, manifest, case, seed)
+            if common_globals is None:
+                common_globals = globals_
+            require(globals_ == common_globals, "Network controls changed across seeds or granularities")
+            results.append(result)
+            grouped_by_case[case["name"]] = grouped
+        rows = {row["case"]: row for row in results}
+        require(len(rows) == len(results) and "packet" in rows and "flow" in rows, "Invalid seed sweep")
+        checks[str(seed["simulation"])] = check_endpoints(batch, rows, grouped_by_case, seed)
+        baseline = rows["flow"]["cct_ns"]
+        for row in results:
+            row["delta_cct_vs_flow_ns"] = row["cct_ns"] - baseline
+            row["paired_cct_reduction_pct"] = 100 * (baseline - row["cct_ns"]) / baseline
+        raw.extend(results)
+    aggregates = []
+    metrics = ("cct_ns", "mean_fct_ns", "p95_fct_ns", "max_fct_ns", "ooo_packets", "decisions", "valiant_decisions",
+               "valiant_decision_pct", "valiant_packet_pct", "valiant_new_data_packets", "mean_packets_per_decision",
+               "ring_allreduce_finish_ns", "tree_allreduce_finish_ns", "direct_alltoall_finish_ns",
+               "delta_cct_vs_flow_ns", "paired_cct_reduction_pct")
+    for case in manifest["cases"]:
+        samples = [row for row in raw if row["case"] == case["name"]]
+        require(len(samples) == len(seeds), "Unequal samples per granularity")
+        result = {"case": case["name"], "granularity": case["granularity"], "messagelet_packets": case["packets_per_messagelet"] or "flow",
+                  "budget_bytes": case["size_bytes"], "seed_count": len(samples),
+                  "distinct_routing_outcomes": len({row["routing_sha256"] for row in samples})}
+        for metric in metrics:
+            values = [row[metric] for row in samples]
+            result[metric + "_mean"] = statistics.mean(values)
+            result[metric + "_std"] = statistics.stdev(values) if len(values) > 1 else 0.0
+            result[metric + "_min"] = min(values)
+            result[metric + "_max"] = max(values)
+        aggregates.append(result)
+    baseline = next(row for row in aggregates if row["case"] == "flow")["cct_ns_mean"]
+    for result in aggregates:
+        result["cct_reduction_of_means_pct"] = 100 * (baseline - result["cct_ns_mean"]) / baseline
+    packet = next(row for row in aggregates if row["case"] == "packet")
+    if len({seed["routing"] for seed in seeds}) > 1:
+        require(packet["distinct_routing_outcomes"] > 1, "Routing seed did not change observed packet decisions")
+    validation = {"status": "PASS", "batch": str(batch), "binary_sha256": manifest["binary_sha256"],
+                  "input_sha256": manifest["input_sha256"], "case_count": len(aggregates), "run_count": len(raw),
+                  "seed_pairs": seeds, "parallel_jobs": manifest["parallel_jobs"], "equivalent_endpoints_by_seed": checks,
+                  "distinct_packet_routing_outcomes": packet["distinct_routing_outcomes"],
+                  "best_cases": [row["case"] for row in aggregates if row["cct_ns_mean"] == min(item["cct_ns_mean"] for item in aggregates)]}
+    return aggregates, raw, validation
+
+
+def write_multiseed_report(directory, batch, rows, raw, validation, manifest):
+    directory.mkdir(parents=True, exist_ok=True)
+    for name, contents in (("comparison.csv", rows), ("per_seed.csv", raw)):
+        with (directory / name).open("w", newline="") as stream:
+            writer = csv.DictWriter(stream, fieldnames=list(contents[0]), lineterminator="\n")
+            writer.writeheader()
+            writer.writerows(contents)
+    (directory / "validation.json").write_text(json.dumps(validation, indent=2) + "\n")
+    best = min(rows, key=lambda row: row["cct_ns_mean"])
+    flow = next(row for row in rows if row["case"] == "flow")
+    seeds = manifest["seeds"]
+    pairs = ", ".join(f"({seed['simulation']}, {seed['routing']})" for seed in seeds)
+    lines = ["# exp5.3s — Source UGAL-L 粒度 sweep：多种子平均", "",
+             f"批次：`{batch.name}`；**{len(rows)} 个粒度 × {len(seeds)} 个种子 = {len(raw)} 次仿真**，"
+             f"**{manifest['parallel_jobs']} 路并行**，全部校验 **PASS**。", "",
+             f"种子对 `(simulation seed, routing seed)`：{pairs}。每个种子对都覆盖所有粒度。", "",
+             f"平均 CCT 最低为 **{best['cct_ns_mean'] / 1000:.3f} ± {best['cct_ns_std'] / 1000:.3f} µs**"
+             f"（{', '.join(validation['best_cases'])}）。flow 为 **{flow['cct_ns_mean'] / 1000:.3f} ± {flow['cct_ns_std'] / 1000:.3f} µs**，"
+             f"按均值之比降低 **{best['cct_reduction_of_means_pct']:.2f}%**。", "",
+             "所有运行都是相同 source UGAL-L：`runtime.mode=label`、`routing.network_decision=ugal_l`、"
+             "`-routing SOURCE`。每个种子内部只改变粒度；计算图、拓扑、placement、binary、CC 和 queue 等控制保持一致。", "",
+             "## 平均性能与波动", "",
+             "| 粒度 | Budget (wire bytes) | CCT mean ± SD (µs) | CCT min–max (µs) | ΔCCT vs 同 seed flow mean (µs) | Mean FCT (µs) | Mean seed P95 FCT (µs) | Mean OOO |",
+             "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"]
+    for row in rows:
+        lines.append(f"| {row['case']} | {row['budget_bytes'] or '—'} | **{row['cct_ns_mean'] / 1000:.3f} ± {row['cct_ns_std'] / 1000:.3f}** | "
+                     f"{row['cct_ns_min'] / 1000:.3f}–{row['cct_ns_max'] / 1000:.3f} | {row['delta_cct_vs_flow_ns_mean'] / 1000:+.3f} | "
+                     f"{row['mean_fct_ns_mean'] / 1000:.3f} | {row['p95_fct_ns_mean'] / 1000:.3f} | {row['ooo_packets_mean']:.1f} |")
+    lines += ["", f"均值等权汇总 {len(seeds)} 个 seed；SD 为 seed 间样本标准差（n−1），不是置信区间。"
+              "CCT 为最大 GOAL rank graph finish。FCT 先在每次运行的 60 条 flow 上统计，"
+              "表中 P95 是各 seed 的 P95 再取均值，不是混合 300 条 flow 的 P95。OOO 为每次运行的 `oooCount` 总和再取均值。", "",
+              "## 每个种子的 CCT", "",
+              "| 粒度 | " + " | ".join(f"{seed['simulation']}/{seed['routing']} (µs)" for seed in seeds) + " |",
+              "| --- | " + " | ".join("---:" for _ in seeds) + " |"]
+    lookup = {(row["case"], row["simulation_seed"]): row for row in raw}
+    for row in rows:
+        values = [lookup[(row["case"], seed["simulation"])]["cct_ns"] / 1000 for seed in seeds]
+        lines.append(f"| {row['case']} | " + " | ".join(f"{value:.3f}" for value in values) + " |")
+    lines += ["", "## 平均决策与选路", "",
+              "| 粒度 | Decisions / seed | Mean packets / decision | Mean Valiant decision % | Mean packet-weighted Valiant % | Distinct routing outcomes |",
+              "| --- | ---: | ---: | ---: | ---: | ---: |"]
+    for row in rows:
+        lines.append(f"| {row['case']} | {row['decisions_mean']:.0f} | {row['mean_packets_per_decision_mean']:.2f} | "
+                     f"{row['valiant_decision_pct_mean']:.2f}% | {row['valiant_packet_pct_mean']:.2f}% | {row['distinct_routing_outcomes']} |")
+    lines += ["", "messagelet 预算为 N × 4160 bytes；每条 flow 是 16 包，末组可以较短。"
+              "按新数据包数加权的 Valiant 占比反映不等长分组；重传沿用原标签，不触发新决策。", "",
+              "## 平均 collective graph finish", "",
+              "| 粒度 | Ring all-reduce (µs) | Tree all-reduce (µs) | Direct all-to-all (µs) |",
+              "| --- | ---: | ---: | ---: |"]
+    for row in rows:
+        lines.append(f"| {row['case']} | {row['ring_allreduce_finish_ns_mean'] / 1000:.3f} | "
+                     f"{row['tree_allreduce_finish_ns_mean'] / 1000:.3f} | {row['direct_alltoall_finish_ns_mean'] / 1000:.3f} |")
+    lines += ["", "## 校验与原始记录", "",
+              f"- 全部运行使用同一 binary SHA-256：`{manifest['binary_sha256']}`。",
+              "- 两个独立参数分别初始化全局 RNG 和每个 Dragonfly switch 的候选采样 RNG；默认仍是 13/33，UGAL-L 比较规则未改动。",
+              f"- 实际执行种子记录于每次运行的 `randomSeeds.csv`；packet 点观测到 **{validation['distinct_packet_routing_outcomes']}** 种路由结果。",
+              "- 输入哈希、网络控制、flow/DAG 完成、messagelet index/预算、UGAL-L cost 规则全部通过核对。",
+              "- 每个 seed 的 1 包 messagelet == packet、16 包 messagelet == flow 端点等价校验通过。",
+              "- 每次仿真在独立进程和目录中运行；并行不共享 RNG、输出文件或仿真时钟。Slack 只做离线分析。", "",
+              "| Seed pair | 每点原始记录 |", "| --- | --- |"]
+    for seed in seeds:
+        target = os.path.relpath(batch / "seeds" / f"seed_{seed['simulation']}" / "cases", directory)
+        lines.append(f"| {seed['simulation']}/{seed['routing']} | [18 个粒度点]({target}) |")
+    lines += ["", "`comparison.csv` 包含均值、样本标准差、min/max 与同 seed 配对变化；"
+              "`per_seed.csv` 保留每次运行的指标。配对百分比先对同 seed flow 求改善率再取均值，"
+              "与均值之比的改善率分别记录。旧单种子报告保留于旧 artifact。", "",
+              f"当前是 {len(seeds)} 个 seed 的实测统计，结论限于此计算图、拓扑和种子集合。", ""]
+    (directory / "comparison.md").write_text("\n".join(lines))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--batch", type=Path, default=Path(__file__).resolve().parent / "artifacts/latest")
     parser.add_argument("--output-dir", type=Path, default=Path(__file__).resolve().parent)
     args = parser.parse_args()
     batch, output = args.batch.resolve(strict=True), args.output_dir.resolve()
-    results, validation, manifest = analyze(batch)
-    write_report(batch, batch, results, validation, manifest)
-    if output != batch:
-        write_report(output, batch, results, validation, manifest)
-    print(f"PASS: {len(results)} controlled source-UGAL-L sweep points; report: {output / 'comparison.md'}")
+    manifest = json.loads((batch / "manifest.json").read_text())
+    if "seeds" in manifest:
+        results, raw, validation = analyze_multiseed(batch, manifest)
+        write_multiseed_report(batch, batch, results, raw, validation, manifest)
+        if output != batch:
+            write_multiseed_report(output, batch, results, raw, validation, manifest)
+        print(f"PASS: {len(results)} granularities, {len(raw)} seeded runs; report: {output / 'comparison.md'}")
+    else:
+        results, validation, manifest = analyze(batch)
+        write_report(batch, batch, results, validation, manifest)
+        if output != batch:
+            write_report(output, batch, results, validation, manifest)
+        print(f"PASS: {len(results)} controlled source-UGAL-L sweep points; report: {output / 'comparison.md'}")

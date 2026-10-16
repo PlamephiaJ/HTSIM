@@ -1,0 +1,1959 @@
+{
+  "schema_version": 1,
+  "generator": {
+    "name": "htsim-workload-gen",
+    "version": "0.3.0"
+  },
+  "workload": {
+    "name": "exp2a1_collective_internal_slack",
+    "kind": "collective",
+    "world_size": 12,
+    "binary": "workload.bin",
+    "goal_text": "workload.goal",
+    "tasks": 200,
+    "dependency_edges": 336,
+    "p2p_flows": 60
+  },
+  "source_graph": {
+    "defaults": {
+      "cpu": 0,
+      "nic": 0,
+      "chunk_bytes": 65536
+    },
+    "nodes": [
+      {
+        "id": "start",
+        "op": "compute",
+        "ranks": "all",
+        "duration_ns": 0
+      },
+      {
+        "id": "ring_allreduce",
+        "op": "allreduce",
+        "algorithm": "ring",
+        "protocol": "simple",
+        "ranks": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "bytes": 262144,
+        "channels": 1,
+        "ring_orders": [
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ],
+        "depends_on": [
+          "start"
+        ]
+      },
+      {
+        "id": "tree_allreduce",
+        "op": "allreduce",
+        "algorithm": "tree",
+        "protocol": "simple",
+        "ranks": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "bytes": 262144,
+        "chunk_bytes": 65536,
+        "tree_parent": {
+          "4": null,
+          "5": 4,
+          "6": 4,
+          "7": 5
+        },
+        "depends_on": [
+          "start"
+        ]
+      },
+      {
+        "id": "direct_alltoall",
+        "op": "alltoall",
+        "algorithm": "direct",
+        "ranks": [
+          8,
+          9,
+          10,
+          11
+        ],
+        "bytes_per_peer": 65536,
+        "chunk_bytes": 65536,
+        "depends_on": [
+          "start"
+        ]
+      },
+      {
+        "id": "sink",
+        "op": "sink",
+        "ranks": "all",
+        "duration_ns": 0,
+        "depends_on": [
+          "ring_allreduce",
+          "tree_allreduce",
+          "direct_alltoall"
+        ]
+      }
+    ]
+  },
+  "collectives": [
+    {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "ranks": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "context": 0,
+      "ordering_domain": 0,
+      "protocol": "simple",
+      "bytes": 262144
+    },
+    {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "ranks": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "context": 1,
+      "ordering_domain": 1,
+      "protocol": "simple",
+      "bytes": 262144
+    },
+    {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "ranks": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "context": 2,
+      "ordering_domain": 2,
+      "protocol": "simple",
+      "bytes_per_peer": 65536
+    }
+  ],
+  "flows": {
+    "0": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 3,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 0,
+      "src": 0,
+      "dst": 1,
+      "bytes": 65536,
+      "tag": 0,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 0,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 1,
+        "task_id": 3
+      }
+    },
+    "1": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 1,
+      "src": 1,
+      "dst": 2,
+      "bytes": 65536,
+      "tag": 0,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 1,
+        "task_id": 4
+      },
+      "recv_task": {
+        "rank": 2,
+        "task_id": 3
+      }
+    },
+    "2": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 1,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 2,
+      "src": 2,
+      "dst": 3,
+      "bytes": 65536,
+      "tag": 0,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 2,
+        "task_id": 4
+      },
+      "recv_task": {
+        "rank": 3,
+        "task_id": 3
+      }
+    },
+    "3": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 2,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 3,
+      "src": 3,
+      "dst": 0,
+      "bytes": 65536,
+      "tag": 0,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 3,
+        "task_id": 4
+      },
+      "recv_task": {
+        "rank": 0,
+        "task_id": 4
+      }
+    },
+    "4": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 2,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 4,
+      "src": 0,
+      "dst": 1,
+      "bytes": 65536,
+      "tag": 100000,
+      "message_sequence": 1,
+      "send_task": {
+        "rank": 0,
+        "task_id": 5
+      },
+      "recv_task": {
+        "rank": 1,
+        "task_id": 5
+      }
+    },
+    "5": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 3,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 5,
+      "src": 1,
+      "dst": 2,
+      "bytes": 65536,
+      "tag": 100000,
+      "message_sequence": 1,
+      "send_task": {
+        "rank": 1,
+        "task_id": 6
+      },
+      "recv_task": {
+        "rank": 2,
+        "task_id": 5
+      }
+    },
+    "6": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 6,
+      "src": 2,
+      "dst": 3,
+      "bytes": 65536,
+      "tag": 100000,
+      "message_sequence": 1,
+      "send_task": {
+        "rank": 2,
+        "task_id": 6
+      },
+      "recv_task": {
+        "rank": 3,
+        "task_id": 5
+      }
+    },
+    "7": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 1,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 7,
+      "src": 3,
+      "dst": 0,
+      "bytes": 65536,
+      "tag": 100000,
+      "message_sequence": 1,
+      "send_task": {
+        "rank": 3,
+        "task_id": 6
+      },
+      "recv_task": {
+        "rank": 0,
+        "task_id": 6
+      }
+    },
+    "8": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 1,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 8,
+      "src": 0,
+      "dst": 1,
+      "bytes": 65536,
+      "tag": 200000,
+      "message_sequence": 2,
+      "send_task": {
+        "rank": 0,
+        "task_id": 7
+      },
+      "recv_task": {
+        "rank": 1,
+        "task_id": 7
+      }
+    },
+    "9": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 2,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 9,
+      "src": 1,
+      "dst": 2,
+      "bytes": 65536,
+      "tag": 200000,
+      "message_sequence": 2,
+      "send_task": {
+        "rank": 1,
+        "task_id": 8
+      },
+      "recv_task": {
+        "rank": 2,
+        "task_id": 7
+      }
+    },
+    "10": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 3,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 10,
+      "src": 2,
+      "dst": 3,
+      "bytes": 65536,
+      "tag": 200000,
+      "message_sequence": 2,
+      "send_task": {
+        "rank": 2,
+        "task_id": 8
+      },
+      "recv_task": {
+        "rank": 3,
+        "task_id": 7
+      }
+    },
+    "11": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "reduce_scatter",
+      "chunk": 0,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 11,
+      "src": 3,
+      "dst": 0,
+      "bytes": 65536,
+      "tag": 200000,
+      "message_sequence": 2,
+      "send_task": {
+        "rank": 3,
+        "task_id": 8
+      },
+      "recv_task": {
+        "rank": 0,
+        "task_id": 8
+      }
+    },
+    "12": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 12,
+      "src": 0,
+      "dst": 1,
+      "bytes": 65536,
+      "tag": 300000,
+      "message_sequence": 3,
+      "send_task": {
+        "rank": 0,
+        "task_id": 9
+      },
+      "recv_task": {
+        "rank": 1,
+        "task_id": 9
+      }
+    },
+    "13": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 1,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 13,
+      "src": 1,
+      "dst": 2,
+      "bytes": 65536,
+      "tag": 300000,
+      "message_sequence": 3,
+      "send_task": {
+        "rank": 1,
+        "task_id": 10
+      },
+      "recv_task": {
+        "rank": 2,
+        "task_id": 9
+      }
+    },
+    "14": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 2,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 14,
+      "src": 2,
+      "dst": 3,
+      "bytes": 65536,
+      "tag": 300000,
+      "message_sequence": 3,
+      "send_task": {
+        "rank": 2,
+        "task_id": 10
+      },
+      "recv_task": {
+        "rank": 3,
+        "task_id": 9
+      }
+    },
+    "15": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 3,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 15,
+      "src": 3,
+      "dst": 0,
+      "bytes": 65536,
+      "tag": 300000,
+      "message_sequence": 3,
+      "send_task": {
+        "rank": 3,
+        "task_id": 10
+      },
+      "recv_task": {
+        "rank": 0,
+        "task_id": 10
+      }
+    },
+    "16": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 3,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 16,
+      "src": 0,
+      "dst": 1,
+      "bytes": 65536,
+      "tag": 400000,
+      "message_sequence": 4,
+      "send_task": {
+        "rank": 0,
+        "task_id": 11
+      },
+      "recv_task": {
+        "rank": 1,
+        "task_id": 11
+      }
+    },
+    "17": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 17,
+      "src": 1,
+      "dst": 2,
+      "bytes": 65536,
+      "tag": 400000,
+      "message_sequence": 4,
+      "send_task": {
+        "rank": 1,
+        "task_id": 12
+      },
+      "recv_task": {
+        "rank": 2,
+        "task_id": 11
+      }
+    },
+    "18": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 1,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 18,
+      "src": 2,
+      "dst": 3,
+      "bytes": 65536,
+      "tag": 400000,
+      "message_sequence": 4,
+      "send_task": {
+        "rank": 2,
+        "task_id": 12
+      },
+      "recv_task": {
+        "rank": 3,
+        "task_id": 11
+      }
+    },
+    "19": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 2,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 19,
+      "src": 3,
+      "dst": 0,
+      "bytes": 65536,
+      "tag": 400000,
+      "message_sequence": 4,
+      "send_task": {
+        "rank": 3,
+        "task_id": 12
+      },
+      "recv_task": {
+        "rank": 0,
+        "task_id": 12
+      }
+    },
+    "20": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 2,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 20,
+      "src": 0,
+      "dst": 1,
+      "bytes": 65536,
+      "tag": 500000,
+      "message_sequence": 5,
+      "send_task": {
+        "rank": 0,
+        "task_id": 13
+      },
+      "recv_task": {
+        "rank": 1,
+        "task_id": 13
+      }
+    },
+    "21": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 3,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 21,
+      "src": 1,
+      "dst": 2,
+      "bytes": 65536,
+      "tag": 500000,
+      "message_sequence": 5,
+      "send_task": {
+        "rank": 1,
+        "task_id": 14
+      },
+      "recv_task": {
+        "rank": 2,
+        "task_id": 13
+      }
+    },
+    "22": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 0,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 22,
+      "src": 2,
+      "dst": 3,
+      "bytes": 65536,
+      "tag": 500000,
+      "message_sequence": 5,
+      "send_task": {
+        "rank": 2,
+        "task_id": 14
+      },
+      "recv_task": {
+        "rank": 3,
+        "task_id": 13
+      }
+    },
+    "23": {
+      "collective_id": 0,
+      "node_id": "ring_allreduce",
+      "type": "allreduce",
+      "algorithm": "ring",
+      "phase": "allgather",
+      "chunk": 1,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 0,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 23,
+      "src": 3,
+      "dst": 0,
+      "bytes": 65536,
+      "tag": 500000,
+      "message_sequence": 5,
+      "send_task": {
+        "rank": 3,
+        "task_id": 14
+      },
+      "recv_task": {
+        "rank": 0,
+        "task_id": 14
+      }
+    },
+    "24": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 24,
+      "src": 5,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 1,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 5,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 3
+      }
+    },
+    "25": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 25,
+      "src": 4,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 1,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 4,
+        "task_id": 4
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 4
+      }
+    },
+    "26": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 26,
+      "src": 6,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 1,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 6,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 5
+      }
+    },
+    "27": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 27,
+      "src": 4,
+      "dst": 6,
+      "bytes": 65536,
+      "tag": 1,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 4,
+        "task_id": 6
+      },
+      "recv_task": {
+        "rank": 6,
+        "task_id": 4
+      }
+    },
+    "28": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 28,
+      "src": 7,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 1,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 7,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 5
+      }
+    },
+    "29": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 29,
+      "src": 5,
+      "dst": 7,
+      "bytes": 65536,
+      "tag": 1,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 5,
+        "task_id": 6
+      },
+      "recv_task": {
+        "rank": 7,
+        "task_id": 4
+      }
+    },
+    "30": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 1,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 30,
+      "src": 5,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 100001,
+      "message_sequence": 1,
+      "send_task": {
+        "rank": 5,
+        "task_id": 8
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 9
+      }
+    },
+    "31": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 1,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 31,
+      "src": 4,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 100001,
+      "message_sequence": 1,
+      "send_task": {
+        "rank": 4,
+        "task_id": 10
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 9
+      }
+    },
+    "32": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 1,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 32,
+      "src": 6,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 100001,
+      "message_sequence": 1,
+      "send_task": {
+        "rank": 6,
+        "task_id": 5
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 11
+      }
+    },
+    "33": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 1,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 33,
+      "src": 4,
+      "dst": 6,
+      "bytes": 65536,
+      "tag": 100001,
+      "message_sequence": 1,
+      "send_task": {
+        "rank": 4,
+        "task_id": 12
+      },
+      "recv_task": {
+        "rank": 6,
+        "task_id": 6
+      }
+    },
+    "34": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 1,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 34,
+      "src": 7,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 100001,
+      "message_sequence": 1,
+      "send_task": {
+        "rank": 7,
+        "task_id": 5
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 10
+      }
+    },
+    "35": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 1,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 35,
+      "src": 5,
+      "dst": 7,
+      "bytes": 65536,
+      "tag": 100001,
+      "message_sequence": 1,
+      "send_task": {
+        "rank": 5,
+        "task_id": 11
+      },
+      "recv_task": {
+        "rank": 7,
+        "task_id": 6
+      }
+    },
+    "36": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 2,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 36,
+      "src": 5,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 200001,
+      "message_sequence": 2,
+      "send_task": {
+        "rank": 5,
+        "task_id": 13
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 15
+      }
+    },
+    "37": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 2,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 37,
+      "src": 4,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 200001,
+      "message_sequence": 2,
+      "send_task": {
+        "rank": 4,
+        "task_id": 16
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 14
+      }
+    },
+    "38": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 2,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 38,
+      "src": 6,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 200001,
+      "message_sequence": 2,
+      "send_task": {
+        "rank": 6,
+        "task_id": 7
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 17
+      }
+    },
+    "39": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 2,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 39,
+      "src": 4,
+      "dst": 6,
+      "bytes": 65536,
+      "tag": 200001,
+      "message_sequence": 2,
+      "send_task": {
+        "rank": 4,
+        "task_id": 18
+      },
+      "recv_task": {
+        "rank": 6,
+        "task_id": 8
+      }
+    },
+    "40": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 2,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 40,
+      "src": 7,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 200001,
+      "message_sequence": 2,
+      "send_task": {
+        "rank": 7,
+        "task_id": 7
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 15
+      }
+    },
+    "41": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 2,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 41,
+      "src": 5,
+      "dst": 7,
+      "bytes": 65536,
+      "tag": 200001,
+      "message_sequence": 2,
+      "send_task": {
+        "rank": 5,
+        "task_id": 16
+      },
+      "recv_task": {
+        "rank": 7,
+        "task_id": 8
+      }
+    },
+    "42": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 3,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 42,
+      "src": 5,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 300001,
+      "message_sequence": 3,
+      "send_task": {
+        "rank": 5,
+        "task_id": 18
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 21
+      }
+    },
+    "43": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 3,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 43,
+      "src": 4,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 300001,
+      "message_sequence": 3,
+      "send_task": {
+        "rank": 4,
+        "task_id": 22
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 19
+      }
+    },
+    "44": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 3,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 44,
+      "src": 6,
+      "dst": 4,
+      "bytes": 65536,
+      "tag": 300001,
+      "message_sequence": 3,
+      "send_task": {
+        "rank": 6,
+        "task_id": 9
+      },
+      "recv_task": {
+        "rank": 4,
+        "task_id": 23
+      }
+    },
+    "45": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 3,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 4,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 45,
+      "src": 4,
+      "dst": 6,
+      "bytes": 65536,
+      "tag": 300001,
+      "message_sequence": 3,
+      "send_task": {
+        "rank": 4,
+        "task_id": 24
+      },
+      "recv_task": {
+        "rank": 6,
+        "task_id": 10
+      }
+    },
+    "46": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "reduce",
+      "chunk": 3,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "up",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 46,
+      "src": 7,
+      "dst": 5,
+      "bytes": 65536,
+      "tag": 300001,
+      "message_sequence": 3,
+      "send_task": {
+        "rank": 7,
+        "task_id": 9
+      },
+      "recv_task": {
+        "rank": 5,
+        "task_id": 20
+      }
+    },
+    "47": {
+      "collective_id": 1,
+      "node_id": "tree_allreduce",
+      "type": "allreduce",
+      "algorithm": "tree",
+      "phase": "broadcast",
+      "chunk": 3,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 1,
+      "tree_role": "down",
+      "parent": 5,
+      "chunk_bytes": 65536,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 47,
+      "src": 5,
+      "dst": 7,
+      "bytes": 65536,
+      "tag": 300001,
+      "message_sequence": 3,
+      "send_task": {
+        "rank": 5,
+        "task_id": 21
+      },
+      "recv_task": {
+        "rank": 7,
+        "task_id": 10
+      }
+    },
+    "48": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 9,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 48,
+      "src": 8,
+      "dst": 9,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 8,
+        "task_id": 3
+      },
+      "recv_task": {
+        "rank": 9,
+        "task_id": 3
+      }
+    },
+    "49": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 10,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 49,
+      "src": 8,
+      "dst": 10,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 8,
+        "task_id": 4
+      },
+      "recv_task": {
+        "rank": 10,
+        "task_id": 3
+      }
+    },
+    "50": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 3,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 11,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 50,
+      "src": 8,
+      "dst": 11,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 8,
+        "task_id": 5
+      },
+      "recv_task": {
+        "rank": 11,
+        "task_id": 3
+      }
+    },
+    "51": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 8,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 51,
+      "src": 9,
+      "dst": 8,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 9,
+        "task_id": 4
+      },
+      "recv_task": {
+        "rank": 8,
+        "task_id": 6
+      }
+    },
+    "52": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 10,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 52,
+      "src": 9,
+      "dst": 10,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 9,
+        "task_id": 5
+      },
+      "recv_task": {
+        "rank": 10,
+        "task_id": 4
+      }
+    },
+    "53": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 3,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 11,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 53,
+      "src": 9,
+      "dst": 11,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 9,
+        "task_id": 6
+      },
+      "recv_task": {
+        "rank": 11,
+        "task_id": 4
+      }
+    },
+    "54": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 8,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 54,
+      "src": 10,
+      "dst": 8,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 10,
+        "task_id": 5
+      },
+      "recv_task": {
+        "rank": 8,
+        "task_id": 7
+      }
+    },
+    "55": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 9,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 55,
+      "src": 10,
+      "dst": 9,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 10,
+        "task_id": 6
+      },
+      "recv_task": {
+        "rank": 9,
+        "task_id": 7
+      }
+    },
+    "56": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 3,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 11,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 56,
+      "src": 10,
+      "dst": 11,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 10,
+        "task_id": 7
+      },
+      "recv_task": {
+        "rank": 11,
+        "task_id": 5
+      }
+    },
+    "57": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 0,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 8,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 57,
+      "src": 11,
+      "dst": 8,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 11,
+        "task_id": 6
+      },
+      "recv_task": {
+        "rank": 8,
+        "task_id": 8
+      }
+    },
+    "58": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 1,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 9,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 58,
+      "src": 11,
+      "dst": 9,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 11,
+        "task_id": 7
+      },
+      "recv_task": {
+        "rank": 9,
+        "task_id": 8
+      }
+    },
+    "59": {
+      "collective_id": 2,
+      "node_id": "direct_alltoall",
+      "type": "alltoall",
+      "algorithm": "direct",
+      "phase": "exchange",
+      "chunk": 0,
+      "step": 2,
+      "channel": 0,
+      "ordering_domain": 2,
+      "peer": 10,
+      "chunks_per_peer": 1,
+      "protocol": "simple",
+      "payload_bytes": 65536,
+      "wire_bytes": 65536,
+      "flow_id": 59,
+      "src": 11,
+      "dst": 10,
+      "bytes": 65536,
+      "tag": 2,
+      "message_sequence": 0,
+      "send_task": {
+        "rank": 11,
+        "task_id": 8
+      },
+      "recv_task": {
+        "rank": 10,
+        "task_id": 8
+      }
+    }
+  }
+}

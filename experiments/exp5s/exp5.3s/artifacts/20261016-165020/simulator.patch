@@ -1,0 +1,114 @@
+diff --git a/htsim/sim/datacenter/dragonfly_switch.cpp b/htsim/sim/datacenter/dragonfly_switch.cpp
+index 9df8cca..6b4635d 100644
+--- a/htsim/sim/datacenter/dragonfly_switch.cpp
++++ b/htsim/sim/datacenter/dragonfly_switch.cpp
+@@ -9,6 +9,7 @@
+ bool DragonflySwitch::_trim_disable = false;
+ uint16_t DragonflySwitch::_trim_size = 0;
+ DragonflySwitch::RoutingStrategy DragonflySwitch::_routing_strategy = DragonflySwitch::MINIMAL;
++uint32_t DragonflySwitch::_routing_seed = 33;
+ 
+ string ntoa(double n);
+ string itoa(uint64_t n);
+@@ -31,7 +32,7 @@ DragonflySwitch::DragonflySwitch(EventList& event_list,
+ 
+     _pipe = new CallbackPipe(delay, event_list, this);
+ 
+-    _generator = std::mt19937(33);
++    _generator = std::mt19937(_routing_seed);
+     _dist_a = std::uniform_int_distribution<>(0, _a - 1);
+     _dist_h = std::uniform_int_distribution<>(0, _h - 1);
+ 
+diff --git a/htsim/sim/datacenter/dragonfly_switch.h b/htsim/sim/datacenter/dragonfly_switch.h
+index ae2ded4..9e12544 100644
+--- a/htsim/sim/datacenter/dragonfly_switch.h
++++ b/htsim/sim/datacenter/dragonfly_switch.h
+@@ -42,7 +42,7 @@ public:
+     };
+ 
+     // Shared by per-packet UGAL_L and messagelet network decisions. Uses this
+-    // switch's existing RNG (seed 33) and live local egress queue sizes.
++    // switch's RNG (seed 33 by default) and live local egress queue sizes.
+     UgalDecision ugalDecision(uint32_t src_switch, uint32_t dst_switch);
+ 
+     static void set_config(RoutingStrategy routing_strategy,
+@@ -55,6 +55,8 @@ public:
+     static uint16_t get_trim_disable() { return _trim_disable; }
+     static uint16_t get_trim_size() { return _trim_size; }
+     static RoutingStrategy get_routing_strategy() { return _routing_strategy; }
++    // Set before constructing switches; preserve HTSim's default seed 33.
++    static void set_routing_seed(uint32_t seed) { _routing_seed = seed; }
+ 
+ private:
+     SwitchType _type;
+@@ -88,6 +90,7 @@ private:
+     static bool _trim_disable;
+     static uint16_t _trim_size;
+     static RoutingStrategy _routing_strategy;
++    static uint32_t _routing_seed;
+ };
+ 
+ #endif
+diff --git a/htsim/sim/datacenter/main_uec_df.cpp b/htsim/sim/datacenter/main_uec_df.cpp
+index 0e8e0ad..93373fb 100644
+--- a/htsim/sim/datacenter/main_uec_df.cpp
++++ b/htsim/sim/datacenter/main_uec_df.cpp
+@@ -6,6 +6,7 @@
+ #include <list>
+ #include <sstream>
+ #include <memory>
++#include <charconv>
+ 
+ #include "clock.h"
+ #include "compositequeue.h"
+@@ -34,9 +35,8 @@ EventList& eventlist = EventList::getTheEventList();
+ int main(int argc, char** argv) {
+     Clock c(timeFromSec(5 / 100.), eventlist);
+ 
+-    int seed = 13;
+-    srand(seed);
+-    srandom(seed);
++    uint32_t seed = 13;
++    uint32_t routing_seed = 33;
+ 
+     enum LoadBalancing_Algo { BITMAP, REPS, REPS_LEGACY, OBLIVIOUS, MIXED, ECMP };
+ 
+@@ -61,7 +61,17 @@ int main(int argc, char** argv) {
+ 
+     int i = 1;
+     while (i < argc) {
+-        if (!strcmp(argv[i], "-basepath")) {
++        if (!strcmp(argv[i], "-seed") || !strcmp(argv[i], "-routing_seed")) {
++            if (i + 1 >= argc)
++                throw std::invalid_argument("Missing value for seed option");
++            const bool routing = !strcmp(argv[i], "-routing_seed");
++            const char* value = argv[++i];
++            uint32_t parsed = 0;
++            const auto result = std::from_chars(value, value + strlen(value), parsed);
++            if (result.ec != std::errc{} || result.ptr != value + strlen(value))
++                throw std::invalid_argument("Seed must be an unsigned 32-bit integer");
++            (routing ? routing_seed : seed) = parsed;
++        } else if (!strcmp(argv[i], "-basepath")) {
+             topo_base_path = argv[i + 1];
+             i++;
+         } else if (!strcmp(argv[i], "-topo")) {
+@@ -230,6 +240,10 @@ int main(int argc, char** argv) {
+         i++;
+     }
+ 
++    srand(seed);
++    srandom(seed);
++    DragonflySwitch::set_routing_seed(routing_seed);
++
+     // Fixed Parameters
+     queue_type qt = COMPOSITE;
+ 
+@@ -331,6 +345,8 @@ int main(int argc, char** argv) {
+     }
+ 
+     htsim::DataCollector& data_collector = htsim::DataCollector::get_instance();
++    auto* seed_metric = data_collector.RegisterCsvMetric("randomSeeds", {"simulationSeed", "routingSeed"});
++    seed_metric->LogData({std::to_string(seed), std::to_string(routing_seed)});
+     htsim::CsvMetric* global_metric = data_collector.RegisterCsvMetric(
+         "globalInfo", {"linkSpeedGbps", "linkDelayNs", "packetSizeBytes", "sackThresholdBytes",
+                        "queueSizeBytes", "kMinBytes", "kMaxBytes", "routing", "sourceLB"});
