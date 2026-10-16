@@ -6,6 +6,7 @@
 #include <list>
 #include <sstream>
 #include <memory>
+#include <charconv>
 
 #include "clock.h"
 #include "compositequeue.h"
@@ -34,9 +35,8 @@ EventList& eventlist = EventList::getTheEventList();
 int main(int argc, char** argv) {
     Clock c(timeFromSec(5 / 100.), eventlist);
 
-    int seed = 13;
-    srand(seed);
-    srandom(seed);
+    uint32_t seed = 13;
+    uint32_t routing_seed = 33;
 
     enum LoadBalancing_Algo { BITMAP, REPS, REPS_LEGACY, OBLIVIOUS, MIXED, ECMP };
 
@@ -61,7 +61,17 @@ int main(int argc, char** argv) {
 
     int i = 1;
     while (i < argc) {
-        if (!strcmp(argv[i], "-basepath")) {
+        if (!strcmp(argv[i], "-seed") || !strcmp(argv[i], "-routing_seed")) {
+            if (i + 1 >= argc)
+                throw std::invalid_argument("Missing value for seed option");
+            const bool routing = !strcmp(argv[i], "-routing_seed");
+            const char* value = argv[++i];
+            uint32_t parsed = 0;
+            const auto result = std::from_chars(value, value + strlen(value), parsed);
+            if (result.ec != std::errc{} || result.ptr != value + strlen(value))
+                throw std::invalid_argument("Seed must be an unsigned 32-bit integer");
+            (routing ? routing_seed : seed) = parsed;
+        } else if (!strcmp(argv[i], "-basepath")) {
             topo_base_path = argv[i + 1];
             i++;
         } else if (!strcmp(argv[i], "-topo")) {
@@ -230,6 +240,10 @@ int main(int argc, char** argv) {
         i++;
     }
 
+    srand(seed);
+    srandom(seed);
+    DragonflySwitch::set_routing_seed(routing_seed);
+
     // Fixed Parameters
     queue_type qt = COMPOSITE;
 
@@ -331,6 +345,8 @@ int main(int argc, char** argv) {
     }
 
     htsim::DataCollector& data_collector = htsim::DataCollector::get_instance();
+    auto* seed_metric = data_collector.RegisterCsvMetric("randomSeeds", {"simulationSeed", "routingSeed"});
+    seed_metric->LogData({std::to_string(seed), std::to_string(routing_seed)});
     htsim::CsvMetric* global_metric = data_collector.RegisterCsvMetric(
         "globalInfo", {"linkSpeedGbps", "linkDelayNs", "packetSizeBytes", "sackThresholdBytes",
                        "queueSizeBytes", "kMinBytes", "kMaxBytes", "routing", "sourceLB"});

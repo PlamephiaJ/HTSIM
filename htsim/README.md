@@ -103,6 +103,13 @@ Binary: `htsim_uec_df`
 
 Supported routing strategies: `MINIMAL`, `VALIANT`, `UGAL_L`, `SOURCE`
 
+Dragonfly accepts `-seed <uint32>` (global simulator RNG, default `13`) and
+`-routing_seed <uint32>` (each Dragonfly switch's Valiant/UGAL candidate RNG,
+default `33`). Set both when varying source-UGAL or native switch routing seeds.
+Seeds initialize before topology construction; the routing algorithm and its
+cost comparison are unchanged. `output_metrics/randomSeeds.csv` records both
+executed values. Omitting these flags preserves the previous 13/33 defaults.
+
 ```bash
 ./htsim_uec_df -basepath topologies/dragonfly/p3a6h3 -tm traffic.tm -routing MINIMAL -q 88
 ```

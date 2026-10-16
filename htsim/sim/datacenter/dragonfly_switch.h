@@ -42,7 +42,7 @@ public:
     };
 
     // Shared by per-packet UGAL_L and messagelet network decisions. Uses this
-    // switch's existing RNG (seed 33) and live local egress queue sizes.
+    // switch's RNG (seed 33 by default) and live local egress queue sizes.
     UgalDecision ugalDecision(uint32_t src_switch, uint32_t dst_switch);
 
     static void set_config(RoutingStrategy routing_strategy,
@@ -55,6 +55,8 @@ public:
     static uint16_t get_trim_disable() { return _trim_disable; }
     static uint16_t get_trim_size() { return _trim_size; }
     static RoutingStrategy get_routing_strategy() { return _routing_strategy; }
+    // Set before constructing switches; preserve HTSim's default seed 33.
+    static void set_routing_seed(uint32_t seed) { _routing_seed = seed; }
 
 private:
     SwitchType _type;
@@ -88,6 +90,7 @@ private:
     static bool _trim_disable;
     static uint16_t _trim_size;
     static RoutingStrategy _routing_strategy;
+    static uint32_t _routing_seed;
 };
 
 #endif
