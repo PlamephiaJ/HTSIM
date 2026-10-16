@@ -3,6 +3,7 @@ include(FetchContent)
 
 project(htsim_project LANGUAGES CXX)
 option(ENABLE_TESTS "enable the test suite" OFF)
+option(ENABLE_NETWORK_DECISION_TESTS "enable standalone network decision tests" OFF)
 
 # Set C++ standard and compiler flags
 set(CMAKE_CXX_STANDARD 17)
@@ -130,6 +131,7 @@ set(SOURCE_FILES
     atlahs_dragonfly_api.cpp
     rank_placement.cpp
     messagelet_config.cpp
+    network_decision.cpp
     flow_routing_config.cpp
     messagelet_runtime.cpp
 )
@@ -144,6 +146,18 @@ add_subdirectory(datacenter)
 # Define executables and link with htsim library
 add_executable(parse_output parse_output.cpp)
 target_link_libraries(parse_output PRIVATE htsim)
+
+if (ENABLE_TESTS OR ENABLE_NETWORK_DECISION_TESTS)
+    enable_testing()
+    add_executable(network_decision_test network_decision_test.cpp)
+    target_link_libraries(network_decision_test PRIVATE htsim_dc htsim htsim_dc htsim)
+    add_test(NAME network_decision_test COMMAND network_decision_test)
+    set_tests_properties(network_decision_test PROPERTIES TIMEOUT 30)
+    foreach(GRANULARITY flow packet)
+        add_test(NAME network_decision_${GRANULARITY}_test COMMAND network_decision_test ${GRANULARITY})
+        set_tests_properties(network_decision_${GRANULARITY}_test PROPERTIES TIMEOUT 30)
+    endforeach()
+endif()
 
 if ( ENABLE_TESTS )
     # Unit tests.

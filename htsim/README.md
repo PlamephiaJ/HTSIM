@@ -117,15 +117,96 @@ route. Pass a unified JSON configuration with
 ```json
 {
   "schema_version": 1,
+  "runtime": {"granularity": "flow"},
   "messagelet": {"size_bytes": 0},
-  "routing": {"default": "minimum"},
+  "routing": {"default": "minimum", "network_decision": "none"},
   "logging": {"trace_decisions": false}
 }
 ```
 
-`messagelet.size_bytes: 0` means one messagelet per parent flow. Positive sizes split at
-packet boundaries. Enabling `logging.trace_decisions` prints the path ID and human-readable
-route selected at every messagelet boundary.
+`runtime.granularity` explicitly selects the routing unit, independently of the
+network decision policy:
+
+| Granularity | Decision boundary | `messagelet.size_bytes` |
+| --- | --- | --- |
+| `flow` (default) | Once per complete parent flow | Omit or set to `0` |
+| `messagelet` | After the current group reaches its byte budget | Required, greater than `0` |
+| `packet` | Once per new data packet | Omit or set to `0` |
+
+Messagelet byte budgets count full transmitted packet bytes, including headers;
+splits occur at packet boundaries and can exceed the budget by part of one
+packet. Flow mode always keeps the complete flow together, including its packet
+headers. Packet mode treats each new data packet as a one-packet messagelet;
+retransmissions retain their original packet's label in every mode. Control
+packets reuse the current routing unit and do not advance its index.
+
+For existing schema-1 configurations that omit `runtime.granularity`, a positive
+`messagelet.size_bytes` still selects messagelet mode, and zero or omitted size
+selects flow mode. Explicit modes reject conflicting sizes. Decision traces
+include `Granularity`, the path ID and the selected route; in packet mode `Size`
+is the configured maximum data packet size, including headers.
+
+To select routes from live network load before labelling each messagelet, set
+`routing.network_decision` to `"ugal_l"` and run with `-routing SOURCE -goal ...`:
+
+```json
+{
+  "schema_version": 1,
+  "runtime": {"granularity": "messagelet"},
+  "messagelet": {"size_bytes": 8192},
+  "routing": {"default": "minimum", "network_decision": "ugal_l"},
+  "logging": {"trace_decisions": true}
+}
+```
+
+For packet-level decisions in the runtime, use `"runtime": {"granularity": "packet"}`
+and omit `messagelet.size_bytes` (or set it to zero). Forwarding still uses
+`-routing SOURCE`: the packet's label is fixed throughout its network traversal.
+
+The runtime calls `NetworkDecision::decide()` once, immediately before a messagelet
+receives its path ID. All packets in that messagelet, including retransmissions,
+retain the selected label. Each later messagelet observes current queue sizes.
+The existing control-packet hook can start a messagelet decision before its first
+data packet. A zero messagelet size still makes the complete flow one messagelet.
+
+`UgalLNetworkDecision` reuses `DragonflySwitch::ugalDecision()`, which also serves
+HTSim's packet-level `UGAL_L` routing. It preserves the existing Valiant candidate
+sampling, per-switch seed-33 RNG, hop-count walks, and local egress queue byte
+counts. A Valiant candidate wins only when `q_min * h_min > q_val * h_val`;
+ties choose minimal. Matching first hops bypass the comparison, and hosts on
+the same switch are delivered locally. The selected candidate's first two hops
+are encoded as a SOURCE path, including the sampled second hop used during the
+Valiant hop-count walk. Subsequent forwarding follows that fixed path with no
+further UGAL decisions. This applies HTSim's decision at messagelet boundaries;
+the `-routing UGAL_L` mode continues making decisions at each packet hop.
+
+The default `"none"` preserves static/default routing. A network decision policy
+and `-routing_config` are mutually exclusive. To implement another policy, derive
+from `NetworkDecision` and install it with
+`MessageletRuntime::setNetworkDecision(std::unique_ptr<NetworkDecision>)`; register
+it in the configuration factory/validator if JSON selection is needed. Replacing
+the policy affects future messagelets. `setMessageletRoute()` can override a
+future messagelet; modifying a route after its first lookup raises an error.
+Decision traces include the policy, selected path, and queue/hop counts when a
+comparison occurs.
+
+C++ callers can inspect `MessageletRuntime::granularity(source)` and configure a
+registered flow with `setGranularity(source, Granularity::Flow)`,
+`setGranularity(source, Granularity::Messagelet, 8192)`, or
+`setGranularity(source, Granularity::Packet)`. `setMessageletSize(source, bytes)`
+selects messagelet mode. Per-flow changes take effect at the next routing-unit
+boundary; the active unit keeps its cached mode, size and label. A flow unit
+ends only when that flow finishes, so select its mode before its first lookup
+when splitting the current flow is required.
+
+Build and run the standalone network decision tests without fetching GoogleTest:
+
+```bash
+cmake -S htsim/sim -B htsim/sim/build -DENABLE_NETWORK_DECISION_TESTS=ON
+cmake --build htsim/sim/build --target htsim_uec_df network_decision_test --parallel 4
+ctest --test-dir htsim/sim/build -R network_decision_test --output-on-failure
+python3 -m unittest discover -s experiments/common -p 'test_network_decision.py'
+```
 
 GOAL ranks map to HTSIM hosts in their existing sequential order by default. To place ranks
 explicitly, pass `-rank_placement path/to/placement.json`. Each entry names the GOAL rank

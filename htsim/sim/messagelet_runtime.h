@@ -2,13 +2,15 @@
 #define MESSAGELET_RUNTIME_H
 
 #include <cstdint>
-#include <map>
+#include <memory>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "messagelet_config.h"
 #include "flow_routing_config.h"
+#include "network_decision.h"
 
 class AtlahsDragonflyApi;
 class EventOver;
@@ -23,11 +25,8 @@ class graph_node_properties;
 // completion events are forwarded to GOAL unchanged.
 class MessageletRuntime {
 public:
-    struct RouteInfo {
-        uint32_t path_id = 0;
-        std::string description = "minimum";
-        std::map<std::string, std::string> log_info;
-    };
+    using RouteInfo = NetworkRoute;
+    using Granularity = MessageletConfig::Granularity;
 
     struct FlowState {
         uint64_t flow_id = 0;
@@ -37,8 +36,11 @@ public:
         uint32_t tag = 0;
         uint64_t flow_size = 0;
         uint64_t messagelet_size = 0;
+        Granularity granularity = Granularity::Flow;
         RouteInfo default_route;
         std::vector<RouteInfo> messagelet_routes;
+        std::unordered_set<uint64_t> finalized_routes;
+        std::unordered_set<uint64_t> route_overrides;
     };
 
     explicit MessageletRuntime(AtlahsDragonflyApi& goal_runtime);
@@ -52,9 +54,16 @@ public:
     const MessageletConfig& config() const { return _config; }
 
     uint64_t messageletSize(const UecSrc& source) const;
+    Granularity granularity(const UecSrc& source) const;
     uint32_t pathIdForMessagelet(const UecSrc& source, uint64_t messagelet_index);
 
+    // Replacement affects only messagelets that have not yet been labelled.
+    // A null policy restores static/default routing for future messagelets.
+    void setNetworkDecision(std::unique_ptr<NetworkDecision> decision);
+
     // Per-flow policy and inspection hooks for later routing decisions.
+    // Changes apply when the next messagelet starts; active labels stay fixed.
+    void setGranularity(const UecSrc& source, Granularity granularity, uint64_t size_bytes = 0);
     void setMessageletSize(const UecSrc& source, uint64_t size);
     void setMessageletRoute(const UecSrc& source,
                             uint64_t messagelet_index,
@@ -76,6 +85,7 @@ private:
     MessageletConfig _config;
     FlowRoutingConfig _routing_config;
     bool _routing_config_loaded = false;
+    std::unique_ptr<NetworkDecision> _network_decision;
     std::unordered_map<const UecSrc*, FlowState> _flows;
 };
 

@@ -274,6 +274,8 @@ public:
     uint64_t _current_messagelet_size = 0;
     uint32_t _current_messagelet_path_id = 0;
     bool _messagelet_route_valid = false;
+    bool _current_messagelet_is_flow = false;
+    bool _current_messagelet_is_packet = false;
     bool isSendPermitted();
     void sendIfPermitted();
     mem_b sendPacket(const Route& route);

@@ -301,6 +301,13 @@ int main(int argc, char** argv) {
         (routing_strategy != DragonflySwitch::SOURCE || goal_filename.empty())) {
         throw std::logic_error("-routing_config requires -routing SOURCE and -goal");
     }
+    if (!messagelet_config_file.empty()) {
+        const auto config = MessageletConfig::loadFromFile(messagelet_config_file);
+        if (config.routing.network_decision != "none" &&
+            (routing_strategy != DragonflySwitch::SOURCE || goal_filename.empty())) {
+            throw std::logic_error("Messagelet network decision requires -routing SOURCE and -goal");
+        }
+    }
 
     // Topology
     DragonflySwitch::set_config(routing_strategy, trim_disable, trim_size);

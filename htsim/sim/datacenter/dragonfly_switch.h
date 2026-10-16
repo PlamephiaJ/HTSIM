@@ -28,6 +28,23 @@ public:
     virtual void permute_paths(vector<FibEntry*>* uproutes);
     virtual uint32_t getType() { return _type; }
 
+    struct UgalDecision {
+        uint32_t next_min = 0;
+        uint32_t next_val = 0;
+        uint32_t next_switch = 0;
+        uint32_t second_switch = 0;
+        mem_b q_min = 0;
+        mem_b q_val = 0;
+        uint32_t h_min = 0;
+        uint32_t h_val = 0;
+        bool compared = false;
+        bool use_valiant = false;
+    };
+
+    // Shared by per-packet UGAL_L and messagelet network decisions. Uses this
+    // switch's existing RNG (seed 33) and live local egress queue sizes.
+    UgalDecision ugalDecision(uint32_t src_switch, uint32_t dst_switch);
+
     static void set_config(RoutingStrategy routing_strategy,
                            bool trim_disable,
                            uint16_t trim_size) {

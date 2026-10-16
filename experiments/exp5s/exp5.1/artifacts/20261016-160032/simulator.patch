@@ -1,0 +1,457 @@
+diff --git a/htsim/README.md b/htsim/README.md
+index 5d46787..65beee3 100644
+--- a/htsim/README.md
++++ b/htsim/README.md
+@@ -118,7 +118,7 @@ route. Pass a unified JSON configuration with
+ {
+   "schema_version": 1,
+   "messagelet": {"size_bytes": 0},
+-  "routing": {"default": "minimum"},
++  "routing": {"default": "minimum", "network_decision": "none"},
+   "logging": {"trace_decisions": false}
+ }
+ ```
+@@ -127,6 +127,54 @@ route. Pass a unified JSON configuration with
+ packet boundaries. Enabling `logging.trace_decisions` prints the path ID and human-readable
+ route selected at every messagelet boundary.
+ 
++To select routes from live network load before labelling each messagelet, set
++`routing.network_decision` to `"ugal_l"` and run with `-routing SOURCE -goal ...`:
++
++```json
++{
++  "schema_version": 1,
++  "messagelet": {"size_bytes": 8192},
++  "routing": {"default": "minimum", "network_decision": "ugal_l"},
++  "logging": {"trace_decisions": true}
++}
++```
++
++The runtime calls `NetworkDecision::decide()` once, immediately before a messagelet
++receives its path ID. All packets in that messagelet, including retransmissions,
++retain the selected label. Each later messagelet observes current queue sizes.
++The existing control-packet hook can start a messagelet decision before its first
++data packet. A zero messagelet size still makes the complete flow one messagelet.
++
++`UgalLNetworkDecision` reuses `DragonflySwitch::ugalDecision()`, which also serves
++HTSim's packet-level `UGAL_L` routing. It preserves the existing Valiant candidate
++sampling, per-switch seed-33 RNG, hop-count walks, and local egress queue byte
++counts. A Valiant candidate wins only when `q_min * h_min > q_val * h_val`;
++ties choose minimal. Matching first hops bypass the comparison, and hosts on
++the same switch are delivered locally. The selected candidate's first two hops
++are encoded as a SOURCE path, including the sampled second hop used during the
++Valiant hop-count walk. Subsequent forwarding follows that fixed path with no
++further UGAL decisions. This applies HTSim's decision at messagelet boundaries;
++the `-routing UGAL_L` mode continues making decisions at each packet hop.
++
++The default `"none"` preserves static/default routing. A network decision policy
++and `-routing_config` are mutually exclusive. To implement another policy, derive
++from `NetworkDecision` and install it with
++`MessageletRuntime::setNetworkDecision(std::unique_ptr<NetworkDecision>)`; register
++it in the configuration factory/validator if JSON selection is needed. Replacing
++the policy affects future messagelets. `setMessageletRoute()` can override a
++future messagelet; modifying a route after its first lookup raises an error.
++Decision traces include the policy, selected path, and queue/hop counts when a
++comparison occurs.
++
++Build and run the standalone network decision tests without fetching GoogleTest:
++
++```bash
++cmake -S htsim/sim -B htsim/sim/build -DENABLE_NETWORK_DECISION_TESTS=ON
++cmake --build htsim/sim/build --target htsim_uec_df network_decision_test --parallel 4
++ctest --test-dir htsim/sim/build -R network_decision_test --output-on-failure
++python3 -m unittest discover -s experiments/common -p 'test_network_decision.py'
++```
++
+ GOAL ranks map to HTSIM hosts in their existing sequential order by default. To place ranks
+ explicitly, pass `-rank_placement path/to/placement.json`. Each entry names the GOAL rank
+ and its Dragonfly endpoint using group-local switch and host indices:
+diff --git a/htsim/sim/CMakeLists.txt b/htsim/sim/CMakeLists.txt
+index 6477dcf..b3fd7f8 100644
+--- a/htsim/sim/CMakeLists.txt
++++ b/htsim/sim/CMakeLists.txt
+@@ -3,6 +3,7 @@ include(FetchContent)
+ 
+ project(htsim_project LANGUAGES CXX)
+ option(ENABLE_TESTS "enable the test suite" OFF)
++option(ENABLE_NETWORK_DECISION_TESTS "enable standalone network decision tests" OFF)
+ 
+ # Set C++ standard and compiler flags
+ set(CMAKE_CXX_STANDARD 17)
+@@ -130,6 +131,7 @@ set(SOURCE_FILES
+     atlahs_dragonfly_api.cpp
+     rank_placement.cpp
+     messagelet_config.cpp
++    network_decision.cpp
+     flow_routing_config.cpp
+     messagelet_runtime.cpp
+ )
+@@ -145,6 +147,14 @@ add_subdirectory(datacenter)
+ add_executable(parse_output parse_output.cpp)
+ target_link_libraries(parse_output PRIVATE htsim)
+ 
++if (ENABLE_TESTS OR ENABLE_NETWORK_DECISION_TESTS)
++    enable_testing()
++    add_executable(network_decision_test network_decision_test.cpp)
++    target_link_libraries(network_decision_test PRIVATE htsim_dc htsim htsim_dc htsim)
++    add_test(NAME network_decision_test COMMAND network_decision_test)
++    set_tests_properties(network_decision_test PROPERTIES TIMEOUT 30)
++endif()
++
+ if ( ENABLE_TESTS )
+     # Unit tests.
+     set(UNIT_TEST_FILES
+diff --git a/htsim/sim/datacenter/dragonfly_switch.cpp b/htsim/sim/datacenter/dragonfly_switch.cpp
+index a935162..9df8cca 100644
+--- a/htsim/sim/datacenter/dragonfly_switch.cpp
++++ b/htsim/sim/datacenter/dragonfly_switch.cpp
+@@ -116,12 +116,14 @@ uint32_t DragonflySwitch::get_next_switch_valiant(uint32_t this_switch,
+     // Next: route to intermediate switch within G_s (G_i = G_s = G_d) => RVAL improvement
+     if (this_group == src_group && src_group == dst_group) {
+         if (this_switch == src_switch) {
++            // There is no third switch to sample when a == 2. The old
++            // fallback after the rejection loop was unreachable (and omitted
++            // the group offset). The only available next hop is dst_switch.
++            if (_a == 2)
++                return dst_switch;
+             do {
+                 next_switch = (this_group * _a) + _dist_a(_generator);
+             } while (next_switch == this_switch || next_switch == dst_switch);
+-
+-            if (_a == 2)
+-                next_switch = (this_switch + 1) % _a;
+             return next_switch;
+         }
+         return dst_switch;
+@@ -207,6 +209,59 @@ FibEntry* DragonflySwitch::get_fib_entry(uint32_t next_switch) {
+     return fib_entry;
+ }
+ 
++DragonflySwitch::UgalDecision DragonflySwitch::ugalDecision(uint32_t src_switch,
++                                                          uint32_t dst_switch) {
++    UgalDecision decision;
++    if (_id == dst_switch) {
++        return decision;
++    }
++    decision.next_min = get_next_switch_minimal(_id, dst_switch);
++    decision.next_val = get_next_switch_valiant(_id, src_switch, dst_switch);
++    decision.next_switch = decision.next_min;
++
++    if (decision.next_min != decision.next_val) {
++        decision.compared = true;
++        Queue* q_min = _topo->queues_switch_switch[_id][decision.next_min];
++        Queue* q_val = _topo->queues_switch_switch[_id][decision.next_val];
++
++        // Keep HTSim's hop-count walk and RNG draw order. In particular, the
++        // Valiant walk may sample a global link after the first local hop.
++        uint32_t tmp_switch = decision.next_min;
++        decision.h_min = 1;
++        while (tmp_switch != dst_switch) {
++            tmp_switch = get_next_switch_minimal(tmp_switch, dst_switch);
++            decision.h_min++;
++        }
++
++        tmp_switch = decision.next_val;
++        decision.h_val = 1;
++        uint32_t val_second = 0;
++        while (tmp_switch != dst_switch) {
++            tmp_switch = get_next_switch_valiant(tmp_switch, src_switch, dst_switch);
++            if (decision.h_val == 1)
++                val_second = tmp_switch;
++            decision.h_val++;
++        }
++
++        decision.q_min = q_min->queuesize();
++        decision.q_val = q_val->queuesize();
++        // Strict inequality: equal costs select minimal, without a bias,
++        // threshold, normalized utilization, or remote queue observations.
++        decision.use_valiant = decision.q_min * decision.h_min >
++                               decision.q_val * decision.h_val;
++        if (decision.use_valiant) {
++            decision.next_switch = decision.next_val;
++            decision.second_switch = val_second;
++            return decision;
++        }
++    }
++
++    if (decision.next_switch != dst_switch) {
++        decision.second_switch = get_next_switch_minimal(decision.next_switch, dst_switch);
++    }
++    return decision;
++}
++
+ Route* DragonflySwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
+     uint32_t this_switch = _id;
+     uint32_t src_switch = _topo->get_host_switch(pkt.src());
+@@ -260,36 +315,8 @@ Route* DragonflySwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
+         }
+ 
+         case UGAL_L: {
+-            uint32_t next_switch_min = get_next_switch_minimal(this_switch, dst_switch);
+-            uint32_t next_switch_val = get_next_switch_valiant(this_switch, src_switch, dst_switch);
+-
+-            if (next_switch_min == next_switch_val)
+-                return get_fib_entry(next_switch_min)->getEgressPort();
+-
+-            Queue* q_min = _topo->queues_switch_switch[this_switch][next_switch_min];
+-            Queue* q_val = _topo->queues_switch_switch[this_switch][next_switch_val];
+-
+-            // Calculate path hop-count
+-            uint32_t tmp_switch;
+-            uint32_t h_min = 1;
+-            uint32_t h_val = 1;
+-
+-            tmp_switch = next_switch_min;
+-            while (tmp_switch != dst_switch) {
+-                tmp_switch = get_next_switch_minimal(tmp_switch, dst_switch);
+-                h_min++;
+-            }
+-
+-            tmp_switch = next_switch_val;
+-            while (tmp_switch != dst_switch) {
+-                tmp_switch = get_next_switch_valiant(tmp_switch, src_switch, dst_switch);
+-                h_val++;
+-            }
+-
+-            if (q_min->queuesize() * h_min > q_val->queuesize() * h_val)
+-                return get_fib_entry(next_switch_val)->getEgressPort();
+-
+-            return get_fib_entry(next_switch_min)->getEgressPort();
++            const auto decision = ugalDecision(src_switch, dst_switch);
++            return get_fib_entry(decision.next_switch)->getEgressPort();
+         }
+ 
+         case SOURCE: {
+diff --git a/htsim/sim/datacenter/dragonfly_switch.h b/htsim/sim/datacenter/dragonfly_switch.h
+index 3212ad8..ea550b5 100644
+--- a/htsim/sim/datacenter/dragonfly_switch.h
++++ b/htsim/sim/datacenter/dragonfly_switch.h
+@@ -28,6 +28,23 @@ public:
+     virtual void permute_paths(vector<FibEntry*>* uproutes);
+     virtual uint32_t getType() { return _type; }
+ 
++    struct UgalDecision {
++        uint32_t next_min = 0;
++        uint32_t next_val = 0;
++        uint32_t next_switch = 0;
++        uint32_t second_switch = 0;
++        mem_b q_min = 0;
++        mem_b q_val = 0;
++        uint32_t h_min = 0;
++        uint32_t h_val = 0;
++        bool compared = false;
++        bool use_valiant = false;
++    };
++
++    // Shared by per-packet UGAL_L and messagelet network decisions. Uses this
++    // switch's existing RNG (seed 33) and live local egress queue sizes.
++    UgalDecision ugalDecision(uint32_t src_switch, uint32_t dst_switch);
++
+     static void set_config(RoutingStrategy routing_strategy,
+                            bool trim_disable,
+                            uint16_t trim_size) {
+diff --git a/htsim/sim/datacenter/main_uec_df.cpp b/htsim/sim/datacenter/main_uec_df.cpp
+index 198650a..fbce225 100644
+--- a/htsim/sim/datacenter/main_uec_df.cpp
++++ b/htsim/sim/datacenter/main_uec_df.cpp
+@@ -301,6 +301,13 @@ int main(int argc, char** argv) {
+         (routing_strategy != DragonflySwitch::SOURCE || goal_filename.empty())) {
+         throw std::logic_error("-routing_config requires -routing SOURCE and -goal");
+     }
++    if (!messagelet_config_file.empty()) {
++        const auto config = MessageletConfig::loadFromFile(messagelet_config_file);
++        if (config.routing.network_decision != "none" &&
++            (routing_strategy != DragonflySwitch::SOURCE || goal_filename.empty())) {
++            throw std::logic_error("Messagelet network decision requires -routing SOURCE and -goal");
++        }
++    }
+ 
+     // Topology
+     DragonflySwitch::set_config(routing_strategy, trim_disable, trim_size);
+diff --git a/htsim/sim/messagelet_config.cpp b/htsim/sim/messagelet_config.cpp
+index 4d7ae15..121a80d 100644
+--- a/htsim/sim/messagelet_config.cpp
++++ b/htsim/sim/messagelet_config.cpp
+@@ -39,6 +39,7 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
+     readOptional(tree, "schema_version", schema_version, filename);
+     readOptional(tree, "messagelet.size_bytes", config.messagelet.size_bytes, filename);
+     readOptional(tree, "routing.default", config.routing.default_route, filename);
++    readOptional(tree, "routing.network_decision", config.routing.network_decision, filename);
+     readOptional(tree, "logging.trace_decisions", config.logging.trace_decisions, filename);
+ 
+     if (schema_version != kSchemaVersion) {
+@@ -51,6 +52,10 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
+ }
+ 
+ void MessageletConfig::validate() const {
++    if (routing.network_decision != "none" && routing.network_decision != "ugal_l") {
++        throw std::invalid_argument("Unsupported network decision strategy '" +
++                                    routing.network_decision + "'");
++    }
+     if (routing.default_route != "minimum") {
+         throw std::invalid_argument("Unsupported default messagelet route '" +
+                                     routing.default_route + "'");
+diff --git a/htsim/sim/messagelet_config.h b/htsim/sim/messagelet_config.h
+index 8a9ec86..f82be68 100644
+--- a/htsim/sim/messagelet_config.h
++++ b/htsim/sim/messagelet_config.h
+@@ -14,6 +14,7 @@ struct MessageletConfig {
+ 
+     struct RoutingSettings {
+         std::string default_route = "minimum";
++        std::string network_decision = "none";
+     } routing;
+ 
+     struct LoggingSettings {
+diff --git a/htsim/sim/messagelet_runtime.cpp b/htsim/sim/messagelet_runtime.cpp
+index 58440c8..4a15030 100644
+--- a/htsim/sim/messagelet_runtime.cpp
++++ b/htsim/sim/messagelet_runtime.cpp
+@@ -127,13 +127,19 @@ void MessageletRuntime::loadConfig(const std::string& filename) {
+     if (!_flows.empty()) {
+         throw std::logic_error("Messagelet config must be loaded before submitting flows");
+     }
+-    _config = MessageletConfig::loadFromFile(filename);
++    auto config = MessageletConfig::loadFromFile(filename);
++    auto decision = makeNetworkDecision(config.routing.network_decision);
++    setNetworkDecision(std::move(decision));
++    _config = std::move(config);
+ }
+ 
+ void MessageletRuntime::loadRoutingConfig(const std::string& filename) {
+     if (!_flows.empty()) {
+         throw std::logic_error("Routing config must be loaded before submitting flows");
+     }
++    if (_network_decision) {
++        throw std::logic_error("Static routing config cannot be combined with a network decision policy");
++    }
+     _routing_config = FlowRoutingConfig::loadFromFile(filename);
+     _routing_config_loaded = true;
+ }
+@@ -151,9 +157,22 @@ uint64_t MessageletRuntime::messageletSize(const UecSrc& source) const {
+ uint32_t MessageletRuntime::pathIdForMessagelet(const UecSrc& source,
+                                                 uint64_t messagelet_index) {
+     FlowState& state = mutableFlowState(source);
++    if (state.finalized_routes.count(messagelet_index)) {
++        return state.messagelet_routes.at(messagelet_index).path_id;
++    }
+     if (messagelet_index >= state.messagelet_routes.size()) {
+         state.messagelet_routes.resize(messagelet_index + 1, state.default_route);
+     }
++    if (_network_decision && !state.route_overrides.count(messagelet_index)) {
++        auto* topology = _goal_runtime.getDragonflyTopology();
++        if (!topology) {
++            throw std::logic_error("Dragonfly topology not set");
++        }
++        state.messagelet_routes[messagelet_index] = _network_decision->decide(
++            {*topology, state.from, state.to, state.tag, state.flow_size,
++             state.messagelet_size, messagelet_index});
++    }
++    state.finalized_routes.insert(messagelet_index);
+     const RouteInfo& route = state.messagelet_routes[messagelet_index];
+     if (_config.logging.trace_decisions) {
+         std::cout << "Messagelet route - Src " << state.from
+@@ -163,7 +182,11 @@ uint32_t MessageletRuntime::pathIdForMessagelet(const UecSrc& source,
+                   << " - Index " << messagelet_index
+                   << " - Size " << state.messagelet_size
+                   << " - PathId " << route.path_id
+-                  << " - Route " << route.description;
++                  << " - Route " << route.description
++                  << " - TransportFlowId " << source.flowId();
++        if (source.lgs_node) {
++            std::cout << " - SendTaskId " << source.lgs_node->offset;
++        }
+         for (const auto& item : route.log_info) {
+             std::cout << " - " << item.first << " " << item.second;
+         }
+@@ -172,6 +195,13 @@ uint32_t MessageletRuntime::pathIdForMessagelet(const UecSrc& source,
+     return route.path_id;
+ }
+ 
++void MessageletRuntime::setNetworkDecision(std::unique_ptr<NetworkDecision> decision) {
++    if (decision && _routing_config_loaded) {
++        throw std::logic_error("Network decision policy cannot be combined with a static routing config");
++    }
++    _network_decision = std::move(decision);
++}
++
+ void MessageletRuntime::setMessageletSize(const UecSrc& source, uint64_t size) {
+     if (size == 0) {
+         throw std::invalid_argument("Messagelet size must be greater than zero");
+@@ -183,10 +213,14 @@ void MessageletRuntime::setMessageletRoute(const UecSrc& source,
+                                            uint64_t messagelet_index,
+                                            RouteInfo route_info) {
+     FlowState& state = mutableFlowState(source);
++    if (state.finalized_routes.count(messagelet_index)) {
++        throw std::logic_error("Cannot change a messagelet route after it has been labelled");
++    }
+     if (messagelet_index >= state.messagelet_routes.size()) {
+         state.messagelet_routes.resize(messagelet_index + 1, state.default_route);
+     }
+     state.messagelet_routes[messagelet_index] = std::move(route_info);
++    state.route_overrides.insert(messagelet_index);
+ }
+ 
+ const MessageletRuntime::FlowState& MessageletRuntime::flowState(const UecSrc& source) const {
+diff --git a/htsim/sim/messagelet_runtime.h b/htsim/sim/messagelet_runtime.h
+index 3661666..67837b8 100644
+--- a/htsim/sim/messagelet_runtime.h
++++ b/htsim/sim/messagelet_runtime.h
+@@ -2,13 +2,15 @@
+ #define MESSAGELET_RUNTIME_H
+ 
+ #include <cstdint>
+-#include <map>
++#include <memory>
+ #include <string>
+ #include <unordered_map>
++#include <unordered_set>
+ #include <vector>
+ 
+ #include "messagelet_config.h"
+ #include "flow_routing_config.h"
++#include "network_decision.h"
+ 
+ class AtlahsDragonflyApi;
+ class EventOver;
+@@ -23,11 +25,7 @@ class graph_node_properties;
+ // completion events are forwarded to GOAL unchanged.
+ class MessageletRuntime {
+ public:
+-    struct RouteInfo {
+-        uint32_t path_id = 0;
+-        std::string description = "minimum";
+-        std::map<std::string, std::string> log_info;
+-    };
++    using RouteInfo = NetworkRoute;
+ 
+     struct FlowState {
+         uint64_t flow_id = 0;
+@@ -39,6 +37,8 @@ public:
+         uint64_t messagelet_size = 0;
+         RouteInfo default_route;
+         std::vector<RouteInfo> messagelet_routes;
++        std::unordered_set<uint64_t> finalized_routes;
++        std::unordered_set<uint64_t> route_overrides;
+     };
+ 
+     explicit MessageletRuntime(AtlahsDragonflyApi& goal_runtime);
+@@ -54,6 +54,10 @@ public:
+     uint64_t messageletSize(const UecSrc& source) const;
+     uint32_t pathIdForMessagelet(const UecSrc& source, uint64_t messagelet_index);
+ 
++    // Replacement affects only messagelets that have not yet been labelled.
++    // A null policy restores static/default routing for future messagelets.
++    void setNetworkDecision(std::unique_ptr<NetworkDecision> decision);
++
+     // Per-flow policy and inspection hooks for later routing decisions.
+     void setMessageletSize(const UecSrc& source, uint64_t size);
+     void setMessageletRoute(const UecSrc& source,
+@@ -76,6 +80,7 @@ private:
+     MessageletConfig _config;
+     FlowRoutingConfig _routing_config;
+     bool _routing_config_loaded = false;
++    std::unique_ptr<NetworkDecision> _network_decision;
+     std::unordered_map<const UecSrc*, FlowState> _flows;
+ };
+ 
