@@ -10,6 +10,9 @@
 #include "lgs/cmdline.h"
 #include <chrono>
 #include <cmath>
+#include <cstdlib>
+#include <iomanip>
+#include <sstream>
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
@@ -382,7 +385,22 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
     //const int O = 0;
     const int g = 0;
     //const int L = 0;
-    const double G = 0.04;
+    const double G = lgs_interface->lgs_G;
+    if (!std::isfinite(G) || G < 0)
+        throw std::invalid_argument("GOAL G must be finite and nonnegative");
+    std::ostringstream goal_G_value;
+    goal_G_value << std::setprecision(17) << G;
+    auto& collector = htsim::DataCollector::get_instance();
+    auto* scheduler_config = collector.RegisterCsvMetric("goalSchedulerConfig",
+        {"G_ns_per_byte", "g_ns", "o_ns", "minimum_send_gate_ns"});
+    scheduler_config->LogData({goal_G_value.str(), std::to_string(g),
+                              std::to_string(lgs_interface->lgs_o), "1"});
+    const char* trace_gate_env = std::getenv("HTSIM_TRACE_GOAL_SEND_GATE");
+    auto* send_gate_metric = trace_gate_env && std::string(trace_gate_env) == "1" ?
+        collector.RegisterCsvMetric("goalSendGate",
+            {"time_ns", "rank", "cpu", "nic", "send_task_id", "peer", "payload_bytes",
+             "cpu_available_ns", "send_available_ns", "resource_time_ns", "action",
+             "next_send_available_ns"}) : nullptr;
     myprint = false;
     bool timeline_stat = false;
     //const uint32_t S = 0;
@@ -645,6 +663,16 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
               if(myprint) printf("[%i] found send to %i tag %lu - t: %lu (CPU: %i)\n", elem.host, elem.target, (ulint)elem.tag, (ulint)elem.time, elem.proc);
   
               uint64_t resource_time = std::max(nexto[elem.host][elem.proc], nextgs[elem.host][elem.nic]);
+              const uint64_t cpu_available = nexto[elem.host][elem.proc];
+              const uint64_t send_available = nextgs[elem.host][elem.nic];
+              auto log_send_gate = [&](const char* action) {
+                  if (!send_gate_metric) return;
+                  send_gate_metric->LogData({std::to_string(elem.time), std::to_string(elem.host),
+                      std::to_string(elem.proc), std::to_string(elem.nic), std::to_string(elem.offset),
+                      std::to_string(elem.target), std::to_string(elem.size), std::to_string(cpu_available),
+                      std::to_string(send_available), std::to_string(resource_time), action,
+                      std::to_string(nextgs[elem.host][elem.nic])});
+              };
 
               if(resource_time <= elem.time) { // local o,g available!
                   if(myprint) 
@@ -680,6 +708,7 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
                   lgs_interface->nic_available[elem.host] = false;
                   lgs_interface->sends_active++;
                   elem.size = original_size;
+                  log_send_gate("issue");
                   lgs_interface->send_event(elem);
                   send_doing++;
 
@@ -688,6 +717,7 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
                   elem.ts = aqtime++; // new element in queue 
           #endif    
               } else { // local o,g unavailable - retry later
+                  log_send_gate("blocked");
               if(myprint) printf("-- send local o,g not available -- reinserting\n");
                   //printf("Reinseringg send %d %d %d %d at %lu\n", elem.host, elem.target, elem.tag, elem.size, resource_time);
                   elem.time = resource_time;
