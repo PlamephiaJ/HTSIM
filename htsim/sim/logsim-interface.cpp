@@ -9,10 +9,7 @@
 #include "lgs/TimelineVisualization.hpp"
 #include "lgs/cmdline.h"
 #include <chrono>
-#include <cmath>
 #include <cstdlib>
-#include <iomanip>
-#include <sstream>
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
@@ -385,16 +382,11 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
     //const int O = 0;
     const int g = 0;
     //const int L = 0;
-    const double G = lgs_interface->lgs_G;
-    if (!std::isfinite(G) || G < 0)
-        throw std::invalid_argument("GOAL G must be finite and nonnegative");
-    std::ostringstream goal_G_value;
-    goal_G_value << std::setprecision(17) << G;
     auto& collector = htsim::DataCollector::get_instance();
     auto* scheduler_config = collector.RegisterCsvMetric("goalSchedulerConfig",
-        {"G_ns_per_byte", "g_ns", "o_ns", "minimum_send_gate_ns"});
-    scheduler_config->LogData({goal_G_value.str(), std::to_string(g),
-                              std::to_string(lgs_interface->lgs_o), "1"});
+        {"G_ns_per_byte", "g_ns", "o_ns", "minimum_send_gate_ns", "send_bandwidth_model"});
+    scheduler_config->LogData({"0", std::to_string(g),
+                              std::to_string(lgs_interface->lgs_o), "0", "uec_nic_and_links"});
     const char* trace_gate_env = std::getenv("HTSIM_TRACE_GOAL_SEND_GATE");
     auto* send_gate_metric = trace_gate_env && std::string(trace_gate_env) == "1" ?
         collector.RegisterCsvMetric("goalSendGate",
@@ -692,22 +684,13 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
                   btime_t noise = 0;
                   uint64_t cpu_time = elem.time + lgs_interface->lgs_o + noise; // We don't model the other paramter in HTSIM
                   nexto[elem.host][elem.proc] = cpu_time;
-                  // Calc Actual Size in HTSIM
-                  int original_size = elem.size;
-                  int message_size = elem.size;
-                  int packet_size = 4096;
-                  int num_packets = (message_size + packet_size - 1) / packet_size;
-                  int updated_size = (num_packets+1) * 4160; // Parameterize this. This accounts for the header size
-                  elem.size = updated_size;
-
-                  uint64_t bandwidth_cost2 = std::max(static_cast<uint64_t>(1),
-                                                       static_cast<uint64_t>(std::ceil((double)(elem.size) * G)));
-                  nextgs[elem.host][elem.nic] = elem.time + g + bandwidth_cost2; 
-                  can_simulate_until = nextgs[elem.host][elem.nic];
+                  // GOAL schedules dependencies/CPU work; the transport NIC
+                  // and links serialize the original payload. Do not reserve
+                  // a byte-dependent interval or an artificial 1 ns send slot.
+                  nextgs[elem.host][elem.nic] = elem.time + g;
 
                   lgs_interface->nic_available[elem.host] = false;
                   lgs_interface->sends_active++;
-                  elem.size = original_size;
                   log_send_gate("issue");
                   lgs_interface->send_event(elem);
                   send_doing++;
@@ -1013,6 +996,13 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
         }
       }
 
+      // Advance to a genuinely pending GOAL event, or let HTSim run until a
+      // transport/compute completion. A synthetic send deadline at "now"
+      // would repeatedly schedule zero-time wakeups after removing the gate.
+      if (!lgs_interface->aq.empty() &&
+          lgs_interface->aq.top().time > lgs_interface->htsim_api->getGlobalTimeNs()) {
+          can_simulate_until = lgs_interface->aq.top().time;
+      }
       if (custom_print) {
         printf("1) Sends Active %d - Compute Started %d\n", lgs_interface->sends_active, lgs_interface->compute_started);
         printf("1) Can Simulate Until %" PRId64 " - Top Time %lu\n", can_simulate_until, lgs_interface->aq.top().time);
@@ -1028,7 +1018,9 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
       if (custom_print) {
         printf("2) Time %lu > htsim time %lu, unlocked_elem %d, just_running %d\n", lgs_interface->aq.top().time, lgs_interface->htsim_api->getGlobalTimeNs(), unlocked_elem, just_running);
       }
-      if (lgs_interface->aq.top().time > (lgs_interface->htsim_api->getGlobalTimeNs()) && !unlocked_elem && !just_running) { // Let htim catchup
+      if (!lgs_interface->aq.empty() &&
+          lgs_interface->aq.top().time > lgs_interface->htsim_api->getGlobalTimeNs() &&
+          !unlocked_elem && !just_running) { // Let htim catchup
         lgs_interface->htsim_simulate_until(lgs_interface->aq.top().time);
       }
 

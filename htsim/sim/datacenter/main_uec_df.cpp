@@ -7,7 +7,6 @@
 #include <sstream>
 #include <memory>
 #include <charconv>
-#include <cmath>
 
 #include "clock.h"
 #include "compositequeue.h"
@@ -52,7 +51,6 @@ int main(int argc, char** argv) {
     std::string messagelet_config_file;
     std::string routing_config_file;
     std::string rank_placement_file;
-    double goal_G_ns_per_byte = 0.04;
     mem_b cwnd_b = 0;
     mem_b queuesize = 88;  // Dragonfly default (1x BDP)
 
@@ -74,13 +72,8 @@ int main(int argc, char** argv) {
                 throw std::invalid_argument("Seed must be an unsigned 32-bit integer");
             (routing ? routing_seed : seed) = parsed;
         } else if (!strcmp(argv[i], "-goal_G")) {
-            if (i + 1 >= argc)
-                throw std::invalid_argument("Missing value for -goal_G");
-            const std::string value = argv[++i];
-            size_t consumed = 0;
-            goal_G_ns_per_byte = std::stod(value, &consumed);
-            if (consumed != value.size() || !std::isfinite(goal_G_ns_per_byte) || goal_G_ns_per_byte < 0)
-                throw std::invalid_argument("-goal_G must be finite and nonnegative (ns/byte)");
+            throw std::invalid_argument(
+                "-goal_G has been removed: UEC NIC and links model send bandwidth");
         } else if (!strcmp(argv[i], "-basepath")) {
             topo_base_path = argv[i + 1];
             i++;
@@ -401,7 +394,6 @@ int main(int argc, char** argv) {
         LogSimInterface* lgs =
             new LogSimInterface(nullptr, traffic_logger, eventlist, nullptr, nullptr);
         lgs->htsim_api = api;
-        lgs->lgs_G = goal_G_ns_per_byte;
         api->setLogSimInterface(lgs);
         lgs->set_protocol(UEC_PROTOCOL);
 
