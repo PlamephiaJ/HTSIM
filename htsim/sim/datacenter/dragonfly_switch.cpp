@@ -211,7 +211,8 @@ FibEntry* DragonflySwitch::get_fib_entry(uint32_t next_switch) {
 }
 
 DragonflySwitch::UgalDecision DragonflySwitch::ugalDecision(uint32_t src_switch,
-                                                          uint32_t dst_switch) {
+                                                          uint32_t dst_switch,
+                                                          const PressureQuery& pressure) {
     UgalDecision decision;
     if (_id == dst_switch) {
         return decision;
@@ -248,8 +249,16 @@ DragonflySwitch::UgalDecision DragonflySwitch::ugalDecision(uint32_t src_switch,
         decision.q_val = q_val->queuesize();
         // Strict inequality: equal costs select minimal, without a bias,
         // threshold, normalized utilization, or remote queue observations.
-        decision.use_valiant = decision.q_min * decision.h_min >
-                               decision.q_val * decision.h_val;
+        if (pressure) {
+            const auto min_second = decision.next_min == dst_switch ? 0 :
+                get_next_switch_minimal(decision.next_min, dst_switch);
+            const double min_pressure = pressure(decision.next_min, min_second);
+            const double val_pressure = pressure(decision.next_val, val_second);
+            decision.use_valiant = min_pressure * decision.h_min > val_pressure * decision.h_val;
+        } else {
+            decision.use_valiant = decision.q_min * decision.h_min >
+                                   decision.q_val * decision.h_val;
+        }
         if (decision.use_valiant) {
             decision.next_switch = decision.next_val;
             decision.second_switch = val_second;

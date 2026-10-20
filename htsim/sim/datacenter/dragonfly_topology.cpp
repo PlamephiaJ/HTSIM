@@ -51,6 +51,12 @@ DragonflyTopology::DragonflyTopology(queue_type queue_type,
     _h = 0;
 }
 
+void DragonflyTopology::init_group_agents() {
+    _group_agents.clear();
+    for (uint32_t group = 0; group < _no_groups; ++group)
+        _group_agents.push_back(std::make_unique<GroupRoutingAgent>(*this, group));
+}
+
 void DragonflyTopology::construct_topology(uint32_t p, uint32_t a, uint32_t h) {
     assert(p > 0 && a > 0 && h > 0);
 
@@ -65,6 +71,7 @@ void DragonflyTopology::construct_topology(uint32_t p, uint32_t a, uint32_t h) {
     init_link_latencies();
     init_pipes_queues();
     init_network();
+    init_group_agents();
 }
 
 void DragonflyTopology::load_topology(std::string path) {
@@ -130,6 +137,7 @@ void DragonflyTopology::load_topology(std::string path) {
 
     init_pipes_queues();
     init_network();
+    init_group_agents();
 }
 
 void DragonflyTopology::init_link_latencies() {

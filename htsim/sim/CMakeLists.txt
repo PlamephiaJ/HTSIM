@@ -132,6 +132,7 @@ set(SOURCE_FILES
     rank_placement.cpp
     messagelet_config.cpp
     network_decision.cpp
+    group_routing_agent.cpp
     flow_routing_config.cpp
     messagelet_runtime.cpp
 )

@@ -2328,6 +2328,7 @@ uint32_t UecSrc::messageletPathIdForNewPacket(UecDataPacket::seq_t seqno,
     const uint32_t path_id = _current_messagelet_path_id;
     _messagelet_packet_paths[seqno] = path_id;
     _messagelet_bytes_sent += pkt_size;
+    _messagelet_runtime->bindPacket(*this, _messagelet_index, seqno, pkt_size - _hdr_size);
     return path_id;
 }
 

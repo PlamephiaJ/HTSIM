@@ -8,6 +8,7 @@
 
 //#include <list>
 //#include "circular_buffer.h"
+#include <functional>
 #include "config.h"
 #include "eventlist.h"
 #include "network.h"
@@ -95,6 +96,10 @@ class Queue : public BaseQueue {
  public:
     Queue(linkspeed_bps bitrate, mem_b maxsize, EventList &eventlist, 
           QueueLogger* logger);
+    // Called only after successful intact admission, never on drop/trim.
+    void setAdmissionObserver(std::function<void(const Packet&)> observer) {
+        _admission_observer = std::move(observer);
+    }
     virtual void receivePacket(Packet& pkt);
     void doNextEvent();
     // should really be private, but loggers want to see
@@ -107,6 +112,10 @@ class Queue : public BaseQueue {
     void reset_drops() {_num_drops = 0;}
 
  protected:
+    std::function<void(const Packet&)> _admission_observer;
+    void notifyAdmission(const Packet& packet) const {
+        if (_admission_observer) _admission_observer(packet);
+    }
     // Mechanism
     // start serving the item at the head of the queue
     virtual void beginService(); 

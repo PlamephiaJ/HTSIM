@@ -153,7 +153,7 @@ void MessageletRuntime::loadConfig(const std::string& filename) {
     if (config.runtime.mode == MessageletConfig::Mode::Transparent && _routing_config_loaded) {
         throw std::logic_error("Transparent runtime cannot be combined with a static routing config");
     }
-    auto decision = makeNetworkDecision(config.routing.network_decision);
+    auto decision = makeNetworkDecision(config.routing.network_decision, config.routing.commitment_alpha);
     if (decision && _routing_config_loaded) {
         throw std::logic_error("Network decision policy cannot be combined with a static routing config");
     }
@@ -212,6 +212,50 @@ uint32_t MessageletRuntime::pathIdForMessagelet(const UecSrc& source,
     }
     state.finalized_routes.insert(messagelet_index);
     const RouteInfo& route = state.messagelet_routes[messagelet_index];
+    auto& topology = *_goal_runtime.getDragonflyTopology();
+    auto& gra = topology.groupRoutingAgent(topology.get_host_switch(state.from) / topology.get_a());
+    gra.setTrace(_config.logging.trace_decisions);
+    const auto corridor = DragonflySwitch::get_routing_strategy() == DragonflySwitch::SOURCE ?
+        gra.corridorForRoute(state.from, state.to, route.path_id) : std::nullopt;
+    const uint64_t mtu = Packet::data_packet_size();
+    const uint64_t mss = mtu - UecSrc::_hdr_size;
+    const uint64_t remaining = state.flow_size - state.original_payload_sent;
+    const uint64_t payload = state.granularity == Granularity::Flow ? remaining :
+        std::min(remaining, (state.messagelet_size / mtu + (state.messagelet_size % mtu != 0)) * mss);
+    const auto decision_id = _decision_index++;
+    if (_config.logging.trace_decisions) {
+        // Capture all corridors and all pending R_m,c before this decision's
+        // own reservation. The single-threaded simulator cannot mutate state
+        // between the policy query above and this snapshot.
+        const auto snapshot = gra.snapshot();
+        auto& collector = htsim::DataCollector::get_instance();
+        auto* decisions = collector.RegisterCsvMetric("runtime_decisions",
+            {"decision_id", "time_ps", "group", "gra_version", "transport_flow_id", "send_task_id",
+             "src_host", "dst_host", "tag", "messagelet_index", "granularity", "size_bytes",
+             "payload_bytes", "path_id", "route", "egress_switch", "remote_switch", "policy_state"});
+        std::string policy_state;
+        for (const auto& item : route.log_info) policy_state += item.first + "=" + item.second + ";";
+        decisions->LogData({std::to_string(decision_id), std::to_string(_goal_runtime.getEventList()->now()),
+            std::to_string(gra.group()), std::to_string(snapshot.version), std::to_string(source.flowId()),
+            source.lgs_node ? std::to_string(source.lgs_node->offset) : "", std::to_string(state.from),
+            std::to_string(state.to), std::to_string(state.tag), std::to_string(messagelet_index),
+            MessageletConfig::granularityName(state.granularity), std::to_string(state.messagelet_size),
+            std::to_string(payload), std::to_string(route.path_id), route.description,
+            corridor ? std::to_string(corridor->first) : "", corridor ? std::to_string(corridor->second) : "", policy_state});
+        auto* corridors = collector.RegisterCsvMetric("gra_corridor_snapshots",
+            {"decision_id", "egress_switch", "remote_switch", "q_wire_bytes", "r_payload_bytes"});
+        for (const auto& c : snapshot.corridors) corridors->LogData({std::to_string(decision_id),
+            std::to_string(c.corridor.first), std::to_string(c.corridor.second),
+            std::to_string(c.q_bytes), std::to_string(c.r_bytes)});
+        auto* messages = collector.RegisterCsvMetric("gra_messagelet_snapshots",
+            {"decision_id", "transport_flow_id", "messagelet_index", "egress_switch", "remote_switch",
+             "original_payload_bytes", "remaining_payload_bytes"});
+        for (const auto& item : snapshot.messagelets) messages->LogData({std::to_string(decision_id),
+            std::to_string(item.first.first), std::to_string(item.first.second),
+            std::to_string(item.second.corridor.first), std::to_string(item.second.corridor.second),
+            std::to_string(item.second.original_bytes), std::to_string(item.second.remaining_bytes)});
+    }
+    if (corridor) gra.commit({source.flowId(), messagelet_index}, *corridor, payload);
     if (_config.logging.trace_decisions) {
         std::cout << "Messagelet route - Src " << state.from
                   << " - Dst " << state.to
@@ -232,6 +276,16 @@ uint32_t MessageletRuntime::pathIdForMessagelet(const UecSrc& source,
         std::cout << std::endl;
     }
     return route.path_id;
+}
+
+void MessageletRuntime::bindPacket(const UecSrc& source, uint64_t index, uint64_t seqno, uint64_t bytes) {
+    auto& state = mutableFlowState(source);
+    auto& topology = *_goal_runtime.getDragonflyTopology();
+    auto& gra = topology.groupRoutingAgent(topology.get_host_switch(state.from) / topology.get_a());
+    const auto corridor = DragonflySwitch::get_routing_strategy() == DragonflySwitch::SOURCE ?
+        gra.corridorForRoute(state.from, state.to, state.messagelet_routes.at(index).path_id) : std::nullopt;
+    if (corridor) gra.bindPacket({source.flowId(), index}, seqno, bytes);
+    state.original_payload_sent += bytes;
 }
 
 void MessageletRuntime::setNetworkDecision(std::unique_ptr<NetworkDecision> decision) {

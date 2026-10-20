@@ -35,6 +35,7 @@ public:
         uint32_t to = 0;
         uint32_t tag = 0;
         uint64_t flow_size = 0;
+        uint64_t original_payload_sent = 0;
         uint64_t messagelet_size = 0;
         Granularity granularity = Granularity::Flow;
         RouteInfo default_route;
@@ -57,6 +58,8 @@ public:
     uint64_t messageletSize(const UecSrc& source) const;
     Granularity granularity(const UecSrc& source) const;
     uint32_t pathIdForMessagelet(const UecSrc& source, uint64_t messagelet_index);
+
+    void bindPacket(const UecSrc& source, uint64_t messagelet_index, uint64_t seqno, uint64_t payload_bytes);
 
     // Replacement affects only messagelets that have not yet been labelled.
     // A null policy restores static/default routing for future messagelets.
@@ -88,6 +91,7 @@ private:
     bool _routing_config_loaded = false;
     std::unique_ptr<NetworkDecision> _network_decision;
     std::unordered_map<const UecSrc*, FlowState> _flows;
+    uint64_t _decision_index = 0;
 };
 
 #endif // MESSAGELET_RUNTIME_H

@@ -188,6 +188,7 @@ Queue::receivePacket(Packet& pkt)
     Packet* pkt_p = &pkt;
     _enqueued.push(pkt_p);
     _queuesize += pkt.size();
+    notifyAdmission(pkt);
     if (_logger) _logger->logQueue(*this, QueueLogger::PKT_ENQUEUE, pkt);
 
     if (queueWasEmpty) {

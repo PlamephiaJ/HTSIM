@@ -3,6 +3,7 @@
 #define _DRAGONFLY_SWITCH_H
 
 #include <random>
+#include <functional>
 #include <unordered_map>
 #include <unordered_set>
 #include "callback_pipe.h"
@@ -43,7 +44,9 @@ public:
 
     // Shared by per-packet UGAL_L and messagelet network decisions. Uses this
     // switch's RNG (seed 33 by default) and live local egress queue sizes.
-    UgalDecision ugalDecision(uint32_t src_switch, uint32_t dst_switch);
+    using PressureQuery = std::function<double(uint32_t first, uint32_t second)>;
+    UgalDecision ugalDecision(uint32_t src_switch, uint32_t dst_switch,
+                              const PressureQuery& pressure = {});
 
     static void set_config(RoutingStrategy routing_strategy,
                            bool trim_disable,

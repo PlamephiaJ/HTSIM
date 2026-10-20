@@ -1,6 +1,7 @@
 #include "messagelet_config.h"
 
 #include <stdexcept>
+#include <cmath>
 
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -61,6 +62,7 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
     }
     readOptional(tree, "routing.default", config.routing.default_route, filename);
     readOptional(tree, "routing.network_decision", config.routing.network_decision, filename);
+    readOptional(tree, "routing.commitment_alpha", config.routing.commitment_alpha, filename);
     readOptional(tree, "logging.trace_decisions", config.logging.trace_decisions, filename);
 
     if (schema_version != kSchemaVersion) {
@@ -89,9 +91,13 @@ void MessageletConfig::validate() const {
     if (runtime.granularity == Granularity::Packet && messagelet.size_bytes != 0) {
         throw std::invalid_argument("runtime.granularity 'packet' requires messagelet.size_bytes = 0");
     }
-    if (routing.network_decision != "none" && routing.network_decision != "ugal_l") {
+    if (routing.network_decision != "none" && routing.network_decision != "ugal_l" &&
+        routing.network_decision != "commitment_aware_ugal") {
         throw std::invalid_argument("Unsupported network decision strategy '" +
                                     routing.network_decision + "'");
+    }
+    if (!std::isfinite(routing.commitment_alpha) || routing.commitment_alpha < 0) {
+        throw std::invalid_argument("routing.commitment_alpha must be finite and nonnegative");
     }
     if (routing.default_route != "minimum") {
         throw std::invalid_argument("Unsupported default messagelet route '" +

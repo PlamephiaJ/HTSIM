@@ -2,6 +2,8 @@
 #ifndef DRAGONFLY_H
 #define DRAGONFLY_H
 #include <ostream>
+#include <memory>
+#include "group_routing_agent.h"
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -58,6 +60,7 @@ public:
     uint32_t no_of_nodes() const override { return _no_hosts; }
 
     uint32_t get_host_switch(uint32_t src) { return (src / _p); }
+    GroupRoutingAgent& groupRoutingAgent(uint32_t group) { return *_group_agents.at(group); }
     uint32_t get_p() { return _p; }
     uint32_t get_a() { return _a; }
     uint32_t get_h() { return _h; }
@@ -83,6 +86,8 @@ public:
     static int _fail_packet_rate;
 
 private:
+    std::vector<std::unique_ptr<GroupRoutingAgent>> _group_agents;
+    void init_group_agents();
     uint32_t _p, _a, _h;
     mem_b _queue_size;
     QueueLoggerFactory* _logger_factory;

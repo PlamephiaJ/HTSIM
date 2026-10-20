@@ -1,6 +1,9 @@
 #include "network_decision.h"
 
 #include <stdexcept>
+#include <cmath>
+#include <iomanip>
+#include <sstream>
 
 #include "datacenter/dragonfly_topology.h"
 
@@ -16,14 +19,28 @@ NetworkRoute UgalLNetworkDecision::decide(const NetworkDecisionContext& context)
     const uint32_t src_switch = topology.get_host_switch(context.from);
     const uint32_t dst_switch = topology.get_host_switch(context.to);
     NetworkRoute route;
-    route.log_info.emplace("policy", "ugal_l");
+    route.log_info.emplace("policy", _commitment_aware ? "commitment_aware_ugal" : "ugal_l");
+    auto number = [](double value) { std::ostringstream out; out << std::setprecision(17) << value; return out.str(); };
+    route.log_info.emplace("alpha", number(_commitment_aware ? _alpha : 0.0));
     // HTSim delivers locally before consulting UGAL-L.
     if (src_switch == dst_switch) {
         return route;
     }
 
     auto* source = static_cast<DragonflySwitch*>(topology.switches.at(src_switch));
-    const auto decision = source->ugalDecision(src_switch, dst_switch);
+    auto& gra = topology.groupRoutingAgent(src_switch / topology.get_a());
+    std::vector<GroupRoutingAgent::CorridorState> observations;
+    DragonflySwitch::PressureQuery pressure;
+    // Intra-group routes do not enter a global corridor; retain local UGAL.
+    if (_commitment_aware && src_switch / topology.get_a() != dst_switch / topology.get_a()) {
+        pressure = [&](uint32_t first, uint32_t second) {
+            const auto c = gra.corridorForRoute(context.from, context.to, (first << 16) | second);
+            const auto state = gra.query(*c);
+            observations.push_back(state);
+            return state.q_bytes + _alpha * state.r_bytes;
+        };
+    }
+    const auto decision = source->ugalDecision(src_switch, dst_switch, pressure);
     route.path_id = (decision.next_switch << 16) | decision.second_switch;
     route.description = decision.use_valiant ? "valiant" : "minimum";
     route.log_info.emplace("hop_one_switch", std::to_string(decision.next_switch));
@@ -32,20 +49,37 @@ NetworkRoute UgalLNetworkDecision::decide(const NetworkDecisionContext& context)
     route.log_info.emplace("next_val", std::to_string(decision.next_val));
     route.log_info.emplace("compared", decision.compared ? "true" : "false");
     if (decision.compared) {
-        route.log_info.emplace("q_min_bytes", std::to_string(decision.q_min));
-        route.log_info.emplace("q_val_bytes", std::to_string(decision.q_val));
+        const uint64_t q_min = observations.empty() ? decision.q_min : observations.at(0).q_bytes;
+        const uint64_t q_val = observations.empty() ? decision.q_val : observations.at(1).q_bytes;
+        const uint64_t r_min = observations.empty() ? 0 : observations.at(0).r_bytes;
+        const uint64_t r_val = observations.empty() ? 0 : observations.at(1).r_bytes;
+        route.log_info.emplace("q_min_bytes", std::to_string(q_min));
+        route.log_info.emplace("q_val_bytes", std::to_string(q_val));
+        route.log_info.emplace("r_min_bytes", std::to_string(r_min));
+        route.log_info.emplace("r_val_bytes", std::to_string(r_val));
+        route.log_info.emplace("pressure_min", number(q_min + (_commitment_aware ? _alpha * r_min : 0)));
+        route.log_info.emplace("pressure_val", number(q_val + (_commitment_aware ? _alpha * r_val : 0)));
+        for (size_t i = 0; i < observations.size(); ++i) {
+            const std::string prefix = i == 0 ? "min_" : "val_";
+            route.log_info.emplace(prefix + "egress_switch", std::to_string(observations[i].corridor.first));
+            route.log_info.emplace(prefix + "remote_switch", std::to_string(observations[i].corridor.second));
+        }
         route.log_info.emplace("h_min", std::to_string(decision.h_min));
         route.log_info.emplace("h_val", std::to_string(decision.h_val));
     }
     return route;
 }
 
-std::unique_ptr<NetworkDecision> makeNetworkDecision(const std::string& strategy) {
+std::unique_ptr<NetworkDecision> makeNetworkDecision(const std::string& strategy, double alpha) {
+    if (!std::isfinite(alpha) || alpha < 0) throw std::invalid_argument("Invalid commitment alpha");
     if (strategy == "none") {
         return nullptr;
     }
     if (strategy == "ugal_l") {
         return std::make_unique<UgalLNetworkDecision>();
+    }
+    if (strategy == "commitment_aware_ugal") {
+        return std::make_unique<UgalLNetworkDecision>(true, alpha);
     }
     throw std::invalid_argument("Unsupported network decision strategy '" + strategy + "'");
 }

@@ -34,10 +34,15 @@ public:
 
 class UgalLNetworkDecision final : public NetworkDecision {
 public:
+    explicit UgalLNetworkDecision(bool commitment_aware = false, double alpha = 1.0)
+        : _commitment_aware(commitment_aware), _alpha(alpha) {}
     NetworkRoute decide(const NetworkDecisionContext& context) override;
+private:
+    bool _commitment_aware;
+    double _alpha;
 };
 
 // "none" preserves the runtime's configured/static routes.
-std::unique_ptr<NetworkDecision> makeNetworkDecision(const std::string& strategy);
+std::unique_ptr<NetworkDecision> makeNetworkDecision(const std::string& strategy, double alpha = 1.0);
 
 #endif // NETWORK_DECISION_H

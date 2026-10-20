@@ -253,6 +253,7 @@ void CompositeQueue::receivePacket(Packet& pkt)
             Packet* pkt_p = &pkt;
             _enqueued_low.push(pkt_p);
             _queuesize_low += pkt.size();
+            notifyAdmission(pkt);
             if (_logger) _logger->logQueue(*this, QueueLogger::PKT_ENQUEUE, pkt);
             
             if (_serv==QUEUE_INVALID) {

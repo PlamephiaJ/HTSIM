@@ -12,6 +12,7 @@
 #include <unistd.h>
 
 #include "network_decision.h"
+#include "compositequeue.h"
 #include "atlahs_dragonfly_api.h"
 #include "logsim-interface.h"
 #include "datacenter/dragonfly_topology.h"
@@ -29,7 +30,7 @@ public:
 };
 
 void checkUgalCosts() {
-    EventList events;
+    auto& events = EventList::getTheEventList();
     DragonflyTopology topology(COMPOSITE, 1000000, nullptr, &events);
     topology.construct_topology(2, 4, 2);
     // Independent switch objects restart HTSim's seed-33 candidate sequence.
@@ -106,6 +107,59 @@ void checkUgalCosts() {
     DragonflyTopology pair(COMPOSITE, 1000000, nullptr, &events);
     pair.construct_topology(2, 2, 1);
     assert(policy.decide({pair, 4, 6, 7, 4096, 4096, 0}).path_id == (3u << 16));
+}
+
+void checkGroupCommitments() {
+    auto& events = EventList::getTheEventList();
+    events.setEndtime(1); // admission-only test: do not schedule queue departures
+    DragonflyTopology topology(COMPOSITE, 1000000, nullptr, &events);
+    topology.construct_topology(2, 4, 2);
+    auto& gra = topology.groupRoutingAgent(0);
+    const GroupRoutingAgent::Corridor corridor{1, 14};
+    assert(gra.corridorForRoute(0, 24, (1u << 16) | 14u) == corridor);
+    assert(!gra.corridorForRoute(0, 2, 1u << 16));
+    PacketFlow first(nullptr), second(nullptr);
+    const GroupRoutingAgent::Messagelet m1{first.flow_id(), 0}, m2{second.flow_id(), 0};
+    gra.commit(m1, corridor, 8192);
+    gra.commit(m2, corridor, 4096);
+    gra.bindPacket(m1, 0, 4096);
+    gra.bindPacket(m1, 1, 4096);
+    gra.bindPacket(m2, 0, 4096);
+    assert(gra.query(corridor).r_bytes == 12288);
+    assert(gra.snapshot().messagelets.size() == 2);
+    // The source has an empty local queue while the commitment belongs to
+    // switch 1's global queue: exercise the a > 1 mapping explicitly.
+    UgalLNetworkDecision aware(true, 1.0);
+    const auto selected = aware.decide({topology, 0, 24, 7, 8192, 8320, 0});
+    assert(selected.description == "valiant");
+    assert(selected.log_info.at("r_min_bytes") == "12288");
+    assert(selected.log_info.at("min_egress_switch") == "1");
+    auto& queue = *static_cast<CompositeQueue*>(topology.queues_switch_switch[1][14]);
+    Route route;
+    auto packet = [&](PacketFlow& flow, uint64_t seq, bool retransmit = false) {
+        return UecDataPacket::newpkt(flow, route, seq, 4160,
+            retransmit ? UecDataPacket::DATA_RTX : UecDataPacket::DATA_PULL, 0, 24);
+    };
+    queue.set_fail_rate(0);
+    queue.receivePacket(*packet(first, 0)); // dropped before admission
+    assert(gra.remaining(m1) == 8192);
+    queue.set_fail_rate(100000);
+    auto* trimmed = packet(first, 0);
+    trimmed->strip_payload(64);
+    queue.receivePacket(*trimmed); // header admission does not consume payload
+    assert(gra.remaining(m1) == 8192);
+    queue.receivePacket(*packet(first, 0, true)); // first successful data entry
+    assert(gra.remaining(m1) == 4096);
+    queue.receivePacket(*packet(first, 0, true)); // repeated retransmit is free
+    assert(gra.remaining(m1) == 4096);
+    queue.receivePacket(*packet(second, 0)); // same seqno, different flow
+    assert(gra.query(corridor).r_bytes == 4096);
+    queue.receivePacket(*packet(first, 1));
+    assert(gra.query(corridor).r_bytes == 0 && gra.remaining(m1) == 0);
+    assert(gra.snapshot().messagelets.empty());
+    // Already-admitted data must not reappear in R after later trimming.
+    assert(gra.snapshot().version == 5); // two commits, three unique admissions
+    events.setEndtime(0);
 }
 
 struct PacketRecord {
@@ -322,6 +376,7 @@ int main(int argc, char** argv) {
     }
     assert(rejected);
     checkUgalCosts();
+    checkGroupCommitments();
     auto granularity = MessageletRuntime::Granularity::Messagelet;
     if (argc > 1 && std::string(argv[1]) == "flow")
         granularity = MessageletRuntime::Granularity::Flow;

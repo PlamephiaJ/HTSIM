@@ -25,6 +25,7 @@ struct MessageletConfig {
     struct RoutingSettings {
         std::string default_route = "minimum";
         std::string network_decision = "none";
+        double commitment_alpha = 1.0;
     } routing;
 
     struct LoggingSettings {
