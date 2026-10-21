@@ -1,3 +1,6 @@
-HF_BUCKET = hf://buckets/Plamephia/DAG-routing-exps
+#!/usr/bin/env bash
+set -euo pipefail
 
-hf buckets sync ./experiments $(HF_BUCKET)
+HF_BUCKET="hf://buckets/Plamephia/DAG-routing-exps"
+
+hf buckets sync ./experiments "$HF_BUCKET"
