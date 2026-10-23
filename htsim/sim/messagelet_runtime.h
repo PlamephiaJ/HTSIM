@@ -18,6 +18,7 @@ class EventOver;
 class SendEvent;
 class UecSrc;
 class graph_node_properties;
+class Parser;
 
 // Boundary between the GOAL scheduler and Dragonfly's HTSim transport.
 //
@@ -55,6 +56,7 @@ public:
     void loadRoutingConfig(const std::string& filename);
     void loadFlowMetadata(const std::string& filename);
     void validateRoutingComplete() const;
+    void initializeGoalGraph(const Parser& parser);
     const MessageletConfig& config() const { return _config; }
     bool transparent() const { return _config.runtime.mode == MessageletConfig::Mode::Transparent; }
     bool entrySwitchRouting() const {
@@ -98,6 +100,8 @@ private:
     bool _routing_config_loaded = false;
     FlowRoutingConfig _flow_metadata;
     bool _flow_metadata_loaded = false;
+    FlowRoutingConfig _graph_identities;
+    bool _static_graph_initialized = false;
     std::unique_ptr<NetworkDecision> _network_decision;
     std::unordered_map<const UecSrc*, FlowState> _flows;
     uint64_t _decision_index = 0;

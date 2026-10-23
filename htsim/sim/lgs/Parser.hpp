@@ -489,7 +489,7 @@ class SerializedGraph {
 
 	}
 
-	DeserializedNode get_node_by_offset(uint32_t offset) {
+	DeserializedNode get_node_by_offset(uint32_t offset) const {
 	
 		//printf("[timos] trying to get node with offset %i\n", offset);
 	
@@ -548,6 +548,16 @@ class SerializedGraph {
 
 
 	public:
+
+	// Snapshot every operation before scheduling mutates dependency counters.
+	// Unlike GetExecutableNodes(), this does not consume the ready queue.
+	std::vector<DeserializedNode> GetAllNodes() const {
+		std::vector<DeserializedNode> nodes;
+		nodes.reserve(num_nodes);
+		for (uint32_t offset = 0; offset < num_nodes; ++offset)
+			nodes.push_back(get_node_by_offset(offset));
+		return nodes;
+	}
 
 	uint32_t GetNumNodes() {
 		return this->num_nodes;		

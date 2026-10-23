@@ -6,6 +6,11 @@
 #include "dragonfly_source_route.h"
 #include "uecpacket.h"
 
+const GraStaticGraph& GroupRoutingAgent::staticGraph() const {
+    if (!_static_graph) throw std::logic_error("GRA static graph has not been initialized");
+    return *_static_graph;
+}
+
 GroupRoutingAgent::GroupRoutingAgent(DragonflyTopology& topology, uint32_t group)
     : _topology(topology), _group(group) {
     const auto a = topology.get_a();

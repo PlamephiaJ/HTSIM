@@ -406,6 +406,7 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
     printf("filename is %s\n", filename_goal.c_str());
 
     Parser parser(filename_goal, false);
+    lgs_interface->htsim_api->initializeGoalGraph(parser);
   
     const uint p = parser.schedules.size();
     const int ncpus = parser.GetNumCPU();

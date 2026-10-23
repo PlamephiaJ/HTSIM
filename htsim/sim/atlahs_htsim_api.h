@@ -25,6 +25,7 @@ class NdpPullPacer;
 class UecNIC;
 class UecPullPacer;
 class UecMultipath;
+class Parser;
 //class ComputeEvent;
 
 // Added FlowInfo class
@@ -65,6 +66,7 @@ public:
     virtual void Calc(const ComputeAtlahsEvent &event) override;
     virtual void Setup() override;
     virtual void EventFinished(const EventOver &event) override;
+    virtual void initializeGoalGraph(const Parser&) {}
 
     // Getter and setter for EventList
     void setEventList(EventList* eventlist) { _eventlist = eventlist; }

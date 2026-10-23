@@ -389,6 +389,14 @@ linkspeed_bps DragonflyTopology::get_linkspeed() {
     return _link_speed_global;
 }
 
+void DragonflyTopology::initializeGraStaticGraphs(std::vector<GraStaticGraph::Dag> dags) {
+    if (_group_agents.empty()) throw std::logic_error("GRA groups have not been constructed");
+    if (_group_agents.front()->_static_graph)
+        throw std::logic_error("GRA static graphs are already initialized");
+    auto result = GraStaticGraph::build(std::move(dags), _link_speed_global);
+    for (auto& agent : _group_agents) agent->_static_graph = result;
+}
+
 std::string DragonflyTopology::get_link_latencies() {
     return std::to_string(_link_latency_global) + ":" + std::to_string(_link_latency_local) + ":" +
            std::to_string(_link_latency_host);

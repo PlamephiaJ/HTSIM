@@ -7,6 +7,7 @@
 #include <utility>
 #include <vector>
 #include "messagelet.h"
+#include "gra_static_graph.h"
 
 class DragonflyTopology;
 class Packet;
@@ -34,6 +35,9 @@ public:
 
     GroupRoutingAgent(DragonflyTopology& topology, uint32_t group);
     uint32_t group() const { return _group; }
+    // Installed once before GOAL scheduling; every group shares the same
+    // immutable global result. Keys deliberately omit messagelet_idx.
+    const GraStaticGraph& staticGraph() const;
     // Resolve SOURCE's two-hop label (including explicit waypoint labels).
     std::optional<Corridor> corridorForRoute(uint32_t from, uint32_t to, uint32_t path_id) const;
     CorridorState query(Corridor corridor) const;
@@ -49,6 +53,8 @@ public:
     void setTrace(bool enabled) { _trace = enabled; }
 
 private:
+    friend class DragonflyTopology;
+    std::shared_ptr<const GraStaticGraph> _static_graph;
     void log(const char* action, Messagelet messagelet, const Commitment& state,
              uint64_t bytes, std::optional<uint64_t> seqno = std::nullopt) const;
     DragonflyTopology& _topology;

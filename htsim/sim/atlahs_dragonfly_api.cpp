@@ -11,3 +11,7 @@ AtlahsDragonflyApi::~AtlahsDragonflyApi() = default;
 void AtlahsDragonflyApi::Send(const SendEvent& event, graph_node_properties elem) {
     _messagelet_runtime->submit(event, elem);
 }
+
+void AtlahsDragonflyApi::initializeGoalGraph(const Parser& parser) {
+    _messagelet_runtime->initializeGoalGraph(parser);
+}

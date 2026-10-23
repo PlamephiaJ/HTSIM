@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <tuple>
 #include <utility>
 
 #include "atlahs_dragonfly_api.h"
@@ -11,6 +12,7 @@
 #include "datacenter/dragonfly_topology.h"
 #include "dragonfly_source_route.h"
 #include "data_collector.h"
+#include "gra_goal_graph.h"
 #include "uec.h"
 
 namespace {
@@ -55,8 +57,9 @@ void MessageletRuntime::submit(const SendEvent& event, graph_node_properties nod
     int size = event.getSizeBytes();
 
     const FlowRoutingConfig::Entry* routing = nullptr;
-    if (_routing_config_loaded || _flow_metadata_loaded) {
-        const auto& identities = _routing_config_loaded ? _routing_config : _flow_metadata;
+    if (_routing_config_loaded || _flow_metadata_loaded || _static_graph_initialized) {
+        const auto& identities = _static_graph_initialized ? _graph_identities :
+            (_routing_config_loaded ? _routing_config : _flow_metadata);
         auto entry = identities.sends.find({static_cast<uint32_t>(from), node.offset});
         if (entry == identities.sends.end()) {
             throw std::runtime_error("Routing config has no label for GOAL send rank " +
@@ -156,6 +159,7 @@ void MessageletRuntime::eventFinished(const EventOver& event) {
 }
 
 void MessageletRuntime::loadConfig(const std::string& filename) {
+    if (_static_graph_initialized) throw std::logic_error("GRA static graph is already initialized");
     if (!_flows.empty()) {
         throw std::logic_error("Messagelet config must be loaded before submitting flows");
     }
@@ -175,6 +179,7 @@ void MessageletRuntime::loadConfig(const std::string& filename) {
 }
 
 void MessageletRuntime::loadRoutingConfig(const std::string& filename) {
+    if (_static_graph_initialized) throw std::logic_error("GRA static graph is already initialized");
     if (!_flows.empty()) {
         throw std::logic_error("Routing config must be loaded before submitting flows");
     }
@@ -191,9 +196,41 @@ void MessageletRuntime::loadRoutingConfig(const std::string& filename) {
 }
 
 void MessageletRuntime::loadFlowMetadata(const std::string& filename) {
+    if (_static_graph_initialized) throw std::logic_error("GRA static graph is already initialized");
     if (!_flows.empty()) throw std::logic_error("Flow metadata must be loaded before submitting flows");
     _flow_metadata = FlowRoutingConfig::loadFromFile(filename, true);
     _flow_metadata_loaded = true;
+}
+
+void MessageletRuntime::initializeGoalGraph(const Parser& parser) {
+    if (_static_graph_initialized || !_flows.empty())
+        throw std::logic_error("GRA static graph must be initialized once before submitting flows");
+    auto* topology = _goal_runtime.getDragonflyTopology();
+    if (!topology) throw std::logic_error("Dragonfly topology not set");
+    if (entrySwitchRouting() && !_flow_metadata_loaded)
+        throw std::logic_error("ENTRY_SWITCH requires workload flow metadata with DAG-global flow IDs");
+
+    FlowRoutingConfig identities = _routing_config_loaded ? _routing_config : _flow_metadata;
+    if (_routing_config_loaded && _flow_metadata_loaded) {
+        if (identities.sends.size() != _flow_metadata.sends.size())
+            throw std::invalid_argument("GRA routing and metadata flow identities differ");
+        for (auto& item : identities.sends) {
+            auto found = _flow_metadata.sends.find(item.first);
+            if (found == _flow_metadata.sends.end())
+                throw std::invalid_argument("GRA routing and metadata send tasks differ");
+            const auto& meta = found->second;
+            auto& route = item.second;
+            if (std::tie(route.flow_id, route.src, route.dst, route.tag, route.bytes) !=
+                std::tie(meta.flow_id, meta.src, meta.dst, meta.tag, meta.bytes))
+                throw std::invalid_argument("GRA routing and metadata flow identities differ");
+            route.recv_task_id = meta.recv_task_id;
+        }
+    }
+    auto graph = buildGraGoalGraph(parser, _config.runtime.dag_id,
+        (_routing_config_loaded || _flow_metadata_loaded) ? &identities : nullptr);
+    topology->initializeGraStaticGraphs({std::move(graph.dag)});
+    _graph_identities = std::move(graph.identities);
+    _static_graph_initialized = true;
 }
 
 void MessageletRuntime::validateRoutingComplete() const {

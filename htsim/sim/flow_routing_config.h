@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <map>
+#include <optional>
 #include <string>
 #include <utility>
 
@@ -13,6 +14,7 @@ struct FlowRoutingConfig {
         uint32_t src, dst, tag, send_task_id;
         uint64_t bytes;
         std::string label;
+        std::optional<uint32_t> recv_task_id = std::nullopt;
     };
     std::map<std::pair<uint32_t, uint32_t>, Entry> sends;
     // Metadata supplies identity only; routing labels remain a separate input.
