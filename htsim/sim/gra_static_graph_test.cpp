@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <sstream>
 #include <stdexcept>
 #include <unistd.h>
 
@@ -20,6 +21,7 @@
 namespace {
 using Type = GraStaticGraph::Type;
 using Dag = GraStaticGraph::Dag;
+using Event = GraStaticGraph::Event;
 
 template<class Exception, class Fn> void rejects(Fn fn) {
     bool caught = false;
@@ -105,6 +107,18 @@ void checkInvalidGraphs() {
     rejects<std::invalid_argument>([] {
         GraStaticGraph::build({{0, {{Type::COMM, 1, 0, {}}, {Type::COMM, 1, 0, {}}}}}, 8);
     });
+    rejects<std::invalid_argument>([] {
+        GraStaticGraph::build({{0, {{Type::COMP, 0, 0, {}}},
+            {{0, 0, Event::RECEIVE_START, Event::START}}}}, 8);
+    });
+    rejects<std::invalid_argument>([] {
+        GraStaticGraph::build({{0, {{Type::COMM, 0, 0, {}}},
+            {{0, 0, Event::START, Event::FINISH}}}}, 8);
+    });
+    rejects<std::invalid_argument>([] {
+        GraStaticGraph::build({{0, {{Type::COMP, 0, 1, {}}, {Type::COMP, 0, 1, {}}},
+            {{0, 1, Event::START}, {1, 0, Event::START}}}}, 8);
+    });
     rejects<std::overflow_error>([&] {
         GraStaticGraph::build({{0, {{Type::COMM, 1, max, {}}}}}, 1);
     });
@@ -120,7 +134,7 @@ void checkInvalidGraphs() {
 // Minimal GOAL binary with dependencies on both communication endpoints:
 // rank 0: SEND -> COMP(3); rank 1: COMP(7) -> RECV -> COMP(5).
 // The two rank-local outgoing edges must survive as a COMM fanout.
-template<class T> void write(std::ofstream& stream, T value) {
+template<class T> void write(std::ostream& stream, T value) {
     stream.write(reinterpret_cast<const char*>(&value), sizeof(value));
 }
 void node(std::ofstream& stream, uint32_t indegree, char type, uint32_t peer,
@@ -169,8 +183,11 @@ void checkGoalStartup() {
         const auto& graph = topology.groupRoutingAgent(0).staticGraph();
         assert(graph.dTable().at({0, 0}) == 7); // ceil(26/25) + max(3,5)
         assert(graph.dags().at(0).nodes.size() == 4); // one COMM and three COMP
-        assert(graph.dags().at(0).nodes[0].successors.size() == 2);
-        assert(graph.dags().at(0).nodes[2].successors == std::vector<size_t>{0});
+        const auto& dependencies = graph.dags().at(0).dependencies;
+        assert(dependencies.size() == 3);
+        assert(dependencies[0].predecessor == 0 && dependencies[0].successor == 1);
+        assert(dependencies[2].predecessor == 2 && dependencies[2].successor == 0);
+        assert(dependencies[2].target == Event::RECEIVE_START);
         for (uint32_t group = 0; group < topology.get_no_groups(); ++group)
             assert(&graph == &topology.groupRoutingAgent(group).staticGraph());
         rejects<std::logic_error>([&] { api.initializeGoalGraph(parser); });
@@ -194,11 +211,175 @@ void checkGoalStartup() {
     }
     unlink(filename);
 }
+
+void checkStartTables() {
+    // START releases overlap with the originating COMM instead of paying its
+    // duration before the branch. FINISH retains the original serial formula.
+    Dag overlap{0, {{Type::COMM, 1, 2500, {}}, {Type::COMP, 0, 1000, {}}},
+        {{0, 1, Event::START}}};
+    auto start = GraStaticGraph::build({overlap}, 200000000000ULL);
+    assert(start->dTable().at({0, 1}) == 1000); // max(100,1000), not 1100
+    assert(start->structureTable().at({0, 1}).empty());
+    assert(start->joinTable().empty()); // lifecycle gates do not create Joins
+    overlap.dependencies[0].release = Event::FINISH;
+    auto finish = GraStaticGraph::build({overlap}, 200000000000ULL);
+    assert(finish->dTable().at({0, 1}) == 1100);
+
+    // The tail after a completed COMM also respects START overlap between COMP
+    // tasks. Both branches meet the same first Join; their tails are 100/200.
+    auto tails = GraStaticGraph::build({{0, {
+        {Type::COMM, 1, 2500, {1}}, {Type::COMP, 0, 100, {3}},
+        {Type::COMP, 0, 200, {3}}, {Type::COMP, 0, 20, {}},
+    }, {{1, 2, Event::START}}}}, 200000000000ULL);
+    assert(tails->dTable().at({0, 1}) == 320);
+    assert(tails->joinTable().size() == 1);
+    assert(tails->joinTable().at({0, 0}).branch_count == 2);
+    const auto& records = tails->structureTable().at({0, 1});
+    assert(records.size() == 2);
+    assert(records[0].branch_id == 0 && records[0].tail_to_join_ns == 100);
+    assert(records[1].branch_id == 1 && records[1].tail_to_join_ns == 200);
+
+    // A branch released by the COMM's START is not causal downstream work of
+    // its FINISH. Only the FINISH branch appears in the structure table.
+    auto early = GraStaticGraph::build({{0, {
+        {Type::COMM, 1, 2500, {2}}, {Type::COMP, 0, 1000, {3}},
+        {Type::COMP, 0, 10, {3}}, {Type::COMP, 0, 20, {}},
+    }, {{0, 1, Event::START}}}}, 200000000000ULL);
+    assert(early->dTable().at({0, 1}) == 1020);
+    const auto& late = early->structureTable().at({0, 1});
+    assert(late.size() == 1 && late[0].branch_id == 1 && late[0].tail_to_join_ns == 10);
+
+    // Different releases from one predecessor are still one logical branch.
+    overlap.dependencies.push_back({0, 1, Event::START});
+    overlap.dependencies.push_back({0, 1, Event::START});
+    auto redundant = GraStaticGraph::build({overlap}, 200000000000ULL);
+    assert(redundant->dTable().at({0, 1}) == 1100);
+    assert(redundant->joinTable().empty());
+    assert(redundant->dags().at(0).dependencies.size() == 2);
+
+    // A sender need not wait for RECV posting to incur transmission cost.
+    auto posted = GraStaticGraph::build({{0, {
+        {Type::COMM, 1, 2500, {2}}, {Type::COMP, 0, 1000, {}},
+        {Type::COMP, 0, 50, {}},
+    }, {{1, 0, Event::FINISH, Event::RECEIVE_START}}}}, 200000000000ULL);
+    assert(posted->dTable().at({0, 1}) == 150);
+    assert(posted->joinTable().empty());
+
+    // Preserve joins whose predecessors enter different endpoints of a COMM.
+    auto endpoint_join = GraStaticGraph::build({{0, {
+        {Type::COMM, 1, 2500, {}}, {Type::COMM, 2, 2500, {}},
+        {Type::COMM, 3, 2500, {}},
+    }, {{0, 2}, {1, 2, Event::FINISH, Event::RECEIVE_START}}}}, 200000000000ULL);
+    assert(endpoint_join->joinTable().at({0, 0}).branch_count == 2);
+    assert(endpoint_join->structureTable().at({0, 1})[0].branch_id == 0);
+    assert(endpoint_join->structureTable().at({0, 2})[0].branch_id == 1);
+    assert(endpoint_join->dTable().at({0, 1}) == 200);
+    assert(endpoint_join->dTable().at({0, 2}) == 100);
+}
+
+struct GoalTask {
+    char type;
+    uint32_t peer, tag;
+    uint64_t work;
+    std::vector<uint32_t> finish = {}, start = {};
+};
+
+class GoalFile {
+public:
+    std::string path;
+    explicit GoalFile(const std::vector<std::vector<GoalTask>>& ranks) {
+        char name[] = "/tmp/htsim-gra-start-XXXXXX";
+        const int fd = mkstemp(name);
+        assert(fd >= 0);
+        close(fd);
+        path = name;
+        std::vector<std::string> blobs;
+        for (const auto& rank : ranks) {
+            std::vector<uint32_t> indegree(rank.size()), roots, appendix;
+            for (const auto& task : rank) {
+                for (auto target : task.finish) ++indegree.at(target);
+                for (auto target : task.start) ++indegree.at(target);
+            }
+            for (uint32_t i = 0; i < rank.size(); ++i)
+                if (!indegree[i]) roots.push_back(i);
+            std::ostringstream blob;
+            write(blob, uint32_t(rank.size())); write(blob, uint32_t(roots.size()));
+            for (auto root : roots) write(blob, root);
+            for (size_t i = 0; i < rank.size(); ++i) {
+                const auto& task = rank[i];
+                write(blob, indegree[i]); write(blob, task.type); write(blob, task.peer);
+                write(blob, task.work); write(blob, task.tag);
+                write(blob, uint8_t{0}); write(blob, uint8_t{0});
+                write(blob, uint32_t(task.finish.size())); write(blob, uint32_t(appendix.size()));
+                write(blob, uint32_t(task.start.size()));
+                write(blob, uint32_t(appendix.size() + task.finish.size()));
+                appendix.insert(appendix.end(), task.finish.begin(), task.finish.end());
+                appendix.insert(appendix.end(), task.start.begin(), task.start.end());
+            }
+            for (auto target : appendix) write(blob, target);
+            blobs.push_back(blob.str());
+        }
+        std::ofstream out(path, std::ios::binary);
+        write(out, uint64_t{MAGIC_COOKIE}); write(out, uint32_t(ranks.size()));
+        write(out, uint8_t{0}); write(out, uint8_t{0});
+        uint64_t offset = 6 + ranks.size() * 16;
+        for (const auto& blob : blobs) {
+            write(out, offset); write(out, offset + blob.size());
+            offset += blob.size();
+        }
+        for (const auto& blob : blobs) out.write(blob.data(), blob.size());
+        assert(out.good());
+    }
+    ~GoalFile() { unlink(path.c_str()); }
+};
+
+void checkGoalStarts() {
+    for (bool first_start : {false, true}) {
+        for (bool second_start : {false, true}) {
+            GoalTask a{OPTYPE_SEND, 1, 1, 2500}, b{OPTYPE_SEND, 0, 2, 2500};
+            (first_start ? a.start : a.finish) = {1};
+            (second_start ? b.start : b.finish) = {1};
+            GoalFile file({{a, {OPTYPE_RECV, 1, 2, 2500}},
+                           {b, {OPTYPE_RECV, 0, 1, 2500}}});
+            Parser parser(file.path, false);
+            auto goal = buildGraGoalGraph(parser, 0);
+            assert(goal.dag.nodes.size() == 2 && goal.dag.dependencies.size() == 2);
+            for (const auto& dep : goal.dag.dependencies) assert(dep.target == Event::RECEIVE_START);
+            if (!first_start && !second_start) {
+                // Both RECVs waiting for matched SEND completion is a real deadlock.
+                rejects<std::invalid_argument>([&] { GraStaticGraph::build({goal.dag}, 200000000000ULL); });
+            } else {
+                // Either START edge breaks that dependency cycle. In particular,
+                // two opposite START edges must not become a fake COMM cycle.
+                auto graph = GraStaticGraph::build({goal.dag}, 200000000000ULL);
+                assert(graph->dTable().at({0, 0}) == 100);
+                assert(graph->dTable().at({0, uint64_t{1} << 32}) == 100);
+                assert(graph->joinTable().empty());
+            }
+        }
+    }
+
+    // SEND START and RECV START are independent even within the same flow.
+    GoalFile endpoints({{
+        {OPTYPE_SEND, 1, 1, 2500, {}, {1}}, {OPTYPE_CALC, 0, 0, 1000},
+    }, {
+        {OPTYPE_RECV, 0, 1, 2500, {}, {1}}, {OPTYPE_CALC, 0, 0, 2000},
+    }});
+    Parser parser(endpoints.path, false);
+    auto goal = buildGraGoalGraph(parser, 0);
+    assert(goal.dag.dependencies[0].release == Event::START);
+    assert(goal.dag.dependencies[1].release == Event::RECEIVE_START);
+    auto graph = GraStaticGraph::build({goal.dag}, 200000000000ULL);
+    assert(graph->dTable().at({0, 0}) == 1000); // RECV's 2000 ns branch is independent
+    assert(graph->structureTable().at({0, 0}).empty());
+}
 } // namespace
 
 int main() {
     checkTables();
     checkInvalidGraphs();
     checkGoalStartup();
+    checkStartTables();
+    checkGoalStarts();
     std::cout << "GRA static graph tests passed\n";
 }

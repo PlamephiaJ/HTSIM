@@ -9,19 +9,30 @@
 #include <vector>
 
 // Startup-only global logical graphs and their nominal (not measured) costs.
-// SEND/RECV endpoints are represented by one COMM, regardless of messagelets.
+// A COMM has one identity/cost, separate SEND/RECV starts, and a shared finish.
 class GraStaticGraph {
 public:
     enum class Type { COMM, COMP };
+    // START means SEND issue for COMM, or task start for COMP. Matched FINISH
+    // is shared by a COMM's endpoints; RECEIVE_START preserves RECV posting.
+    enum class Event { START, RECEIVE_START, FINISH };
     struct Node {
         Type type;
         uint64_t flow_id; // used only by COMM
         uint64_t work; // COMM: payload bytes; COMP: estimated nanoseconds
-        std::vector<size_t> successors;
+        std::vector<size_t> successors; // shorthand for FINISH -> START dependencies
+    };
+    struct Dependency {
+        size_t predecessor, successor;
+        Event release = Event::FINISH;
+        Event target = Event::START; // START or (for COMM) RECEIVE_START
     };
     struct Dag {
         uint64_t dag_index;
         std::vector<Node> nodes;
+        // The node projection may be cyclic. Only the expanded event graph
+        // must be acyclic; all dependencies retain their event endpoints.
+        std::vector<Dependency> dependencies = {};
     };
     using FlowKey = std::pair<uint64_t, uint64_t>; // dag_index, DAG flow_id
     using JoinKey = std::pair<uint64_t, uint64_t>; // dag_index, join_id
@@ -31,6 +42,9 @@ public:
     struct JoinRecord {
         uint64_t dag_index, join_id, branch_count;
     };
+    // D is the longest weighted event path from SEND START. Structure tails
+    // start at matched FINISH, stop before the first logical Join, and exclude
+    // START-only branches already released independently of that FINISH.
     using DTable = std::map<FlowKey, uint64_t>;
     using StructureTable = std::map<FlowKey, std::vector<StructureRecord>>;
     using JoinTable = std::map<JoinKey, JoinRecord>;

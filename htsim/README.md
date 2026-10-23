@@ -526,6 +526,7 @@ cmake -S htsim/sim -B htsim/sim/build -DENABLE_NETWORK_DECISION_TESTS=ON
 cmake --build htsim/sim/build --target htsim_uec_df network_decision_test gra_static_graph_test -j 4
 ctest --test-dir htsim/sim/build --output-on-failure
 python3 -m unittest discover -s tests -p test_entry_switch_routing.py -v
+python3 -m unittest discover -s tests -p test_gra_start_dependencies.py -v
 ```
 
 ### GRA static computation graphs
@@ -534,8 +535,10 @@ Every GOAL-driven Dragonfly run snapshots the complete GOAL graph before the
 scheduler issues any task. Each matched SEND/RECV pair becomes one logical
 `COMM`, carrying its full payload bytes and DAG-global `flow_id`. Each local
 compute task becomes a `COMP` whose nominal cost is its GOAL duration in ns.
-Dependencies from both endpoints are retained; duplicate logical edges are
-collapsed. Start dependencies are also retained as nominal precedence edges.
+Dependencies retain their release event (`START`, `RECEIVE_START`, or `FINISH`)
+and target endpoint (`START` or `RECEIVE_START`). A SEND and its paired RECV
+share one completion event, but their start events remain independent. Exact
+duplicate typed edges are collapsed.
 The graph and the following maps are computed once, then shared by all GRAs
 through a `shared_ptr<const GraStaticGraph>`:
 
@@ -545,20 +548,41 @@ through a `shared_ptr<const GraStaticGraph>`:
 | `structureTable()` | `(dag_index, flow_id)` | Collection of `(dag_index, flow_id, join_id, branch_id, tail_to_join_ns)` records |
 | `joinTable()` | `(dag_index, join_id)` | `(dag_index, join_id, branch_count)` |
 
-`D(v) = w(v) + max(D(successor))` is evaluated in reverse topological order
-for all nodes, with a zero maximum at a terminal node. Only COMM results enter
-the D table. Communication cost is exactly
+Initialization expands logical nodes into a weighted event DAG. A COMP has a
+start-to-finish edge carrying its duration. A COMM has exactly one weighted
+SEND-start-to-finish edge carrying its communication cost, plus a zero-cost
+RECV-start-to-finish edge. Thus communication completion obeys
+`finish = max(send_start + cost, receive_start)`: transfer can proceed before
+RECV is posted. FINISH dependencies originate at completion; START dependencies
+originate at the corresponding endpoint's start. Every dependency targets the
+dependent task's start event and carries zero cost.
+
+Reverse topological evaluation uses
+`L(event) = max(edge_cost + L(successor_event))`, with zero at terminal events.
+The D table stores `L(send_start)` for each COMM. For ordinary serial FINISH
+chains this reduces to the original `w(v) + max(D(successor))` recurrence.
+A START-released 1000 ns compute task overlaps a 100 ns COMM, yielding
+`D = max(100, 1000) = 1000 ns`, rather than 1100 ns. If a START-only branch
+dominates, the originating COMM's cost is not added to that parallel branch;
+it is already represented by the separate transfer edge. Communication cost is exactly
 `ceil(payload_bytes * 8 * 10^9 / global_link_speed_bps)` ns, using the global
 link bandwidth from the topology settings and wide integer arithmetic. It
 excludes packet headers, hop counts, queueing, and simulated completion times.
 
 Every node with more than one distinct direct predecessor is a Join, including
-COMM nodes and terminal compute tasks. Join IDs start at zero in logical node
-order; each Join's branch IDs start at zero in direct predecessor order.
-For each COMM, the structure map follows every successor path only until its
-first Join. The tail counts the longest intervening nominal work and excludes
-both the originating COMM and the Join. A direct COMM-to-Join edge has tail
-zero. COMM nodes without a downstream Join have an empty record collection.
+COMM nodes and terminal compute tasks. This counts logical predecessor nodes
+across both endpoint starts; multiple START/FINISH edges from one predecessor
+form one branch. Internal lifecycle edges and dependencies between endpoints
+of the same COMM do not create Join branches. Join IDs start at zero in logical
+node order; branch IDs follow distinct direct predecessor order.
+For each COMM, the structure map starts at its **completion** event and follows
+event paths only until their first dependency entering a logical Join. The
+tail is the longest weighted path to that entry, excluding the originating
+COMM and the Join's own cost. START dependencies along intervening paths keep
+their overlap semantics. Work released only by the originating COMM's START
+is not downstream of its completion and does not enter its structure records.
+A direct COMM-FINISH-to-Join dependency has tail zero. COMM nodes without a
+downstream Join have an empty record collection.
 
 Access the immutable graph and tables with
 `topology.groupRoutingAgent(group).staticGraph()`. All messagelets of a flow
@@ -572,4 +596,10 @@ receive task; older metadata may omit it when `(src, dst, tag)` uniquely
 identifies the pair. Outside ENTRY_SWITCH mode, runs without either identity
 file use `(source_rank << 32) | send_task_id` consistently for the static tables
 and runtime messagelets. Ambiguous or unmatched endpoints, cycles in the
-logical graph, and costs exceeding `uint64_t` are rejected at startup.
+expanded event graph, and costs exceeding `uint64_t` are rejected at startup.
+The logical node projection may contain a cycle while the event graph remains
+acyclic: opposite SEND-START-to-RECV-start dependencies are valid. Opposite
+SEND-FINISH-to-RECV-start dependencies still form a real completion deadlock
+and are rejected. The model accounts for nominal causal dependencies; runtime
+CPU/NIC contention, network queues, and measured timings remain outside these
+static tables.

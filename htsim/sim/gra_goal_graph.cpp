@@ -70,24 +70,24 @@ GraGoalGraph buildGraGoalGraph(const Parser& parser, uint64_t dag_index,
     if (identities && result.identities.sends.size() != identities->sends.size())
         throw std::invalid_argument("GRA metadata contains flows absent from GOAL graph");
 
-    // Both finish and start dependencies are retained as nominal precedence
-    // edges; runtime resource scheduling and observed timings are not used.
+    // A GOAL task's START is endpoint-specific, while SEND and RECV share
+    // matched FINISH. Preserve the release and target event of every edge.
     for (size_t rank = 0; rank < ranks.size(); ++rank) {
         for (const auto& node : ranks[rank]) {
             const Task task{static_cast<uint32_t>(rank), node.offset};
             const auto found = logical.find(task);
             if (found == logical.end()) throw std::invalid_argument("Unmatched GOAL receive task for GRA");
-            auto& successors = result.dag.nodes[found->second].successors;
-            const auto add = [&](uint32_t target) {
+            const auto add = [&](uint32_t target, GraStaticGraph::Event release) {
                 const auto next = logical.find({static_cast<uint32_t>(rank), target});
                 if (next == logical.end()) throw std::invalid_argument("Invalid GOAL dependency for GRA");
-                // An endpoint dependency within the same logical COMM is
-                // internal, rather than a dependency on another graph node.
-                if (next->second != found->second || target == node.offset)
-                    successors.push_back(next->second);
+                const auto target_event = ranks[rank][target].Type == OPTYPE_RECV ?
+                    GraStaticGraph::Event::RECEIVE_START : GraStaticGraph::Event::START;
+                result.dag.dependencies.push_back({found->second, next->second, release, target_event});
             };
-            for (auto target : node.DependOnMe) add(target);
-            for (auto target : node.StartDependOnMe) add(target);
+            for (auto target : node.DependOnMe) add(target, GraStaticGraph::Event::FINISH);
+            const auto start = node.Type == OPTYPE_RECV ? GraStaticGraph::Event::RECEIVE_START :
+                GraStaticGraph::Event::START;
+            for (auto target : node.StartDependOnMe) add(target, start);
         }
     }
     return result;
