@@ -269,6 +269,7 @@ public:
 
     map<UecDataPacket::seq_t, mem_b> _rtx_queue;
     map<UecDataPacket::seq_t, uint32_t> _messagelet_packet_paths;
+    std::unordered_map<UecDataPacket::seq_t, MessageletInfo> _messagelet_packet_info;
     uint64_t _messagelet_index = 0;
     uint64_t _messagelet_bytes_sent = 0;
     uint64_t _current_messagelet_size = 0;

@@ -66,9 +66,10 @@ GroupRoutingAgent::Snapshot GroupRoutingAgent::snapshot() const {
     return result;
 }
 
-void GroupRoutingAgent::commit(Messagelet m, Corridor c, uint64_t bytes) {
+void GroupRoutingAgent::commit(Messagelet m, Corridor c, uint64_t bytes,
+                               std::optional<uint64_t> transport_flow_id) {
     query(c);
-    auto inserted = _commitments.emplace(m, Commitment{c, bytes, bytes});
+    auto inserted = _commitments.emplace(m, Commitment{c, bytes, bytes, transport_flow_id.value_or(m.flow_id)});
     if (!inserted.second) throw std::logic_error("Messagelet already committed");
     _remaining.at(c) += bytes;
     ++_version;
@@ -77,8 +78,18 @@ void GroupRoutingAgent::commit(Messagelet m, Corridor c, uint64_t bytes) {
 
 void GroupRoutingAgent::bindPacket(Messagelet m, uint64_t seqno, uint64_t bytes) {
     if (!_commitments.count(m)) throw std::logic_error("Packet has no commitment");
-    if (!_packets.emplace(std::make_pair(m.first, seqno), PacketState{m, bytes, false}).second)
+    if (!_packets.emplace(std::make_pair(_commitments.at(m).transport_flow_id, seqno), PacketState{m, bytes, false}).second)
         throw std::logic_error("Original packet already bound");
+}
+
+void GroupRoutingAgent::bindPacketOnce(Messagelet m, uint64_t seqno, uint64_t bytes) {
+    const auto& commitment = _commitments.at(m);
+    const auto found = _packets.find({commitment.transport_flow_id, seqno});
+    if (found == _packets.end()) {
+        bindPacket(m, seqno, bytes);
+    } else if (!(found->second.messagelet == m) || found->second.bytes != bytes) {
+        throw std::logic_error("Inconsistent retransmitted messagelet packet");
+    }
 }
 
 void GroupRoutingAgent::admitted(Corridor c, const Packet& packet) {
@@ -104,9 +115,11 @@ void GroupRoutingAgent::log(const char* action, Messagelet m, const Commitment& 
     if (!_trace) return;
     auto* metric = htsim::DataCollector::get_instance().RegisterCsvMetric("gra_events",
         {"time_ps", "group", "version", "action", "transport_flow_id", "messagelet_index", "egress_switch",
-         "remote_switch", "payload_bytes", "seqno", "remaining_messagelet_bytes", "remaining_corridor_bytes"});
+         "remote_switch", "payload_bytes", "seqno", "remaining_messagelet_bytes", "remaining_corridor_bytes",
+         "dag_id", "flow_id"});
     metric->LogData({std::to_string(EventList::getTheEventList().now()), std::to_string(_group), std::to_string(_version), action,
-        std::to_string(m.first), std::to_string(m.second), std::to_string(state.corridor.first),
+        std::to_string(state.transport_flow_id), std::to_string(m.messagelet_idx), std::to_string(state.corridor.first),
         std::to_string(state.corridor.second), std::to_string(bytes), seqno ? std::to_string(*seqno) : "",
-        std::to_string(state.remaining_bytes), std::to_string(_remaining.at(state.corridor))});
+        std::to_string(state.remaining_bytes), std::to_string(_remaining.at(state.corridor)),
+        std::to_string(m.dag_id), std::to_string(m.flow_id)});
 }

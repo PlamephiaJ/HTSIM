@@ -26,7 +26,7 @@ uint32_t field32(const boost::property_tree::ptree& tree, const std::string& key
 }
 } // namespace
 
-FlowRoutingConfig FlowRoutingConfig::loadFromFile(const std::string& filename) {
+FlowRoutingConfig FlowRoutingConfig::loadFromFile(const std::string& filename, bool metadata) {
     try {
         boost::property_tree::ptree tree;
         boost::property_tree::read_json(filename, tree);
@@ -38,8 +38,11 @@ FlowRoutingConfig FlowRoutingConfig::loadFromFile(const std::string& filename) {
         for (const auto& item : tree.get_child("flows")) {
             const auto& row = item.second;
             Entry entry{unsignedNumber(item.first), field32(row, "src"), field32(row, "dst"),
-                        field32(row, "tag"), field32(row, "send_task_id"),
-                        number(row, "bytes"), row.get<std::string>("label")};
+                        field32(row, "tag"), field32(row, metadata ? "send_task.task_id" : "send_task_id"),
+                        number(row, "bytes"), metadata ? "minimum" : row.get<std::string>("label")};
+            if (metadata && (field32(row, "send_task.rank") != entry.src ||
+                             number(row, "flow_id") != entry.flow_id))
+                throw std::invalid_argument("Inconsistent metadata flow identity " + item.first);
             if (entry.label != "minimum" && entry.label != "valiant") {
                 throw std::invalid_argument("Unknown routing label '" + entry.label + "'");
             }
@@ -50,7 +53,7 @@ FlowRoutingConfig FlowRoutingConfig::loadFromFile(const std::string& filename) {
                 throw std::invalid_argument("Duplicate GOAL send task for flow " + item.first);
             }
         }
-        if (number(tree, "flow_count") != config.sends.size()) {
+        if (number(tree, metadata ? "workload.p2p_flows" : "flow_count") != config.sends.size()) {
             throw std::invalid_argument("flow_count does not match flows");
         }
         return config;

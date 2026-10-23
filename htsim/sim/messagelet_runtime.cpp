@@ -40,15 +40,25 @@ void MessageletRuntime::submit(const SendEvent& event, graph_node_properties nod
         throw std::logic_error("Transparent runtime requires switch routing MINIMAL, VALIANT or UGAL_L");
     }
 
+    if (entrySwitchRouting() != (DragonflySwitch::get_routing_strategy() == DragonflySwitch::ENTRY_SWITCH)) {
+        throw std::logic_error("Host runtime.routing_mode and switch -routing must agree on ENTRY_SWITCH");
+    }
+    if (entrySwitchRouting()) {
+        if (!_flow_metadata_loaded)
+            throw std::logic_error("ENTRY_SWITCH requires workload flow metadata with DAG-global flow IDs");
+        DragonflySwitch::configureEntryRouting(_config);
+    }
+
     int to = event.getTo();
     int from = event.getFrom();
     int tag = event.getTag();
     int size = event.getSizeBytes();
 
     const FlowRoutingConfig::Entry* routing = nullptr;
-    if (_routing_config_loaded) {
-        auto entry = _routing_config.sends.find({static_cast<uint32_t>(from), node.offset});
-        if (entry == _routing_config.sends.end()) {
+    if (_routing_config_loaded || _flow_metadata_loaded) {
+        const auto& identities = _routing_config_loaded ? _routing_config : _flow_metadata;
+        auto entry = identities.sends.find({static_cast<uint32_t>(from), node.offset});
+        if (entry == identities.sends.end()) {
             throw std::runtime_error("Routing config has no label for GOAL send rank " +
                                      std::to_string(from) + " task " + std::to_string(node.offset));
         }
@@ -129,7 +139,7 @@ void MessageletRuntime::submit(const SendEvent& event, graph_node_properties nod
 
     uec_src->connectPort(
         0, *srctotor, *dsttotor, *uec_sink, _goal_runtime.getEventList()->now());
-    if (!transparent()) {
+    if (!transparent() && !entrySwitchRouting()) {
         // GOAL SOURCE flows compute both directions without .lt files.
         // Transparent mode keeps the sink's native control-packet entropy.
         uec_sink->setReturnPath(minimumRoute(to, from).path_id);
@@ -153,7 +163,10 @@ void MessageletRuntime::loadConfig(const std::string& filename) {
     if (config.runtime.mode == MessageletConfig::Mode::Transparent && _routing_config_loaded) {
         throw std::logic_error("Transparent runtime cannot be combined with a static routing config");
     }
-    auto decision = makeNetworkDecision(config.routing.network_decision, config.routing.commitment_alpha);
+    if (config.runtime.routing_mode == MessageletConfig::RoutingMode::ENTRY_SWITCH && _routing_config_loaded)
+        throw std::logic_error("ENTRY_SWITCH cannot be combined with a static routing config");
+    auto decision = config.runtime.routing_mode == MessageletConfig::RoutingMode::ENTRY_SWITCH ? nullptr :
+        makeNetworkDecision(config.routing.network_decision, config.routing.commitment_alpha);
     if (decision && _routing_config_loaded) {
         throw std::logic_error("Network decision policy cannot be combined with a static routing config");
     }
@@ -165,6 +178,8 @@ void MessageletRuntime::loadRoutingConfig(const std::string& filename) {
     if (!_flows.empty()) {
         throw std::logic_error("Routing config must be loaded before submitting flows");
     }
+    if (entrySwitchRouting())
+        throw std::logic_error("ENTRY_SWITCH cannot be combined with a static routing config");
     if (transparent()) {
         throw std::logic_error("Transparent runtime cannot be combined with a static routing config");
     }
@@ -175,7 +190,15 @@ void MessageletRuntime::loadRoutingConfig(const std::string& filename) {
     _routing_config_loaded = true;
 }
 
+void MessageletRuntime::loadFlowMetadata(const std::string& filename) {
+    if (!_flows.empty()) throw std::logic_error("Flow metadata must be loaded before submitting flows");
+    _flow_metadata = FlowRoutingConfig::loadFromFile(filename, true);
+    _flow_metadata_loaded = true;
+}
+
 void MessageletRuntime::validateRoutingComplete() const {
+    if (_flow_metadata_loaded && _flows.size() != _flow_metadata.sends.size())
+        throw std::runtime_error("Flow metadata contains flows absent from the GOAL workload");
     if (_routing_config_loaded && _flows.size() != _routing_config.sends.size()) {
         throw std::runtime_error("Routing config contains flows absent from the GOAL workload");
     }
@@ -191,6 +214,8 @@ MessageletRuntime::Granularity MessageletRuntime::granularity(const UecSrc& sour
 
 uint32_t MessageletRuntime::pathIdForMessagelet(const UecSrc& source,
                                                 uint64_t messagelet_index) {
+    if (entrySwitchRouting())
+        throw std::logic_error("ENTRY_SWITCH runtime does not assign path IDs");
     if (transparent()) {
         throw std::logic_error("Transparent runtime does not assign messagelet routes");
     }
@@ -251,11 +276,11 @@ uint32_t MessageletRuntime::pathIdForMessagelet(const UecSrc& source,
             {"decision_id", "transport_flow_id", "messagelet_index", "egress_switch", "remote_switch",
              "original_payload_bytes", "remaining_payload_bytes"});
         for (const auto& item : snapshot.messagelets) messages->LogData({std::to_string(decision_id),
-            std::to_string(item.first.first), std::to_string(item.first.second),
+            std::to_string(item.second.transport_flow_id), std::to_string(item.first.messagelet_idx),
             std::to_string(item.second.corridor.first), std::to_string(item.second.corridor.second),
             std::to_string(item.second.original_bytes), std::to_string(item.second.remaining_bytes)});
     }
-    if (corridor) gra.commit({source.flowId(), messagelet_index}, *corridor, payload);
+    if (corridor) gra.commit(messageletInfo(source, messagelet_index).key, *corridor, payload, source.flowId());
     if (_config.logging.trace_decisions) {
         std::cout << "Messagelet route - Src " << state.from
                   << " - Dst " << state.to
@@ -278,17 +303,38 @@ uint32_t MessageletRuntime::pathIdForMessagelet(const UecSrc& source,
     return route.path_id;
 }
 
-void MessageletRuntime::bindPacket(const UecSrc& source, uint64_t index, uint64_t seqno, uint64_t bytes) {
+const MessageletInfo& MessageletRuntime::messageletInfo(const UecSrc& source, uint64_t index) {
     auto& state = mutableFlowState(source);
-    auto& topology = *_goal_runtime.getDragonflyTopology();
-    auto& gra = topology.groupRoutingAgent(topology.get_host_switch(state.from) / topology.get_a());
-    const auto corridor = DragonflySwitch::get_routing_strategy() == DragonflySwitch::SOURCE ?
-        gra.corridorForRoute(state.from, state.to, state.messagelet_routes.at(index).path_id) : std::nullopt;
-    if (corridor) gra.bindPacket({source.flowId(), index}, seqno, bytes);
+    auto found = state.messagelets.find(index);
+    if (found != state.messagelets.end()) return found->second;
+    const uint64_t mtu = Packet::data_packet_size();
+    const uint64_t mss = mtu - UecSrc::_hdr_size;
+    const uint64_t packets_per_mlet = state.granularity == Granularity::Flow ?
+        std::max<uint64_t>(1, state.flow_size / mss + (state.flow_size % mss != 0)) :
+        (state.messagelet_size / mtu + (state.messagelet_size % mtu != 0));
+    const uint64_t packet_count = state.flow_size / mss + (state.flow_size % mss != 0);
+    const uint64_t total = packet_count / packets_per_mlet + (packet_count % packets_per_mlet != 0);
+    const uint64_t payload = std::min(state.flow_size - state.original_payload_sent, packets_per_mlet * mss);
+    return state.messagelets.emplace(index, MessageletInfo{
+        {_config.runtime.dag_id, state.flow_id, index}, {payload, total}}).first->second;
+}
+
+void MessageletRuntime::bindPacket(const UecSrc& source, uint64_t index, uint64_t seqno, uint64_t bytes) {
+    const auto info = messageletInfo(source, index);
+    auto& state = mutableFlowState(source);
+    if (!entrySwitchRouting()) {
+        auto& topology = *_goal_runtime.getDragonflyTopology();
+        auto& gra = topology.groupRoutingAgent(topology.get_host_switch(state.from) / topology.get_a());
+        const auto corridor = DragonflySwitch::get_routing_strategy() == DragonflySwitch::SOURCE ?
+            gra.corridorForRoute(state.from, state.to, state.messagelet_routes.at(index).path_id) : std::nullopt;
+        if (corridor) gra.bindPacket(info.key, seqno, bytes);
+    }
     state.original_payload_sent += bytes;
 }
 
 void MessageletRuntime::setNetworkDecision(std::unique_ptr<NetworkDecision> decision) {
+    if (decision && entrySwitchRouting())
+        throw std::logic_error("Install ENTRY_SWITCH policies through routing.network_decision");
     if (decision && transparent()) {
         throw std::logic_error("Transparent runtime cannot install a network decision policy");
     }
@@ -306,6 +352,8 @@ void MessageletRuntime::setGranularity(const UecSrc& source,
     settings.messagelet.size_bytes = size_bytes;
     settings.validate();
     auto& state = mutableFlowState(source);
+    if (entrySwitchRouting() && !state.messagelets.empty())
+        throw std::logic_error("Cannot change ENTRY_SWITCH segmentation after metadata has been issued");
     state.granularity = granularity;
     state.messagelet_size = routingUnitSize(granularity, state.flow_size, size_bytes);
 }
@@ -317,6 +365,8 @@ void MessageletRuntime::setMessageletSize(const UecSrc& source, uint64_t size) {
 void MessageletRuntime::setMessageletRoute(const UecSrc& source,
                                            uint64_t messagelet_index,
                                            RouteInfo route_info) {
+    if (entrySwitchRouting())
+        throw std::logic_error("ENTRY_SWITCH runtime does not assign messagelet routes");
     if (transparent()) {
         throw std::logic_error("Transparent runtime does not assign messagelet routes");
     }
@@ -352,14 +402,17 @@ void MessageletRuntime::registerFlow(UecSrc& source,
     state.flow_size = flow_size;
     state.granularity = _config.runtime.granularity;
     state.messagelet_size = routingUnitSize(state.granularity, flow_size, _config.messagelet.size_bytes);
-    if (transparent()) {
-        state.default_route.description = "transparent";
+    state.flow_id = (uint64_t{from} << 32) | static_cast<uint32_t>(_flows.size());
+    if (transparent() || entrySwitchRouting()) {
+        state.default_route.description = entrySwitchRouting() ? "entry_switch" : "transparent";
     } else {
         state.default_route = minimumRoute(from, to);
     }
     if (routing) {
         state.flow_id = routing->flow_id;
         state.has_flow_id = true;
+    }
+    if (routing && _routing_config_loaded) {
         if (routing->label == "valiant") {
             state.default_route = valiantRoute(from, to, routing->flow_id);
         }

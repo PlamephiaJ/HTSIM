@@ -7,6 +7,7 @@
 #include <optional>
 #include "network.h"
 #include "ecn.h"
+#include "messagelet.h"
 
 // All UEC packets are subclasses of Packet.
 // They incorporate a packet database, to reuse packet objects that are no longer needed.
@@ -47,6 +48,7 @@ public:
                                          uint32_t destination = UINT32_MAX) {
         UecDataPacket* p = _packetdb.allocPacket();
         p->set_route(flow, route, full_size, epsn);  // also sets size and seqno
+        p->_messagelet.reset();
         p->_type = UECDATA;
         p->_is_header = false;
         p->_bounced = false;
@@ -95,6 +97,9 @@ public:
     void free() {set_pathid(UINT32_MAX),  _packetdb.freePacket(this);}
     virtual ~UecDataPacket(){}
 
+    const std::optional<MessageletInfo>& messagelet() const { return _messagelet; }
+    void set_messagelet(const MessageletInfo& info) { _messagelet = info; }
+
     inline seq_t epsn() const {return _epsn;}
 
     inline pull_quanta pull_target() const {return _pull_target;}
@@ -122,6 +127,7 @@ public:
     }
 
 protected:
+    std::optional<MessageletInfo> _messagelet;
     seq_t _epsn;
 
     pull_quanta _pull_target;  // in a real implemention we'd handle wrapping, but here just never wrap

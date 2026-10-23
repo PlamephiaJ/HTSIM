@@ -48,6 +48,16 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
         throw std::invalid_argument("Unsupported runtime mode '" + mode + "'");
     }
     readOptional(tree, "messagelet.size_bytes", config.messagelet.size_bytes, filename);
+    std::string routing_mode = "SOURCE";
+    readOptional(tree, "runtime.routing_mode", routing_mode, filename);
+    if (routing_mode == "SOURCE") {
+        config.runtime.routing_mode = RoutingMode::SOURCE;
+    } else if (routing_mode == "ENTRY_SWITCH") {
+        config.runtime.routing_mode = RoutingMode::ENTRY_SWITCH;
+    } else {
+        throw std::invalid_argument("Unsupported runtime routing_mode '" + routing_mode + "'");
+    }
+    readOptional(tree, "runtime.dag_id", config.runtime.dag_id, filename);
     // Legacy configs select granularity through size_bytes alone.
     std::string granularity = config.messagelet.size_bytes == 0 ? "flow" : "messagelet";
     readOptional(tree, "runtime.granularity", granularity, filename);
@@ -75,6 +85,10 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
 }
 
 void MessageletConfig::validate() const {
+    if (runtime.routing_mode != RoutingMode::SOURCE && runtime.routing_mode != RoutingMode::ENTRY_SWITCH)
+        throw std::invalid_argument("Unsupported runtime routing_mode");
+    if (runtime.mode == Mode::Transparent && runtime.routing_mode == RoutingMode::ENTRY_SWITCH)
+        throw std::invalid_argument("ENTRY_SWITCH requires runtime.mode 'label'");
     if (runtime.mode != Mode::Label && runtime.mode != Mode::Transparent) {
         throw std::invalid_argument("Unsupported runtime mode");
     }

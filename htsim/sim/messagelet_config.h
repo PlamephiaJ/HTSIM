@@ -9,11 +9,15 @@ struct MessageletConfig {
 
     enum class Granularity { Flow, Messagelet, Packet };
     enum class Mode { Label, Transparent };
+    enum class RoutingMode { SOURCE, ENTRY_SWITCH };
 
     struct RuntimeSettings {
         // Transparent mode bypasses runtime routing and granularity handling.
         Mode mode = Mode::Label;
         Granularity granularity = Granularity::Flow;
+        // Must match the Dragonfly switch strategy for ENTRY_SWITCH.
+        RoutingMode routing_mode = RoutingMode::SOURCE;
+        uint64_t dag_id = 0;
     } runtime;
 
     struct MessageletSettings {

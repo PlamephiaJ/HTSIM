@@ -8,13 +8,16 @@
 #include <unordered_set>
 #include "callback_pipe.h"
 #include "switch.h"
+#include "messagelet_config.h"
+#include "network_decision.h"
+#include "messagelet.h"
 
 class DragonflyTopology;
 
 class DragonflySwitch : public Switch {
 public:
     enum SwitchType { NONE = 0, GENERAL = 1 };
-    enum RoutingStrategy { MINIMAL = 0, VALIANT = 1, UGAL_L = 2, SOURCE = 3 };
+    enum RoutingStrategy { MINIMAL = 0, VALIANT = 1, UGAL_L = 2, SOURCE = 3, ENTRY_SWITCH = 4 };
 
     DragonflySwitch(EventList& event_list,
                     std::string name,
@@ -60,6 +63,7 @@ public:
     static RoutingStrategy get_routing_strategy() { return _routing_strategy; }
     // Set before constructing switches; preserve HTSim's default seed 33.
     static void set_routing_seed(uint32_t seed) { _routing_seed = seed; }
+    static void configureEntryRouting(const MessageletConfig& config) { _entry_config = config; }
 
 private:
     SwitchType _type;
@@ -94,6 +98,16 @@ private:
     static uint16_t _trim_size;
     static RoutingStrategy _routing_strategy;
     static uint32_t _routing_seed;
+    static MessageletConfig _entry_config;
+    std::unique_ptr<NetworkDecision> _entry_decision;
+    struct EntryRoute {
+        NetworkRoute route;
+        MessageletMeta meta;
+        uint32_t src, dst;
+        uint64_t transport_flow_id;
+    };
+    std::map<MessageletKey, EntryRoute> _entry_routes;
+    void routeEntryPacket(Packet& packet);
 };
 
 #endif

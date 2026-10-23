@@ -11,6 +11,7 @@
 #include "messagelet_config.h"
 #include "flow_routing_config.h"
 #include "network_decision.h"
+#include "messagelet.h"
 
 class AtlahsDragonflyApi;
 class EventOver;
@@ -42,6 +43,7 @@ public:
         std::vector<RouteInfo> messagelet_routes;
         std::unordered_set<uint64_t> finalized_routes;
         std::unordered_set<uint64_t> route_overrides;
+        std::unordered_map<uint64_t, MessageletInfo> messagelets;
     };
 
     explicit MessageletRuntime(AtlahsDragonflyApi& goal_runtime);
@@ -51,13 +53,18 @@ public:
 
     void loadConfig(const std::string& filename);
     void loadRoutingConfig(const std::string& filename);
+    void loadFlowMetadata(const std::string& filename);
     void validateRoutingComplete() const;
     const MessageletConfig& config() const { return _config; }
     bool transparent() const { return _config.runtime.mode == MessageletConfig::Mode::Transparent; }
+    bool entrySwitchRouting() const {
+        return _config.runtime.routing_mode == MessageletConfig::RoutingMode::ENTRY_SWITCH;
+    }
 
     uint64_t messageletSize(const UecSrc& source) const;
     Granularity granularity(const UecSrc& source) const;
     uint32_t pathIdForMessagelet(const UecSrc& source, uint64_t messagelet_index);
+    const MessageletInfo& messageletInfo(const UecSrc& source, uint64_t messagelet_index);
 
     void bindPacket(const UecSrc& source, uint64_t messagelet_index, uint64_t seqno, uint64_t payload_bytes);
 
@@ -89,6 +96,8 @@ private:
     MessageletConfig _config;
     FlowRoutingConfig _routing_config;
     bool _routing_config_loaded = false;
+    FlowRoutingConfig _flow_metadata;
+    bool _flow_metadata_loaded = false;
     std::unique_ptr<NetworkDecision> _network_decision;
     std::unordered_map<const UecSrc*, FlowState> _flows;
     uint64_t _decision_index = 0;

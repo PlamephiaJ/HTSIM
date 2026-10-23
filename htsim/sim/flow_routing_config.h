@@ -15,7 +15,8 @@ struct FlowRoutingConfig {
         std::string label;
     };
     std::map<std::pair<uint32_t, uint32_t>, Entry> sends;
-    static FlowRoutingConfig loadFromFile(const std::string& filename);
+    // Metadata supplies identity only; routing labels remain a separate input.
+    static FlowRoutingConfig loadFromFile(const std::string& filename, bool metadata = false);
 };
 
 #endif

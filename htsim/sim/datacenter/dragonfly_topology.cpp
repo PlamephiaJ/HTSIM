@@ -359,6 +359,7 @@ simtime_picosec DragonflyTopology::get_max_rtt(DragonflySwitch::RoutingStrategy 
     switch (routing_strategy) {
         case DragonflySwitch::MINIMAL:
         case DragonflySwitch::SOURCE:
+        case DragonflySwitch::ENTRY_SWITCH:
         case DragonflySwitch::VALIANT:
         case DragonflySwitch::UGAL_L: {
             // Worst case routing

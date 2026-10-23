@@ -5,11 +5,14 @@
 #include "config.h"
 #include "dragonfly_topology.h"
 #include "dragonfly_source_route.h"
+#include "data_collector.h"
+#include "uec.h"
 
 bool DragonflySwitch::_trim_disable = false;
 uint16_t DragonflySwitch::_trim_size = 0;
 DragonflySwitch::RoutingStrategy DragonflySwitch::_routing_strategy = DragonflySwitch::MINIMAL;
 uint32_t DragonflySwitch::_routing_seed = 33;
+MessageletConfig DragonflySwitch::_entry_config;
 
 string ntoa(double n);
 string itoa(uint64_t n);
@@ -272,12 +275,75 @@ DragonflySwitch::UgalDecision DragonflySwitch::ugalDecision(uint32_t src_switch,
     return decision;
 }
 
+void DragonflySwitch::routeEntryPacket(Packet& packet) {
+    auto& data = static_cast<UecDataPacket&>(packet);
+    const auto& info = *data.messagelet();
+    if (!info.meta.mlet_size || !info.meta.total_mlet || info.key.messagelet_idx >= info.meta.total_mlet)
+        throw std::logic_error("Invalid entry messagelet metadata");
+    auto& gra = _topo->groupRoutingAgent(_id / _a);
+    gra.setTrace(_entry_config.logging.trace_decisions);
+    auto found = _entry_routes.find(info.key);
+    if (found == _entry_routes.end()) {
+        if (!_entry_decision)
+            _entry_decision = makeNetworkDecision(_entry_config.routing.network_decision,
+                                                 _entry_config.routing.commitment_alpha);
+        NetworkRoute route;
+        if (_entry_decision) {
+            route = _entry_decision->decide({*_topo, packet.src(), packet.dst(), 0,
+                info.meta.mlet_size, info.meta.mlet_size, info.key.messagelet_idx});
+        } else if (_id != _topo->get_host_switch(packet.dst())) {
+            const auto first = get_next_switch_minimal(_id, _topo->get_host_switch(packet.dst()));
+            const auto second = first == _topo->get_host_switch(packet.dst()) ? 0 :
+                get_next_switch_minimal(first, _topo->get_host_switch(packet.dst()));
+            route.path_id = (first << 16) | second;
+        }
+        const auto corridor = gra.corridorForRoute(packet.src(), packet.dst(), route.path_id);
+        if (_entry_config.logging.trace_decisions) {
+            std::string policy_state;
+            for (const auto& item : route.log_info) policy_state += item.first + "=" + item.second + ";";
+            auto& collector = htsim::DataCollector::get_instance();
+            auto* decisions = collector.RegisterCsvMetric("entry_decisions",
+                {"time_ps", "entry_switch", "gra_version", "dag_id", "flow_id", "messagelet_index",
+                 "transport_flow_id", "src_host", "dst_host", "mlet_size", "total_mlet", "path_id",
+                 "route", "egress_switch", "remote_switch", "policy_state"});
+            decisions->LogData({std::to_string(eventlist().now()), std::to_string(_id),
+                std::to_string(gra.snapshot().version), std::to_string(info.key.dag_id),
+                std::to_string(info.key.flow_id), std::to_string(info.key.messagelet_idx),
+                std::to_string(packet.flow_id()), std::to_string(packet.src()), std::to_string(packet.dst()),
+                std::to_string(info.meta.mlet_size), std::to_string(info.meta.total_mlet),
+                std::to_string(route.path_id), route.description,
+                corridor ? std::to_string(corridor->first) : "",
+                corridor ? std::to_string(corridor->second) : "", policy_state});
+        }
+        // This executes inside getNextHop(), before the switch's delay pipe
+        // can release this first packet into any egress queue. Subsequent
+        // decisions therefore see its R even when Q is still zero.
+        if (corridor) gra.commit(info.key, *corridor, info.meta.mlet_size, packet.flow_id());
+        found = _entry_routes.emplace(info.key, EntryRoute{
+            std::move(route), info.meta, packet.src(), packet.dst(), packet.flow_id()}).first;
+    }
+    const auto& cached = found->second;
+    if (!(cached.meta == info.meta) || cached.src != packet.src() || cached.dst != packet.dst() ||
+        cached.transport_flow_id != packet.flow_id())
+        throw std::logic_error("Inconsistent entry messagelet identity or metadata");
+    const auto corridor = gra.corridorForRoute(packet.src(), packet.dst(), cached.route.path_id);
+    if (corridor && !packet.header_only() && data.packet_type() != UecBasePacket::DATA_PROBE)
+        gra.bindPacketOnce(info.key, data.epsn(), packet.size() - UecSrc::_hdr_size);
+    packet.set_pathid(cached.route.path_id);
+}
+
 Route* DragonflySwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
     uint32_t this_switch = _id;
     uint32_t src_switch = _topo->get_host_switch(pkt.src());
     uint32_t dst_switch = _topo->get_host_switch(pkt.dst());
 
     pkt.set_direction(DOWN);
+
+    if (_routing_strategy == ENTRY_SWITCH && this_switch == src_switch && pkt.type() == UECDATA &&
+        static_cast<const UecDataPacket&>(pkt).messagelet())
+        routeEntryPacket(pkt);
+    if (_routing_strategy == ENTRY_SWITCH && this_switch == src_switch && !pkt.has_pathid())
+        pkt.set_pathid(0); // unlabelled control packets follow minimum routes
 
     // Manual valiant SOURCE paths must visit the waypoint even when source
     // and destination hosts share a switch. Keep the path label unchanged;
@@ -329,6 +395,11 @@ Route* DragonflySwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
             return get_fib_entry(decision.next_switch)->getEgressPort();
         }
 
+        case ENTRY_SWITCH:
+            // Credit, probes and RTS do not carry original messagelet data.
+            if (pkt.type() != UECDATA || !static_cast<const UecDataPacket&>(pkt).messagelet())
+                return get_fib_entry(get_next_switch_minimal(this_switch, dst_switch))->getEgressPort();
+            [[fallthrough]];
         case SOURCE: {
             uint32_t hop_one_switch = (pkt.pathid() >> 16) & 0xFFFF;  // Upper 16 bits
             uint32_t hop_two_switch = pkt.pathid() & 0xFFFF;          // Lower 16 bits

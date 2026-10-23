@@ -457,3 +457,73 @@ cmake --build build --parallel # To build the project
 cd build
 ctest
 ```
+# Entry switch messagelet routing
+
+Dragonfly GOAL runs support `SOURCE` (the default host routing mode) and
+`ENTRY_SWITCH`. Select the latter in both the simulator and messagelet config:
+
+```json
+{
+  "runtime": {
+    "mode": "label",
+    "routing_mode": "ENTRY_SWITCH",
+    "dag_id": 0,
+    "granularity": "messagelet"
+  },
+  "messagelet": {"size_bytes": 16640},
+  "routing": {
+    "network_decision": "commitment_aware_ugal",
+    "commitment_alpha": 1.0
+  },
+  "logging": {"trace_decisions": true}
+}
+```
+
+```bash
+htsim/sim/build/datacenter/htsim_uec_df \
+  -basepath /path/to/topology -goal /path/to/workload.bin \
+  -routing ENTRY_SWITCH -messagelet_config /path/to/messagelet.json
+```
+
+The runtime automatically reads the adjacent `workload.meta.json`. Use
+`-flow_metadata /path/to/workload.meta.json` for a different location. Metadata
+must map every GOAL `(source rank, send task ID)` to its DAG-global flow ID;
+ENTRY_SWITCH requires this mapping and validates endpoints, tags, and sizes.
+`runtime.dag_id` defaults to zero. Static `-routing_config` labels and transparent
+runtime mode cannot be combined with ENTRY_SWITCH.
+
+The host splits the flow and attaches the same key
+`(dag_id, flow_id, messagelet_idx)` and metadata `(mlet_size, total_mlet)` to every
+data packet in a messagelet, including retransmissions. Indices start at zero.
+It leaves path IDs unassigned. As in SOURCE mode, `messagelet.size_bytes` is a
+wire-byte segmentation threshold, rounded up to whole packets. Metadata
+`mlet_size` is the **actual original payload bytes** in this messagelet; the last
+messagelet can be smaller. `total_mlet` counts the resulting messagelets in the
+flow. Flow and packet granularities are also supported. Once ENTRY_SWITCH
+metadata has been issued, segmentation cannot be changed through the C++ hooks.
+
+On the first arrival of any packet with a new key, the source host's directly
+connected switch selects and caches its path, then commits `mlet_size` to its
+group's GRA before the packet enters the switch delay pipe or an egress queue.
+Further packets and retransmissions reuse that path without recommitting.
+This preserves `Q + alpha * R`: Q counts queued wire bytes and R counts committed
+original payload that has not yet entered its selected global corridor. A drop
+or trim before intact admission leaves those bytes in R; the first intact
+admission consumes them exactly once. Intra-group traffic has no global corridor
+commitment. Control packets follow minimum routes without payload commitments.
+
+`routing.network_decision` also accepts `ugal_l` and `none` (minimum routes).
+With tracing enabled, `entry_decisions.csv` records switch decisions and the
+source-provided key/metadata; `gra_events.csv` records commitments and unique
+admissions, including DAG and global flow IDs. Switch and host modes must agree.
+To use host decisions, set `-routing SOURCE` and
+`runtime.routing_mode: "SOURCE"` (or omit that field).
+
+Build and validate:
+
+```bash
+cmake -S htsim/sim -B htsim/sim/build -DENABLE_NETWORK_DECISION_TESTS=ON
+cmake --build htsim/sim/build --target htsim_uec_df network_decision_test -j 4
+ctest --test-dir htsim/sim/build --output-on-failure
+python3 -m unittest discover -s tests -p test_entry_switch_routing.py -v
+```

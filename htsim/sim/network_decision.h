@@ -24,8 +24,8 @@ struct NetworkDecisionContext {
     uint64_t messagelet_index;
 };
 
-// Called before a messagelet is labelled. The runtime owns and freezes the
-// returned SOURCE route; a policy never changes packets already in flight.
+// Called before a messagelet is labelled. The host runtime or entry switch
+// freezes the returned route; packets already in flight keep their decision.
 class NetworkDecision {
 public:
     virtual ~NetworkDecision() = default;

@@ -699,6 +699,7 @@ mem_b UecSrc::handleAckno(UecDataPacket::seq_t ackno) {
             mem_b pkt_size = rtx_i->second;
             _rtx_queue.erase(rtx_i);
             _messagelet_packet_paths.erase(ackno);
+            _messagelet_packet_info.erase(ackno);
             _rtx_backlog -= pkt_size;
             _in_flight += pkt_size; // don't double count - we decremented when we marked for rtx
             if (_debug_src) {
@@ -733,6 +734,7 @@ mem_b UecSrc::handleAckno(UecDataPacket::seq_t ackno) {
 
         _tx_bitmap.erase(i);
         _messagelet_packet_paths.erase(ackno);
+        _messagelet_packet_info.erase(ackno);
         // _send_times.erase(send_time);
         delFromSendTimes(send_time, ackno);
 
@@ -781,6 +783,7 @@ mem_b UecSrc::handleCumulativeAck(UecDataPacket::seq_t cum_ack) {
             mem_b pkt_size = _rtx_queue.begin()->second;
             _rtx_queue.erase(_rtx_queue.begin());
             _messagelet_packet_paths.erase(seqno);
+            _messagelet_packet_info.erase(seqno);
             _rtx_backlog -= pkt_size;
             _in_flight += pkt_size; // don't double count - we decremented when we marked for rtx
         } else {
@@ -812,6 +815,7 @@ mem_b UecSrc::handleCumulativeAck(UecDataPacket::seq_t cum_ack) {
         }  
         _tx_bitmap.erase(i);
         _messagelet_packet_paths.erase(seqno);
+        _messagelet_packet_info.erase(seqno);
         i = _tx_bitmap.begin();
         // _send_times.erase(send_time);
         delFromSendTimes(send_time, seqno);
@@ -2181,7 +2185,8 @@ mem_b UecSrc::sendNewPacket(const Route& route) {
     p->set_src(_srcaddr);
 
     uint32_t ev = messageletPathIdForNewPacket(_highest_sent, full_pkt_size);
-    p->set_pathid(ev);
+    if (!_messagelet_runtime || !_messagelet_runtime->entrySwitchRouting()) p->set_pathid(ev);
+    if (_messagelet_runtime) p->set_messagelet(_messagelet_packet_info.at(_highest_sent));
     p->set_hop_count(0);
     p->flow().logTraffic(*p, *this, TrafficLogger::PKT_CREATESEND);
 
@@ -2228,7 +2233,9 @@ mem_b UecSrc::sendRtxPacket(const Route& route) {
     p->set_src(_srcaddr);
 
     uint32_t ev = messageletPathIdForRetransmission(seq_no);
-    p->set_pathid(ev);
+    if (!_messagelet_runtime || !_messagelet_runtime->entrySwitchRouting()) p->set_pathid(ev);
+    const auto info = _messagelet_packet_info.find(seq_no);
+    if (info != _messagelet_packet_info.end()) p->set_messagelet(info->second);
     p->set_hop_count(0);
     p->flow().logTraffic(*p, *this, TrafficLogger::PKT_CREATESEND);
 
@@ -2262,7 +2269,7 @@ void UecSrc::sendProbe() {
     p->set_src(_srcaddr);
     p->set_dst(_dstaddr);
     uint32_t ev = messageletPathIdForControlPacket();
-    p->set_pathid(ev);
+    if (!_messagelet_runtime || !_messagelet_runtime->entrySwitchRouting()) p->set_pathid(ev);
     p->set_hop_count(0);
     // p->sendOn();
     _nic.sendControlPacket(p, this, NULL);
@@ -2293,7 +2300,7 @@ void UecSrc::sendRTS() {
     p->set_src(_srcaddr);
 
     uint32_t ev = messageletPathIdForControlPacket();
-    p->set_pathid(ev);
+    if (!_messagelet_runtime || !_messagelet_runtime->entrySwitchRouting()) p->set_pathid(ev);
     p->set_hop_count(0);
     if (_messagelet_runtime) {
         _messagelet_packet_paths[_highest_sent] = ev;
@@ -2327,6 +2334,7 @@ uint32_t UecSrc::messageletPathIdForNewPacket(UecDataPacket::seq_t seqno,
 
     const uint32_t path_id = _current_messagelet_path_id;
     _messagelet_packet_paths[seqno] = path_id;
+    _messagelet_packet_info[seqno] = _messagelet_runtime->messageletInfo(*this, _messagelet_index);
     _messagelet_bytes_sent += pkt_size;
     _messagelet_runtime->bindPacket(*this, _messagelet_index, seqno, pkt_size - _hdr_size);
     return path_id;
@@ -2366,7 +2374,7 @@ void UecSrc::ensureMessageletRoute() {
     if (_current_messagelet_size == 0) {
         throw std::logic_error("Messagelet runtime returned a zero messagelet size");
     }
-    _current_messagelet_path_id =
+    _current_messagelet_path_id = _messagelet_runtime->entrySwitchRouting() ? 0 :
         _messagelet_runtime->pathIdForMessagelet(*this, _messagelet_index);
     _messagelet_route_valid = true;
 }

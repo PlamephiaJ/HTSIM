@@ -7,6 +7,7 @@
 #include <sstream>
 #include <memory>
 #include <charconv>
+#include <filesystem>
 
 #include "clock.h"
 #include "compositequeue.h"
@@ -50,6 +51,7 @@ int main(int argc, char** argv) {
     std::string host_table_base_path;
     std::string messagelet_config_file;
     std::string routing_config_file;
+    std::string flow_metadata_file;
     std::string rank_placement_file;
     mem_b cwnd_b = 0;
     mem_b queuesize = 88;  // Dragonfly default (1x BDP)
@@ -89,6 +91,8 @@ int main(int argc, char** argv) {
                 routing_strategy = DragonflySwitch::UGAL_L;
             } else if (!strcmp(argv[i + 1], "SOURCE")) {
                 routing_strategy = DragonflySwitch::SOURCE;
+            } else if (!strcmp(argv[i + 1], "ENTRY_SWITCH")) {
+                routing_strategy = DragonflySwitch::ENTRY_SWITCH;
             } else {
                 throw std::logic_error("Routing strategy not recognized");
             }
@@ -101,6 +105,9 @@ int main(int argc, char** argv) {
             i++;
         } else if (!strcmp(argv[i], "-routing_config")) {
             routing_config_file = argv[i + 1];
+            i++;
+        } else if (!strcmp(argv[i], "-flow_metadata")) {
+            flow_metadata_file = argv[i + 1];
             i++;
         } else if (!strcmp(argv[i], "-rank_placement")) {
             rank_placement_file = argv[i + 1];
@@ -318,15 +325,21 @@ int main(int argc, char** argv) {
         (routing_strategy != DragonflySwitch::SOURCE || goal_filename.empty())) {
         throw std::logic_error("-routing_config requires -routing SOURCE and -goal");
     }
+    if (routing_strategy == DragonflySwitch::ENTRY_SWITCH &&
+        (goal_filename.empty() || messagelet_config_file.empty()))
+        throw std::logic_error("-routing ENTRY_SWITCH requires -goal and -messagelet_config");
     if (!messagelet_config_file.empty()) {
         const auto config = MessageletConfig::loadFromFile(messagelet_config_file);
+        const bool entry = config.runtime.routing_mode == MessageletConfig::RoutingMode::ENTRY_SWITCH;
+        if (entry != (routing_strategy == DragonflySwitch::ENTRY_SWITCH))
+            throw std::logic_error("runtime.routing_mode and -routing must agree on ENTRY_SWITCH");
         if (config.runtime.mode == MessageletConfig::Mode::Transparent &&
-            (routing_strategy == DragonflySwitch::SOURCE || goal_filename.empty())) {
+            (routing_strategy == DragonflySwitch::SOURCE || entry || goal_filename.empty())) {
             throw std::logic_error("Transparent runtime requires -goal and switch routing MINIMAL, VALIANT or UGAL_L");
         }
         if (config.routing.network_decision != "none" &&
-            (routing_strategy != DragonflySwitch::SOURCE || goal_filename.empty())) {
-            throw std::logic_error("Messagelet network decision requires -routing SOURCE and -goal");
+            ((routing_strategy != DragonflySwitch::SOURCE && !entry) || goal_filename.empty())) {
+            throw std::logic_error("Messagelet network decision requires -routing SOURCE and -goal, or -routing ENTRY_SWITCH with runtime.routing_mode ENTRY_SWITCH");
         }
     }
 
@@ -335,7 +348,7 @@ int main(int argc, char** argv) {
     DragonflyTopology* topo = new DragonflyTopology(qt, queuesize, qlf, &eventlist);
     topo->load_topology(topo_base_path);
 
-    if (routing_strategy == DragonflySwitch::SOURCE &&
+    if ((routing_strategy == DragonflySwitch::SOURCE || routing_strategy == DragonflySwitch::ENTRY_SWITCH) &&
         topo->get_a() * uint64_t{topo->get_no_groups()} > 32768) {
         throw std::logic_error("SOURCE routing supports at most 32768 switches");
     }
@@ -381,6 +394,11 @@ int main(int argc, char** argv) {
         if (!messagelet_config_file.empty()) {
             api->getMessageletRuntime().loadConfig(messagelet_config_file);
         }
+        if (flow_metadata_file.empty()) {
+            auto candidate = std::filesystem::path(goal_filename).replace_extension(".meta.json");
+            if (std::filesystem::is_regular_file(candidate)) flow_metadata_file = candidate.string();
+        }
+        if (!flow_metadata_file.empty()) api->getMessageletRuntime().loadFlowMetadata(flow_metadata_file);
         if (!routing_config_file.empty()) {
             api->getMessageletRuntime().loadRoutingConfig(routing_config_file);
         }

@@ -119,7 +119,7 @@ void checkGroupCommitments() {
     assert(gra.corridorForRoute(0, 24, (1u << 16) | 14u) == corridor);
     assert(!gra.corridorForRoute(0, 2, 1u << 16));
     PacketFlow first(nullptr), second(nullptr);
-    const GroupRoutingAgent::Messagelet m1{first.flow_id(), 0}, m2{second.flow_id(), 0};
+    const GroupRoutingAgent::Messagelet m1{0, first.flow_id(), 0}, m2{0, second.flow_id(), 0};
     gra.commit(m1, corridor, 8192);
     gra.commit(m2, corridor, 4096);
     gra.bindPacket(m1, 0, 4096);
@@ -166,6 +166,7 @@ struct PacketRecord {
     uint64_t seqno;
     uint32_t path_id;
     bool retransmitted;
+    std::optional<MessageletInfo> messagelet;
 };
 
 class CaptureQueue : public Queue {
@@ -177,7 +178,8 @@ public:
     void receivePacket(Packet& packet) override {
         assert(packet.type() == UECDATA);
         auto& data = static_cast<UecDataPacket&>(packet);
-        records.push_back({data.epsn(), data.pathid(), data.retransmitted()});
+        records.push_back({data.epsn(), data.has_pathid() ? data.pathid() : UINT32_MAX,
+                           data.retransmitted(), data.messagelet()});
         // Force a real retransmission after later messagelets have been sent.
         if (records.size() == 1) {
             packet.free();
@@ -211,11 +213,81 @@ public:
     uint32_t& calls;
 };
 
+void checkEntryCommitBeforeAdmission() {
+    auto& events = EventList::getTheEventList();
+    events.setEndtime(1);
+    DragonflySwitch::set_config(DragonflySwitch::ENTRY_SWITCH, false, 64);
+    MessageletConfig config;
+    config.runtime.routing_mode = MessageletConfig::RoutingMode::ENTRY_SWITCH;
+    config.routing.network_decision = "commitment_aware_ugal";
+    DragonflySwitch::configureEntryRouting(config);
+    DragonflyTopology topology(COMPOSITE, 1000000, nullptr, &events);
+    topology.construct_topology(2, 1, 2); // source is itself the global egress
+    auto& entry = *static_cast<DragonflySwitch*>(topology.switches[0]);
+    auto& gra = topology.groupRoutingAgent(0);
+    PacketFlow flow(nullptr), other_dag(nullptr);
+    Route empty;
+    auto packet = [&](PacketFlow& transport, MessageletKey key, uint64_t seq, bool retry = false) {
+        auto* p = UecDataPacket::newpkt(transport, empty, seq, 4160,
+            retry ? UecDataPacket::DATA_RTX : UecDataPacket::DATA_PULL, 0, 2);
+        p->set_src(0);
+        p->set_messagelet({key, {8192, 2}});
+        return p;
+    };
+    const MessageletKey key{0, 41, 0};
+    auto* first = packet(flow, key, 0);
+    entry.receivePacket(*first);
+    const auto corridor = *gra.corridorForRoute(0, 2, first->pathid());
+    // Selection and commit happen synchronously; the switch pipe has not
+    // released the first packet to the directly connected global queue.
+    assert(gra.remaining(key) == 8192 && gra.query(corridor).q_bytes == 0);
+    auto* second = packet(flow, key, 1);
+    entry.getNextHop(*second, nullptr);
+    assert(second->pathid() == first->pathid());
+    assert(gra.snapshot().version == 1); // same mlet does not recommit
+    gra.admitted(corridor, *second);
+    assert(gra.remaining(key) == 4096);
+    auto* retry = packet(flow, key, 1, true);
+    entry.getNextHop(*retry, nullptr);
+    gra.admitted(corridor, *retry);
+    assert(gra.remaining(key) == 4096 && retry->pathid() == first->pathid());
+    auto* trimmed = packet(flow, key, 0, true);
+    trimmed->strip_payload(64);
+    entry.getNextHop(*trimmed, nullptr);
+    gra.admitted(corridor, *trimmed);
+    assert(gra.remaining(key) == 4096);
+    gra.admitted(corridor, *first);
+    assert(gra.remaining(key) == 0);
+    entry.getNextHop(*retry, nullptr);
+    gra.admitted(corridor, *retry);
+    assert(gra.snapshot().messagelets.empty() && retry->pathid() == first->pathid());
+    // A distinct DAG or messagelet index must have its own frozen decision.
+    auto* different_dag = packet(other_dag, {1, 41, 0}, 0);
+    auto* different_mlet = packet(flow, {0, 41, 1}, 2);
+    entry.getNextHop(*different_dag, nullptr);
+    entry.getNextHop(*different_mlet, nullptr);
+    assert(gra.snapshot().messagelets.size() == 2); // completed key is omitted
+    assert(gra.remaining({1, 41, 0}) == 8192 && gra.remaining({0, 41, 1}) == 8192);
+    auto* corrupt = packet(flow, key, 2);
+    corrupt->set_messagelet({key, {1, 2}});
+    bool rejected = false;
+    try { entry.getNextHop(*corrupt, nullptr); }
+    catch (const std::logic_error&) { rejected = true; }
+    assert(rejected);
+    second->free(); retry->free(); trimmed->free();
+    different_dag->free(); different_mlet->free(); corrupt->free();
+    // PacketDB reuse must not leak metadata into probes or native traffic.
+    auto* reused = UecDataPacket::newpkt(flow, empty, 3, 64, UecBasePacket::DATA_PROBE, 0, 2);
+    assert(!reused->messagelet());
+    reused->free();
+}
+
 void checkRuntimeFreezingAndRetransmission(MessageletRuntime::Granularity granularity,
-                                          bool transparent = false) {
+                                          bool transparent = false, bool entry = false) {
     auto& events = EventList::getTheEventList();
     events.setEndtime(timeFromMs(10));
-    const auto routing = transparent ? DragonflySwitch::UGAL_L : DragonflySwitch::SOURCE;
+    const auto routing = entry ? DragonflySwitch::ENTRY_SWITCH :
+        (transparent ? DragonflySwitch::UGAL_L : DragonflySwitch::SOURCE);
     DragonflySwitch::set_config(routing, false, 64);
     DragonflyTopology topology(COMPOSITE, 1000000, nullptr, &events);
     topology.construct_topology(2, 4, 2);
@@ -252,19 +324,56 @@ void checkRuntimeFreezingAndRetransmission(MessageletRuntime::Granularity granul
     {
         std::ofstream config(config_path);
         config << "{\"runtime\":{\"mode\":\"" << (transparent ? "transparent" : "label")
+               << "\",\"routing_mode\":\"" << (entry ? "ENTRY_SWITCH" : "SOURCE")
                << "\",\"granularity\":\""
                << MessageletConfig::granularityName(granularity) << "\"},\"messagelet\":{\"size_bytes\":"
-               << (granularity == MessageletRuntime::Granularity::Messagelet ? 8192 : 0) << "}}";
+               << (granularity == MessageletRuntime::Granularity::Messagelet ? 8192 : 0)
+               << "},\"routing\":{\"network_decision\":\""
+               << (entry ? "commitment_aware_ugal" : "none") << "\"}}";
     }
     runtime.loadConfig(config_path);
+    if (entry) {
+        std::ofstream metadata(config_path);
+        metadata << R"({"schema_version":1,"workload":{"p2p_flows":1},"flows":{"41":{
+            "flow_id":41,"src":0,"dst":16,"tag":7,"bytes":1000000,"send_task":{"rank":0,"task_id":0}}}})";
+        metadata.close();
+        runtime.loadFlowMetadata(config_path);
+    }
     std::remove(config_path);
     std::vector<uint64_t> calls;
-    if (!transparent)
+    if (!transparent && !entry)
         runtime.setNetworkDecision(std::make_unique<AlternatingPolicy>(calls));
     runtime.submit(SendEvent(0, 16, 1000000, 7, 0), graph_node_properties{});
     assert(events.doNextEvent());
     assert(!api.uec_nics[0]->_active_srcs.empty());
     auto& source = *api.uec_nics[0]->_active_srcs.front();
+    if (entry) {
+        assert(calls.empty());
+        // The source has emitted data but no packet has reached the switch.
+        assert(topology.groupRoutingAgent(0).snapshot().messagelets.empty());
+        bool retransmitted = false;
+        for (unsigned step = 0; step < 200000 && events.doNextEvent(); ++step) {
+            if (capture.records.back().retransmitted) { retransmitted = true; break; }
+        }
+        assert(retransmitted && capture.records.size() > 7);
+        for (size_t i = 0; i < 7; ++i) {
+            const auto& record = capture.records[i];
+            assert(record.path_id == UINT32_MAX && record.messagelet);
+            assert(record.messagelet->key == (MessageletKey{0, 41, i / 2}));
+            assert(record.messagelet->meta == (MessageletMeta{8192, 123}));
+        }
+        const auto& first = *capture.records.front().messagelet;
+        const auto& retry = *capture.records.back().messagelet;
+        assert(retry.key == first.key && retry.meta == first.meta);
+        assert(capture.records.back().path_id == UINT32_MAX);
+        const auto& state = runtime.flowState(source);
+        assert(state.messagelet_routes.empty() && state.finalized_routes.empty());
+        bool rejected = false;
+        try { runtime.pathIdForMessagelet(source, 0); }
+        catch (const std::logic_error&) { rejected = true; }
+        assert(rejected);
+        return;
+    }
     if (transparent) {
         assert(runtime.transparent());
         assert(source._messagelet_runtime == nullptr);
@@ -366,6 +475,11 @@ void checkRuntimeFreezingAndRetransmission(MessageletRuntime::Granularity granul
 
 int main(int argc, char** argv) {
     Packet::set_packet_size(4160);
+    if (argc > 1 && std::string(argv[1]) == "entry_admission") {
+        checkEntryCommitBeforeAdmission();
+        std::cout << "Entry commitment tests passed\n";
+        return 0;
+    }
     assert(!makeNetworkDecision("none"));
     assert(makeNetworkDecision("ugal_l"));
     bool rejected = false;
@@ -383,6 +497,7 @@ int main(int argc, char** argv) {
     if (argc > 1 && std::string(argv[1]) == "packet")
         granularity = MessageletRuntime::Granularity::Packet;
     const bool transparent = argc > 1 && std::string(argv[1]) == "transparent";
-    checkRuntimeFreezingAndRetransmission(granularity, transparent);
+    const bool entry = argc > 1 && std::string(argv[1]) == "entry";
+    checkRuntimeFreezingAndRetransmission(granularity, transparent, entry);
     std::cout << "Network decision tests passed\n";
 }

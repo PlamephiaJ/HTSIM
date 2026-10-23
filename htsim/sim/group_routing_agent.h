@@ -6,6 +6,7 @@
 #include <optional>
 #include <utility>
 #include <vector>
+#include "messagelet.h"
 
 class DragonflyTopology;
 class Packet;
@@ -17,9 +18,14 @@ class Queue;
 class GroupRoutingAgent {
 public:
     using Corridor = std::pair<uint32_t, uint32_t>; // egress switch, remote switch
-    using Messagelet = std::pair<uint64_t, uint64_t>; // transport flow, index
+    using Messagelet = MessageletKey;
     struct CorridorState { Corridor corridor; uint64_t q_bytes; uint64_t r_bytes; };
-    struct Commitment { Corridor corridor; uint64_t original_bytes; uint64_t remaining_bytes; };
+    struct Commitment {
+        Corridor corridor;
+        uint64_t original_bytes;
+        uint64_t remaining_bytes;
+        uint64_t transport_flow_id;
+    };
     struct Snapshot {
         uint64_t version = 0;
         std::vector<CorridorState> corridors;
@@ -34,8 +40,11 @@ public:
     uint64_t remaining(Messagelet messagelet) const;
     Snapshot snapshot() const;
 
-    void commit(Messagelet messagelet, Corridor corridor, uint64_t payload_bytes);
+    void commit(Messagelet messagelet, Corridor corridor, uint64_t payload_bytes,
+                std::optional<uint64_t> transport_flow_id = std::nullopt);
     void bindPacket(Messagelet messagelet, uint64_t seqno, uint64_t payload_bytes);
+    // Entry switches can see the same original packet again after a drop.
+    void bindPacketOnce(Messagelet messagelet, uint64_t seqno, uint64_t payload_bytes);
     void admitted(Corridor corridor, const Packet& packet);
     void setTrace(bool enabled) { _trace = enabled; }
 

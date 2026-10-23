@@ -115,6 +115,7 @@ class Packet {
     inline void set_src(uint32_t src) { _src = src;}
     inline uint32_t dst() const {return _dst;}
     inline void set_dst(uint32_t dst) { _dst = dst;}
+    inline bool has_pathid() const { return _pathid != UINT32_MAX; }
     inline uint32_t pathid() {
         assert(_pathid != UINT32_MAX);
         return _pathid;
