@@ -67,6 +67,8 @@ public:
     virtual void Setup() override;
     virtual void EventFinished(const EventOver &event) override;
     virtual void initializeGoalGraph(const Parser&) {}
+    virtual void reportTaskProgress(uint32_t rank, uint32_t task_offset, bool finished,
+                                    uint64_t event_time_ns, uint8_t nic) {}
 
     // Getter and setter for EventList
     void setEventList(EventList* eventlist) { _eventlist = eventlist; }

@@ -8,6 +8,7 @@
 #include <vector>
 #include "messagelet.h"
 #include "gra_static_graph.h"
+#include "gra_execution_progress.h"
 
 class DragonflyTopology;
 class Packet;
@@ -38,6 +39,11 @@ public:
     // Installed once before GOAL scheduling; every group shares the same
     // immutable global result. Keys deliberately omit messagelet_idx.
     const GraStaticGraph& staticGraph() const;
+    const GraExecutionProgress& executionProgress() const;
+    GraExecutionProgress::Result receiveProgress(const GraProgressReport& report);
+    std::vector<GraStaticGraph::EventKey> frontier(uint64_t dag_index) const {
+        return executionProgress().frontier(dag_index);
+    }
     // Resolve SOURCE's two-hop label (including explicit waypoint labels).
     std::optional<Corridor> corridorForRoute(uint32_t from, uint32_t to, uint32_t path_id) const;
     CorridorState query(Corridor corridor) const;
@@ -55,6 +61,7 @@ public:
 private:
     friend class DragonflyTopology;
     std::shared_ptr<const GraStaticGraph> _static_graph;
+    std::unique_ptr<GraExecutionProgress> _execution_progress;
     void log(const char* action, Messagelet messagelet, const Commitment& state,
              uint64_t bytes, std::optional<uint64_t> seqno = std::nullopt) const;
     DragonflyTopology& _topology;

@@ -523,7 +523,7 @@ Build and validate:
 
 ```bash
 cmake -S htsim/sim -B htsim/sim/build -DENABLE_NETWORK_DECISION_TESTS=ON
-cmake --build htsim/sim/build --target htsim_uec_df network_decision_test gra_static_graph_test -j 4
+cmake --build htsim/sim/build --target htsim_uec_df network_decision_test gra_static_graph_test gra_execution_progress_test -j 4
 ctest --test-dir htsim/sim/build --output-on-failure
 python3 -m unittest discover -s tests -p test_entry_switch_routing.py -v
 python3 -m unittest discover -s tests -p test_gra_start_dependencies.py -v
@@ -603,3 +603,67 @@ SEND-FINISH-to-RECV-start dependencies still form a real completion deadlock
 and are rejected. The model accounts for nominal causal dependencies; runtime
 CPU/NIC contention, network queues, and measured timings remain outside these
 static tables.
+
+### GRA execution progress and Frontier
+
+The static graph retains the original `(rank, task_offset)` index built by the
+GOAL importer, including the SEND/RECV distinction, and the event predecessor
+relations already constructed during initialization. These are graph lookup
+indices; the D, structure, and Join tables remain immutable.
+
+Host information follows `Host -> MessageletRuntime -> switch/GRA`.
+`AtlahsDragonflyApi` is a thin scheduler adapter: communication submissions,
+static graph initialization, and execution progress are forwarded to the
+messagelet runtime. It owns no progress versions or GRA reporting logic.
+
+Each rank delivers actual lifecycle transitions to
+`MessageletRuntime::reportTaskProgress()` through that adapter. The scheduler's
+first START/FINISH callbacks pass original task identities and actual times;
+the runtime builds reports with `dag_index`, `rank`, `task_offset`, `event`,
+`version`, and `event_time_ns`. Version numbers start at 1 and increase for every
+report from that rank, across DAGs. Reports use scheduler nanoseconds and
+original task identities; Hosts do not translate internal graph node IDs.
+The runtime owns the per-rank sequence, resolves the source group from rank
+placement and task NIC, delivers reports to GRA, and records optional traces.
+
+SEND START confirms COMM START; RECV START confirms RECEIVE_START. COMP reports
+confirm their corresponding START or FINISH. Matched message completion marks
+both GOAL endpoints finished, but only the sender's FINISH report confirms
+the shared logical COMM FINISH. The receiver's FINISH consumes its rank's
+version without creating a second logical event. Merely issuing a send or
+posting a receive never confirms communication completion.
+
+Each GRA owns a separate `GraExecutionProgress`. Duplicate or already processed
+versions are ignored. Reports beyond a version gap are buffered without
+confirming their events; filling the gap processes the contiguous buffered
+reports. Invalid task identities are rejected. Duplicate logical events retain
+their first actual timestamp, and conflicting timestamps are rejected.
+Receiving an event never implicitly confirms its missing prerequisites.
+
+The current ground-truth model delivers each report immediately to the source
+group and freely fans it out to all other GRAs. No synchronization messages,
+delays, or global scheduler reads are modeled. Direct `gra.receiveProgress()`
+calls update only that GRA, so independent partial views can also be tested.
+
+Query the current view with:
+
+```cpp
+const auto& gra = topology.groupRoutingAgent(group);
+const auto& observed = gra.executionProgress().confirmedEvents();
+auto frontier = gra.frontier(dag_index);
+```
+
+An unconfirmed static event belongs to the Frontier exactly when all of its
+direct predecessor events are confirmed. Roots are initially eligible.
+Readiness never changes execution state: a ready COMP START needs an actual
+START report before its FINISH can become eligible; COMM FINISH becomes
+eligible after both endpoint starts but remains unconfirmed until completion
+is reported. Nominal costs do not act as dynamic completion timers, including
+for zero-duration tasks. The Frontier is recomputed on demand from retained
+event relations and received observations, without a persistent Frontier table.
+It does not affect routing or urgency calculations.
+
+Set `HTSIM_TRACE_GRA_PROGRESS=1` to export `gra_progress_reports.csv`, containing
+each Host report, its source group, the resulting confirmed-event count, and
+that group's Frontier after delivery. Tracing is optional; normal progress
+updates do not calculate or cache the Frontier.

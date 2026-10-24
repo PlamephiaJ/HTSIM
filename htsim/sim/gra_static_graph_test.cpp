@@ -183,6 +183,12 @@ void checkGoalStartup() {
         const auto& graph = topology.groupRoutingAgent(0).staticGraph();
         assert(graph.dTable().at({0, 0}) == 7); // ceil(26/25) + max(3,5)
         assert(graph.dags().at(0).nodes.size() == 4); // one COMM and three COMP
+        const auto& tasks = graph.dags().at(0).tasks;
+        assert(tasks.size() == 5);
+        assert(tasks.at({0, 0}).node_index == tasks.at({1, 1}).node_index);
+        assert(tasks.at({0, 0}).start_event == Event::START);
+        assert(tasks.at({1, 1}).start_event == Event::RECEIVE_START);
+        assert(tasks.at({1, 0}).node_index == 2);
         const auto& dependencies = graph.dags().at(0).dependencies;
         assert(dependencies.size() == 3);
         assert(dependencies[0].predecessor == 0 && dependencies[0].successor == 1);

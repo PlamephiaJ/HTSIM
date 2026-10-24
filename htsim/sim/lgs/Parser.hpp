@@ -1,4 +1,5 @@
 #include <cstring>
+#include <functional>
 #include <map>
 #include <vector>
 #include <string>
@@ -464,6 +465,7 @@ class SerializedGraph {
 
 	std::vector<DeserializedNode> executableNodes;
 	std::vector<NodeLifecycle> node_lifecycles;
+	std::function<void(uint32_t, bool, uint64_t, uint8_t)> progress_observer;
 
 	// A hashmap that maps the offset of a node to the timestamp
 	// at which it should start. This is updated every time
@@ -557,6 +559,10 @@ class SerializedGraph {
 		for (uint32_t offset = 0; offset < num_nodes; ++offset)
 			nodes.push_back(get_node_by_offset(offset));
 		return nodes;
+	}
+
+	void SetProgressObserver(std::function<void(uint32_t, bool, uint64_t, uint8_t)> observer) {
+		progress_observer = std::move(observer);
 	}
 
 	uint32_t GetNumNodes() {
@@ -726,13 +732,14 @@ class SerializedGraph {
 
 	void MarkNodeAsStarted(uint32_t offset, uint64_t issue_time_ns) {
 		assert(offset < node_lifecycles.size());
+		DeserializedNode N = get_node_by_offset(offset);
 		NodeLifecycle& lifecycle = node_lifecycles[offset];
 		if (!lifecycle.issued) {
 			lifecycle.issue_time_ns = issue_time_ns;
 			lifecycle.issued = true;
+			if (progress_observer) progress_observer(offset, false, issue_time_ns, N.Nic);
 		}
 
-		DeserializedNode N = get_node_by_offset(offset);
 		for (uint32_t cnt=0; cnt<N.StartDependOnMe.size(); cnt++) {
 			uint32_t offset = N.StartDependOnMe[cnt];
 			assert(offset < num_nodes);
@@ -793,12 +800,13 @@ class SerializedGraph {
 	void MarkNodeAsDone(uint32_t offset, uint64_t cpu_time)
 	{
 		assert(offset < node_lifecycles.size());
+		DeserializedNode N = get_node_by_offset(offset);
 		NodeLifecycle& lifecycle = node_lifecycles[offset];
 		if (!lifecycle.finished) {
 			lifecycle.finish_time_ns = cpu_time;
 			lifecycle.finished = true;
+			if (progress_observer) progress_observer(offset, true, cpu_time, N.Nic);
 		}
-		DeserializedNode N = get_node_by_offset(offset);
 		//std::cout << "[INFO] " << "Host: " << my_rank << ", Node " << offset << " has " << N.DependOnMe.size() << " dependencies" << std::endl;
 		//printf("Executable1 Nodes: %u\n", executableNodes.size());
 		for (uint32_t cnt=0; cnt<N.DependOnMe.size(); cnt++) {

@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <map>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -21,6 +22,8 @@ class graph_node_properties;
 class Parser;
 
 // Boundary between the GOAL scheduler and Dragonfly's HTSim transport.
+// Host communication submissions and execution observations enter here;
+// this runtime owns all corresponding switch/GRA interactions.
 //
 // One GOAL send owns one UecSrc and one FlowState. In label mode, UecSrc
 // consults this runtime at messagelet boundaries. Transparent mode uses the
@@ -51,6 +54,8 @@ public:
 
     void submit(const SendEvent& event, graph_node_properties node);
     void eventFinished(const EventOver& event);
+    void reportTaskProgress(uint32_t rank, uint32_t task_offset, bool finished,
+                            uint64_t event_time_ns, uint8_t nic);
 
     void loadConfig(const std::string& filename);
     void loadRoutingConfig(const std::string& filename);
@@ -105,6 +110,7 @@ private:
     std::unique_ptr<NetworkDecision> _network_decision;
     std::unordered_map<const UecSrc*, FlowState> _flows;
     uint64_t _decision_index = 0;
+    std::map<uint32_t, uint64_t> _rank_progress_versions;
 };
 
 #endif // MESSAGELET_RUNTIME_H

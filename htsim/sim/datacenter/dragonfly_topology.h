@@ -62,6 +62,7 @@ public:
     uint32_t get_host_switch(uint32_t src) { return (src / _p); }
     GroupRoutingAgent& groupRoutingAgent(uint32_t group) { return *_group_agents.at(group); }
     void initializeGraStaticGraphs(std::vector<GraStaticGraph::Dag> dags);
+    void reportHostProgress(uint32_t host, const GraProgressReport& report);
     uint32_t get_p() { return _p; }
     uint32_t get_a() { return _a; }
     uint32_t get_h() { return _h; }

@@ -63,12 +63,18 @@ GraStaticGraph::GraStaticGraph(std::vector<Dag> dags, uint64_t bps) {
 
         std::vector<Events> events;
         std::vector<std::vector<Edge>> edges;
+        std::vector<EventKey> event_keys;
         for (const auto& node : dag.nodes) {
+            const size_t node_index = events.size();
             const size_t start = edges.size();
             const size_t finish = start + 1;
             const size_t receive = node.type == Type::COMM ? start + 2 : start;
             edges.resize(start + (node.type == Type::COMM ? 3 : 2));
             events.push_back({start, finish, receive});
+            event_keys.push_back({dag_index, node_index, Event::START});
+            event_keys.push_back({dag_index, node_index, Event::FINISH});
+            if (node.type == Type::COMM)
+                event_keys.push_back({dag_index, node_index, Event::RECEIVE_START});
             const auto cost = node.type == Type::COMM ? communicationCost(node.work, bps) : node.work;
             // Transfer starts at SEND issue, independently of RECV posting.
             // Matched completion waits for both transfer and posted RECV:
@@ -88,6 +94,11 @@ GraStaticGraph::GraStaticGraph(std::vector<Dag> dags, uint64_t bps) {
             }
             throw std::invalid_argument("Invalid GRA dependency event");
         };
+        for (const auto& task : dag.tasks) {
+            if (task.second.start_event == Event::FINISH)
+                throw std::invalid_argument("GRA task binding must identify a start event");
+            eventIndex(task.second.node_index, task.second.start_event);
+        }
 
         // Joins belong to logical workload nodes, not lifecycle bookkeeping.
         // Count distinct logical predecessors across both endpoint starts;
@@ -134,6 +145,19 @@ GraStaticGraph::GraStaticGraph(std::vector<Dag> dags, uint64_t bps) {
                 if (--pending[edge.target] == 0) order.push_back(edge.target);
         if (order.size() != edges.size())
             throw std::invalid_argument("GRA event graph contains a dependency cycle");
+
+        // Retain the already-built event relations for dynamic Frontier queries.
+        // This includes roots and lifecycle edges; no static costs are recomputed.
+        for (const auto& key : event_keys) _event_predecessors.emplace(key, std::vector<EventKey>{});
+        for (size_t v = 0; v < edges.size(); ++v) {
+            for (const auto& edge : edges[v])
+                _event_predecessors.at(event_keys[edge.target]).push_back(event_keys[v]);
+        }
+        for (const auto& key : event_keys) {
+            auto& inputs = _event_predecessors.at(key);
+            std::sort(inputs.begin(), inputs.end());
+            inputs.erase(std::unique(inputs.begin(), inputs.end()), inputs.end());
+        }
 
         // Costs live on lifecycle edges. START dependencies bypass the source
         // duration, so concurrent branches take max rather than summing work.

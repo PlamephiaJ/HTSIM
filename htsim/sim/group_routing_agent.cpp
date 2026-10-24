@@ -11,6 +11,16 @@ const GraStaticGraph& GroupRoutingAgent::staticGraph() const {
     return *_static_graph;
 }
 
+const GraExecutionProgress& GroupRoutingAgent::executionProgress() const {
+    if (!_execution_progress) throw std::logic_error("GRA static graph has not been initialized");
+    return *_execution_progress;
+}
+
+GraExecutionProgress::Result GroupRoutingAgent::receiveProgress(const GraProgressReport& report) {
+    executionProgress();
+    return _execution_progress->receive(report);
+}
+
 GroupRoutingAgent::GroupRoutingAgent(DragonflyTopology& topology, uint32_t group)
     : _topology(topology), _group(group) {
     const auto a = topology.get_a();

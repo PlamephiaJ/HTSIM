@@ -394,7 +394,20 @@ void DragonflyTopology::initializeGraStaticGraphs(std::vector<GraStaticGraph::Da
     if (_group_agents.front()->_static_graph)
         throw std::logic_error("GRA static graphs are already initialized");
     auto result = GraStaticGraph::build(std::move(dags), _link_speed_global);
-    for (auto& agent : _group_agents) agent->_static_graph = result;
+    for (auto& agent : _group_agents) {
+        agent->_static_graph = result;
+        agent->_execution_progress = std::make_unique<GraExecutionProgress>(result);
+    }
+}
+
+void DragonflyTopology::reportHostProgress(uint32_t host, const GraProgressReport& report) {
+    if (host >= _no_hosts) throw std::invalid_argument("GRA progress source host is outside topology");
+    const uint32_t source_group = get_host_switch(host) / _a;
+    _group_agents.at(source_group)->receiveProgress(report);
+    // Current ground-truth model: freely share received reports, without
+    // reading scheduler state or modeling any group synchronization protocol.
+    for (uint32_t group = 0; group < _group_agents.size(); ++group)
+        if (group != source_group) _group_agents[group]->receiveProgress(report);
 }
 
 std::string DragonflyTopology::get_link_latencies() {

@@ -1,7 +1,9 @@
 #include "messagelet_runtime.h"
 
 #include <algorithm>
+#include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <stdexcept>
 #include <string>
 #include <tuple>
@@ -156,6 +158,37 @@ void MessageletRuntime::submit(const SendEvent& event, graph_node_properties nod
 
 void MessageletRuntime::eventFinished(const EventOver& event) {
     _goal_runtime.EventFinished(event);
+}
+
+void MessageletRuntime::reportTaskProgress(uint32_t rank, uint32_t task_offset, bool finished,
+                                          uint64_t event_time_ns, uint8_t nic) {
+    auto* topology = _goal_runtime.getDragonflyTopology();
+    if (!topology) throw std::logic_error("Dragonfly topology not set");
+    auto& version = _rank_progress_versions[rank];
+    if (version == std::numeric_limits<uint64_t>::max())
+        throw std::overflow_error("Host progress report version exhausted");
+    GraProgressReport report{_config.runtime.dag_id, rank, task_offset,
+        finished ? GraTaskEvent::FINISH : GraTaskEvent::START, ++version, event_time_ns};
+    const auto host = _goal_runtime.getHtsimNodeNumber(rank, nic);
+    topology->reportHostProgress(host, report);
+
+    const char* trace = std::getenv("HTSIM_TRACE_GRA_PROGRESS");
+    if (trace && std::string(trace) == "1") {
+        const auto group = topology->get_host_switch(host) / topology->get_a();
+        const auto& gra = topology->groupRoutingAgent(group);
+        std::string frontier;
+        for (const auto& key : gra.frontier(report.dag_index)) {
+            const auto event = key.event == GraStaticGraph::Event::START ? "START" :
+                key.event == GraStaticGraph::Event::RECEIVE_START ? "RECEIVE_START" : "FINISH";
+            frontier += std::to_string(key.node_index) + ":" + event + ";";
+        }
+        auto* metric = htsim::DataCollector::get_instance().RegisterCsvMetric("gra_progress_reports",
+            {"dag_index", "rank", "task_offset", "event", "version", "event_time_ns", "group",
+             "confirmed_events", "frontier"});
+        metric->LogData({std::to_string(report.dag_index), std::to_string(rank), std::to_string(task_offset),
+            finished ? "FINISH" : "START", std::to_string(version), std::to_string(event_time_ns),
+            std::to_string(group), std::to_string(gra.executionProgress().confirmedEvents().size()), frontier});
+    }
 }
 
 void MessageletRuntime::loadConfig(const std::string& filename) {

@@ -15,6 +15,8 @@ public:
 
     void Send(const SendEvent& event, graph_node_properties node) override;
     void initializeGoalGraph(const Parser& parser) override;
+    void reportTaskProgress(uint32_t rank, uint32_t task_offset, bool finished,
+                            uint64_t event_time_ns, uint8_t nic) override;
 
     void setDragonflyTopology(DragonflyTopology* topo) { _df_topo = topo; }
     DragonflyTopology* getDragonflyTopology() const { return _df_topo; }

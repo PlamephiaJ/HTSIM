@@ -134,6 +134,7 @@ set(SOURCE_FILES
     network_decision.cpp
     group_routing_agent.cpp
     gra_static_graph.cpp
+    gra_execution_progress.cpp
     gra_goal_graph.cpp
     flow_routing_config.cpp
     messagelet_runtime.cpp
@@ -156,6 +157,10 @@ if (ENABLE_TESTS OR ENABLE_NETWORK_DECISION_TESTS)
     target_link_libraries(gra_static_graph_test PRIVATE htsim_dc htsim htsim_dc htsim)
     add_test(NAME gra_static_graph_test COMMAND gra_static_graph_test)
     set_tests_properties(gra_static_graph_test PROPERTIES TIMEOUT 30)
+    add_executable(gra_execution_progress_test gra_execution_progress_test.cpp)
+    target_link_libraries(gra_execution_progress_test PRIVATE htsim_dc htsim htsim_dc htsim)
+    add_test(NAME gra_execution_progress_test COMMAND gra_execution_progress_test)
+    set_tests_properties(gra_execution_progress_test PROPERTIES TIMEOUT 30)
     add_executable(network_decision_test network_decision_test.cpp)
     target_link_libraries(network_decision_test PRIVATE htsim_dc htsim htsim_dc htsim)
     add_test(NAME network_decision_test COMMAND network_decision_test)

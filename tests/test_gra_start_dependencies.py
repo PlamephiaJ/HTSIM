@@ -1,6 +1,7 @@
 """Small GOAL START/FINISH integration cases; build htsim_uec_df first."""
 
 import csv
+import json
 import os
 import struct
 import subprocess
@@ -52,15 +53,21 @@ class GraStartDependenciesTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
-    def run_goal(self, ranks):
+    def run_goal(self, ranks, placement=None):
         run = self.root / f"run-{len(list(self.root.iterdir()))}"
         run.mkdir()
         workload = run / "workload.bin"
         write_goal(workload, ranks)
+        extra = []
+        if placement is not None:
+            placement_file = run / "placement.json"
+            placement_file.write_text(json.dumps({"schema_version": 1, "placements": placement}))
+            extra = ["-rank_placement", str(placement_file)]
         result = subprocess.run([str(BINARY), "-basepath", str(self.topology), "-goal", str(workload),
-                                 "-routing", "SOURCE"], cwd=run, capture_output=True, text=True,
+                                 "-routing", "SOURCE", *extra], cwd=run, capture_output=True, text=True,
                                 timeout=10, env={**os.environ, "HTSIM_TRACE_PACKET_HOPS": "0",
-                                                "HTSIM_TRACE_GOAL_SEND_GATE": "0"})
+                                                "HTSIM_TRACE_GOAL_SEND_GATE": "0",
+                                                "HTSIM_TRACE_GRA_PROGRESS": "1"})
         return result, run
 
     def completed(self, result, run, count):
@@ -69,7 +76,26 @@ class GraStartDependenciesTests(unittest.TestCase):
             rows = list(csv.DictReader(stream))
         self.assertEqual(len(rows), count)
         self.assertTrue(all(row["finishTimeNs"] for row in rows), rows)
-        return {(int(row["rank"]), int(row["nodeOffset"])): row for row in rows}
+        tasks = {(int(row["rank"]), int(row["nodeOffset"])): row for row in rows}
+        with (run / "output_metrics/gra_progress_reports.csv").open() as stream:
+            reports = list(csv.DictReader(stream))
+        self.assertEqual(len(reports), 2 * count)
+        versions = {}
+        seen = set()
+        for report in reports:
+            rank, offset = int(report["rank"]), int(report["task_offset"])
+            versions[rank] = versions.get(rank, 0) + 1
+            self.assertEqual(int(report["version"]), versions[rank])
+            identity = rank, offset, report["event"]
+            self.assertNotIn(identity, seen)
+            seen.add(identity)
+            time_field = "issueTimeNs" if report["event"] == "START" else "finishTimeNs"
+            self.assertEqual(report["event_time_ns"], tasks[rank, offset][time_field])
+        # RECEIVE FINISH reports consume versions without duplicating COMM FINISH.
+        event_count = sum(3 if row["op"] == "send" else 2 if row["op"] == "calc" else 0 for row in rows)
+        self.assertEqual(int(reports[-1]["confirmed_events"]), event_count)
+        self.assertEqual(reports[-1]["frontier"], "")
+        return tasks
 
     def test_crossed_sends_with_start_and_mixed_dependencies(self):
         for first_start, second_start in ((True, True), (True, False), (False, True)):
@@ -102,6 +128,16 @@ class GraStartDependenciesTests(unittest.TestCase):
             comm, comp = rows[rank, 0], rows[rank, 1]
             self.assertEqual(comp["readyTimeNs"], comm["issueTimeNs"])
             self.assertLess(int(comp["issueTimeNs"]), int(comm["finishTimeNs"]))
+
+    def test_progress_reports_follow_rank_placement(self):
+        result, run = self.run_goal([
+            [(1, 1, 2500, 1, (), ())], [(2, 0, 2500, 1, (), ())],
+        ], placement=[{"rank": 0, "group": 0, "switch": 0, "host": 0},
+                      {"rank": 1, "group": 3, "switch": 0, "host": 1}])
+        self.completed(result, run, 2)
+        with (run / "output_metrics/gra_progress_reports.csv").open() as stream:
+            for report in csv.DictReader(stream):
+                self.assertEqual(int(report["group"]), 0 if report["rank"] == "0" else 3)
 
 
 if __name__ == "__main__":

@@ -21,13 +21,14 @@ GraGoalGraph buildGraGoalGraph(const Parser& parser, uint64_t dag_index,
     }
 
     GraGoalGraph result{{dag_index, {}}, {}};
-    std::map<Task, size_t> logical;
+    GraStaticGraph::TaskIndex logical;
     for (size_t rank = 0; rank < ranks.size(); ++rank) {
         for (const auto& node : ranks[rank]) {
             const Task task{static_cast<uint32_t>(rank), node.offset};
             if (node.Type == OPTYPE_RECV) continue;
             if (node.Type == OPTYPE_CALC) {
-                logical.emplace(task, result.dag.nodes.size());
+                logical.emplace(task, GraStaticGraph::TaskBinding{
+                    result.dag.nodes.size(), GraStaticGraph::Event::START});
                 result.dag.nodes.push_back({GraStaticGraph::Type::COMP, 0, node.Size, {}});
                 continue;
             }
@@ -61,7 +62,8 @@ GraGoalGraph buildGraGoalGraph(const Parser& parser, uint64_t dag_index,
                 receiver.Tag != entry.tag || receiver.Size != entry.bytes)
                 throw std::invalid_argument("GRA flow identity does not match GOAL receive task");
             const size_t index = result.dag.nodes.size();
-            if (!logical.emplace(task, index).second || !logical.emplace(recv, index).second)
+            if (!logical.emplace(task, GraStaticGraph::TaskBinding{index, GraStaticGraph::Event::START}).second ||
+                !logical.emplace(recv, GraStaticGraph::TaskBinding{index, GraStaticGraph::Event::RECEIVE_START}).second)
                 throw std::invalid_argument("GRA communication endpoint belongs to multiple flows");
             result.dag.nodes.push_back({GraStaticGraph::Type::COMM, entry.flow_id, node.Size, {}});
             result.identities.sends.emplace(task, std::move(entry));
@@ -82,7 +84,8 @@ GraGoalGraph buildGraGoalGraph(const Parser& parser, uint64_t dag_index,
                 if (next == logical.end()) throw std::invalid_argument("Invalid GOAL dependency for GRA");
                 const auto target_event = ranks[rank][target].Type == OPTYPE_RECV ?
                     GraStaticGraph::Event::RECEIVE_START : GraStaticGraph::Event::START;
-                result.dag.dependencies.push_back({found->second, next->second, release, target_event});
+                result.dag.dependencies.push_back({found->second.node_index, next->second.node_index,
+                                                   release, target_event});
             };
             for (auto target : node.DependOnMe) add(target, GraStaticGraph::Event::FINISH);
             const auto start = node.Type == OPTYPE_RECV ? GraStaticGraph::Event::RECEIVE_START :
@@ -90,5 +93,6 @@ GraGoalGraph buildGraGoalGraph(const Parser& parser, uint64_t dag_index,
             for (auto target : node.StartDependOnMe) add(target, start);
         }
     }
+    result.dag.tasks = std::move(logical);
     return result;
 }

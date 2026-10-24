@@ -413,6 +413,12 @@ int start_lgs(std::string filename_goal, LogSimInterface &lgs) {
     const int nnics = parser.GetNumNIC();
     lgs_interface->htsim_api->setGoalRankMappingFromBinaryHeader(
         static_cast<uint32_t>(p), ncpus, nnics);
+    for (uint32_t rank = 0; rank < p; ++rank) {
+        parser.schedules[rank].SetProgressObserver(
+            [api = lgs_interface->htsim_api, rank](uint32_t offset, bool finished, uint64_t time_ns, uint8_t nic) {
+                api->reportTaskProgress(rank, offset, finished, time_ns, nic);
+            });
+    }
     printf("[ATLAHS] GOAL rank mapping: %s (placement=%s, LGS ranks=%u, CPUs=%d, NICs=%d, HTSIM nodes=%u)\n",
            lgs_interface->htsim_api->getGoalRankMappingName(),
            lgs_interface->htsim_api->hasRankPlacement() ? "custom" : "sequential",

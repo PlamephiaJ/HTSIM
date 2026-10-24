@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -27,12 +28,33 @@ public:
         Event release = Event::FINISH;
         Event target = Event::START; // START or (for COMM) RECEIVE_START
     };
+    using TaskKey = std::pair<uint32_t, uint32_t>; // original rank, task_offset
+    struct TaskBinding {
+        size_t node_index;
+        Event start_event; // START for SEND/COMP; RECEIVE_START for RECV
+    };
+    using TaskIndex = std::map<TaskKey, TaskBinding>;
+    struct EventKey {
+        uint64_t dag_index;
+        size_t node_index;
+        Event event;
+        bool operator<(const EventKey& other) const {
+            return std::tie(dag_index, node_index, event) <
+                std::tie(other.dag_index, other.node_index, other.event);
+        }
+        bool operator==(const EventKey& other) const {
+            return std::tie(dag_index, node_index, event) ==
+                std::tie(other.dag_index, other.node_index, other.event);
+        }
+    };
+    using EventPredecessors = std::map<EventKey, std::vector<EventKey>>;
     struct Dag {
         uint64_t dag_index;
         std::vector<Node> nodes;
         // The node projection may be cyclic. Only the expanded event graph
         // must be acyclic; all dependencies retain their event endpoints.
         std::vector<Dependency> dependencies = {};
+        TaskIndex tasks = {}; // retained build-time lookup, not an analysis table
     };
     using FlowKey = std::pair<uint64_t, uint64_t>; // dag_index, DAG flow_id
     using JoinKey = std::pair<uint64_t, uint64_t>; // dag_index, join_id
@@ -58,6 +80,7 @@ public:
     const DTable& dTable() const { return _d; }
     const StructureTable& structureTable() const { return _structure; }
     const JoinTable& joinTable() const { return _joins; }
+    const EventPredecessors& eventPredecessors() const { return _event_predecessors; }
 
 private:
     GraStaticGraph(std::vector<Dag> dags, uint64_t reference_bandwidth_bps);
@@ -65,6 +88,7 @@ private:
     DTable _d;
     StructureTable _structure;
     JoinTable _joins;
+    EventPredecessors _event_predecessors;
 };
 
 #endif
