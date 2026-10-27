@@ -33,12 +33,24 @@ public:
         }
     }
     uint64_t pressure(MessageletKey requester, Corridor corridor) const override {
+        return observePressure(requester, corridor).bytes;
+    }
+    PressureObservation observePressure(MessageletKey requester, Corridor corridor) const override {
+        PressureObservation result;
         const auto current = _pending.find(requester);
-        if (current == _pending.end()) return 0; // missing READY: baseline
         const auto claim = _claims.find(corridor);
-        if (claim == _claims.end() || claim->second.owner.key == requester ||
-            claim->second.owner.priority <= current->second.priority) return 0;
-        return claim->second.owner.payload_bytes;
+        if (current != _pending.end()) result.requester_priority = current->second.priority;
+        if (claim != _claims.end()) result.claim = claim->second;
+        if (current == _pending.end()) result.reason = "missing_ready";
+        else if (claim == _claims.end()) result.reason = "no_claim";
+        else if (claim->second.owner.key == requester) result.reason = "self_claim";
+        else if (claim->second.owner.priority == current->second.priority) result.reason = "equal_priority";
+        else if (claim->second.owner.priority < current->second.priority) result.reason = "lower_priority";
+        else {
+            result.reason = "applied";
+            result.bytes = claim->second.owner.payload_bytes;
+        }
+        return result;
     }
     const std::map<MessageletKey, Ready>& pending() const override { return _pending; }
     const std::map<Corridor, Claim>& claims() const override { return _claims; }

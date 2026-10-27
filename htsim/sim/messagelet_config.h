@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <string>
+#include <optional>
 
 struct MessageletConfig {
     static constexpr uint32_t kSchemaVersion = 1;
@@ -33,7 +34,10 @@ struct MessageletConfig {
         struct SoftClaimSettings {
             bool enabled = false;
             std::string policy = "dag_priority";
+            // Unset follows commitment_alpha, including programmatic changes.
+            std::optional<double> beta;
         } soft_claim;
+        double softClaimBeta() const { return soft_claim.beta.value_or(commitment_alpha); }
     } routing;
 
     struct LoggingSettings {

@@ -29,19 +29,25 @@ NetworkRoute UgalLNetworkDecision::decide(const NetworkDecisionContext& context)
 
     auto* source = static_cast<DragonflySwitch*>(topology.switches.at(src_switch));
     auto& gra = topology.groupRoutingAgent(src_switch / topology.get_a());
+    if (gra.demandPolicy()) route.log_info.emplace("beta", number(_beta));
     std::vector<GroupRoutingAgent::CorridorState> observations;
     std::vector<uint64_t> claims;
+    std::vector<RoutingDemandPolicy::PressureObservation> claim_observations;
     DragonflySwitch::PressureQuery pressure;
     // Intra-group routes do not enter a global corridor; retain local UGAL.
     if (_commitment_aware && src_switch / topology.get_a() != dst_switch / topology.get_a()) {
-        gra.refreshDemand(); // base Q/R may have changed since the last READY
+        gra.refreshDemand("decision", context.messagelet); // current Q/R and pending preferences
+        if (gra.demandPolicy() && gra.demandSnapshotId())
+            route.log_info.emplace("soft_claim_snapshot_id", std::to_string(gra.demandSnapshotId()));
         pressure = [&](uint32_t first, uint32_t second) {
             const auto c = gra.corridorForRoute(context.from, context.to, (first << 16) | second);
             const auto state = gra.query(*c);
             observations.push_back(state);
-            const uint64_t claim = context.messagelet ? gra.softClaimPressure(*context.messagelet, *c) : 0;
+            const auto observation = gra.observeSoftClaim(context.messagelet, *c);
+            const uint64_t claim = observation.bytes;
             claims.push_back(claim);
-            return state.q_bytes + _alpha * state.r_bytes + claim;
+            claim_observations.push_back(observation);
+            return state.q_bytes + _alpha * state.r_bytes + _beta * claim;
         };
     }
     const auto decision = source->ugalDecision(src_switch, dst_switch, pressure);
@@ -52,6 +58,27 @@ NetworkRoute UgalLNetworkDecision::decide(const NetworkDecisionContext& context)
     route.log_info.emplace("next_min", std::to_string(decision.next_min));
     route.log_info.emplace("next_val", std::to_string(decision.next_val));
     route.log_info.emplace("compared", decision.compared ? "true" : "false");
+    if (gra.demandPolicy()) {
+        route.log_info.emplace("soft_claim_evaluation", !_commitment_aware ? "not_commitment_aware" :
+            src_switch / topology.get_a() == dst_switch / topology.get_a() ? "intra_group" :
+            decision.compared ? "compared" : "not_compared");
+        for (size_t i = 0; i < claim_observations.size(); ++i) {
+            const auto& observation = claim_observations[i];
+            const std::string prefix = i == 0 ? "soft_claim_min_" : "soft_claim_val_";
+            route.log_info.emplace(prefix + "reason", observation.bytes && _beta == 0 ? "beta_zero" : observation.reason);
+            route.log_info.emplace(prefix + "pressure", number(_beta * observation.bytes));
+            route.log_info.emplace(prefix + "requester_priority", observation.requester_priority ?
+                std::to_string(*observation.requester_priority) : "");
+            if (observation.claim) {
+                const auto& owner = observation.claim->owner;
+                route.log_info.emplace(prefix + "owner_dag_id", std::to_string(owner.key.dag_id));
+                route.log_info.emplace(prefix + "owner_flow_id", std::to_string(owner.key.flow_id));
+                route.log_info.emplace(prefix + "owner_messagelet_index", std::to_string(owner.key.messagelet_idx));
+                route.log_info.emplace(prefix + "owner_priority", std::to_string(owner.priority));
+                route.log_info.emplace(prefix + "owner_payload_bytes", std::to_string(owner.payload_bytes));
+            }
+        }
+    }
     if (decision.compared) {
         const uint64_t q_min = observations.empty() ? decision.q_min : observations.at(0).q_bytes;
         const uint64_t q_val = observations.empty() ? decision.q_val : observations.at(1).q_bytes;
@@ -67,8 +94,8 @@ NetworkRoute UgalLNetworkDecision::decide(const NetworkDecisionContext& context)
             route.log_info.emplace("soft_claim_min_bytes", std::to_string(s_min));
             route.log_info.emplace("soft_claim_val_bytes", std::to_string(s_val));
         }
-        route.log_info.emplace("pressure_min", number(q_min + (_commitment_aware ? _alpha * r_min : 0) + s_min));
-        route.log_info.emplace("pressure_val", number(q_val + (_commitment_aware ? _alpha * r_val : 0) + s_val));
+        route.log_info.emplace("pressure_min", number(q_min + (_commitment_aware ? _alpha * r_min : 0) + _beta * s_min));
+        route.log_info.emplace("pressure_val", number(q_val + (_commitment_aware ? _alpha * r_val : 0) + _beta * s_val));
         for (size_t i = 0; i < observations.size(); ++i) {
             const std::string prefix = i == 0 ? "min_" : "val_";
             route.log_info.emplace(prefix + "egress_switch", std::to_string(observations[i].corridor.first));
@@ -80,8 +107,10 @@ NetworkRoute UgalLNetworkDecision::decide(const NetworkDecisionContext& context)
     return route;
 }
 
-std::unique_ptr<NetworkDecision> makeNetworkDecision(const std::string& strategy, double alpha) {
+std::unique_ptr<NetworkDecision> makeNetworkDecision(const std::string& strategy, double alpha,
+                                                    std::optional<double> beta) {
     if (!std::isfinite(alpha) || alpha < 0) throw std::invalid_argument("Invalid commitment alpha");
+    if (beta && (!std::isfinite(*beta) || *beta < 0)) throw std::invalid_argument("Invalid soft claim beta");
     if (strategy == "none") {
         return nullptr;
     }
@@ -89,7 +118,7 @@ std::unique_ptr<NetworkDecision> makeNetworkDecision(const std::string& strategy
         return std::make_unique<UgalLNetworkDecision>();
     }
     if (strategy == "commitment_aware_ugal") {
-        return std::make_unique<UgalLNetworkDecision>(true, alpha);
+        return std::make_unique<UgalLNetworkDecision>(true, alpha, beta);
     }
     throw std::invalid_argument("Unsupported network decision strategy '" + strategy + "'");
 }

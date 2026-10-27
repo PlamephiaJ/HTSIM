@@ -203,7 +203,8 @@ void MessageletRuntime::loadConfig(const std::string& filename) {
     if (config.runtime.routing_mode == MessageletConfig::RoutingMode::ENTRY_SWITCH && _routing_config_loaded)
         throw std::logic_error("ENTRY_SWITCH cannot be combined with a static routing config");
     auto decision = config.runtime.routing_mode == MessageletConfig::RoutingMode::ENTRY_SWITCH ? nullptr :
-        makeNetworkDecision(config.routing.network_decision, config.routing.commitment_alpha);
+        makeNetworkDecision(config.routing.network_decision, config.routing.commitment_alpha,
+                            config.routing.soft_claim.beta);
     if (decision && _routing_config_loaded) {
         throw std::logic_error("Network decision policy cannot be combined with a static routing config");
     }

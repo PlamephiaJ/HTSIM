@@ -58,8 +58,11 @@ public:
     void messageletReady(Messagelet messagelet, uint32_t from, uint32_t to, uint64_t payload_bytes);
     void cancelReady(Messagelet messagelet);
     void routeDecided(Messagelet messagelet);
-    void refreshDemand();
+    void refreshDemand(const char* reason = "manual", std::optional<Messagelet> trigger = std::nullopt);
     uint64_t softClaimPressure(Messagelet requester, Corridor corridor) const;
+    RoutingDemandPolicy::PressureObservation observeSoftClaim(std::optional<Messagelet> requester,
+                                                             Corridor corridor) const;
+    uint64_t demandSnapshotId() const { return _demand_snapshot_id; }
 
     void commit(Messagelet messagelet, Corridor corridor, uint64_t payload_bytes,
                 std::optional<uint64_t> transport_flow_id = std::nullopt);
@@ -84,6 +87,9 @@ private:
     std::map<Messagelet, Commitment> _commitments;
     std::unique_ptr<RoutingDemandPolicy> _demand_policy;
     double _demand_alpha = 1.0;
+    uint64_t _demand_snapshot_id = 0; // trace-only, independent of Q/R version
+    void tracePreferences(const char* reason, std::optional<Messagelet> trigger,
+                          const std::map<Messagelet, std::optional<Corridor>>& preferences);
     void removeDemand(Messagelet messagelet, const char* action);
     void traceDemand(const char* action, Messagelet messagelet) const;
     struct PacketState { Messagelet messagelet; uint64_t bytes; bool entered = false; };

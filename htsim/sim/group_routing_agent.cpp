@@ -109,13 +109,14 @@ void GroupRoutingAgent::messageletReady(Messagelet m, uint32_t from, uint32_t to
     if (priority == staticGraph().dTable().end()) return; // unknown DAG identity: baseline
     if (_demand_policy->ready({m, from, to, bytes, priority->second})) {
         ++_version;
-        refreshDemand();
+        refreshDemand("ready", m);
         traceDemand("ready", m);
     }
 }
 
-void GroupRoutingAgent::refreshDemand() {
+void GroupRoutingAgent::refreshDemand(const char* reason, std::optional<Messagelet> trigger) {
     if (!_demand_policy) return;
+    std::map<Messagelet, std::optional<Corridor>> preferences;
     _demand_policy->refresh([&](const RoutingDemandPolicy::Ready& demand) {
         const auto src = _topology.get_host_switch(demand.from);
         const auto dst = _topology.get_host_switch(demand.to);
@@ -125,25 +126,82 @@ void GroupRoutingAgent::refreshDemand() {
             const auto state = query(*corridor);
             return state.q_bytes + _demand_alpha * state.r_bytes;
         });
-        return corridorForRoute(demand.from, demand.to,
+        const auto preferred = corridorForRoute(demand.from, demand.to,
             (decision.next_switch << 16) | decision.second_switch);
+        if (_trace) preferences.emplace(demand.key, preferred);
+        return preferred;
     });
+    if (_trace) tracePreferences(reason, trigger, preferences);
 }
 
 uint64_t GroupRoutingAgent::softClaimPressure(Messagelet requester, Corridor corridor) const {
     return _demand_policy ? _demand_policy->pressure(requester, corridor) : 0;
 }
 
+RoutingDemandPolicy::PressureObservation GroupRoutingAgent::observeSoftClaim(
+    std::optional<Messagelet> requester, Corridor corridor) const {
+    if (!_demand_policy) return {0, "disabled", std::nullopt, std::nullopt};
+    if (!requester) {
+        RoutingDemandPolicy::PressureObservation result{0, "missing_identity", std::nullopt, std::nullopt};
+        const auto claim = _demand_policy->claims().find(corridor);
+        if (claim != _demand_policy->claims().end()) result.claim = claim->second;
+        return result;
+    }
+    return _demand_policy->observePressure(*requester, corridor);
+}
+
 void GroupRoutingAgent::removeDemand(Messagelet m, const char* action) {
     if (!_demand_policy) return;
     if (_demand_policy->remove(m)) ++_version;
     // Even a missing-READY commit may change remaining demands' preferences.
-    refreshDemand();
+    refreshDemand(action, m);
     traceDemand(action, m);
 }
 
 void GroupRoutingAgent::cancelReady(Messagelet m) { removeDemand(m, "cancel"); }
 void GroupRoutingAgent::routeDecided(Messagelet m) { removeDemand(m, "routed"); }
+
+void GroupRoutingAgent::tracePreferences(const char* reason, std::optional<Messagelet> trigger,
+    const std::map<Messagelet, std::optional<Corridor>>& preferences) {
+    ++_demand_snapshot_id;
+    auto* metric = htsim::DataCollector::get_instance().RegisterCsvMetric("gra_pending_preferences",
+        {"time_ps", "group", "version", "snapshot_id", "refresh_reason", "trigger_dag_id", "trigger_flow_id",
+         "trigger_messagelet_index", "pending_count", "dag_id", "flow_id", "messagelet_index", "src_host",
+         "dst_host", "payload_bytes", "priority", "preferred_egress_switch", "preferred_remote_switch",
+         "claim_status", "claim_dag_id", "claim_flow_id", "claim_messagelet_index", "claim_priority",
+         "claim_payload_bytes"});
+    const std::vector<std::string> prefix{std::to_string(EventList::getTheEventList().now()),
+        std::to_string(_group), std::to_string(_version), std::to_string(_demand_snapshot_id), reason,
+        trigger ? std::to_string(trigger->dag_id) : "", trigger ? std::to_string(trigger->flow_id) : "",
+        trigger ? std::to_string(trigger->messagelet_idx) : "", std::to_string(_demand_policy->pending().size())};
+    if (_demand_policy->pending().empty()) {
+        auto row = prefix;
+        row.resize(24);
+        row[18] = "empty";
+        metric->LogData(row);
+    }
+    for (const auto& item : _demand_policy->pending()) {
+        const auto& demand = item.second;
+        const auto preferred = preferences.find(item.first);
+        const auto corridor = preferred == preferences.end() ? std::nullopt : preferred->second;
+        const auto owner = corridor ? _demand_policy->claims().find(*corridor) : _demand_policy->claims().end();
+        const auto* claim = owner == _demand_policy->claims().end() ? nullptr : &owner->second.owner;
+        const char* status = preferred == preferences.end() ? "preference_unavailable" :
+            !corridor ? "no_corridor" : !claim ? "unclaimed" : claim->key == item.first ? "owner" :
+            claim->priority > demand.priority ? "higher_priority_owner" :
+            claim->priority == demand.priority ? "equal_priority_tiebreak" : "policy_not_selected";
+        auto row = prefix;
+        const std::vector<std::string> detail{std::to_string(item.first.dag_id), std::to_string(item.first.flow_id),
+            std::to_string(item.first.messagelet_idx), std::to_string(demand.from), std::to_string(demand.to),
+            std::to_string(demand.payload_bytes), std::to_string(demand.priority),
+            corridor ? std::to_string(corridor->first) : "", corridor ? std::to_string(corridor->second) : "", status,
+            claim ? std::to_string(claim->key.dag_id) : "", claim ? std::to_string(claim->key.flow_id) : "",
+            claim ? std::to_string(claim->key.messagelet_idx) : "", claim ? std::to_string(claim->priority) : "",
+            claim ? std::to_string(claim->payload_bytes) : ""};
+        row.insert(row.end(), detail.begin(), detail.end());
+        metric->LogData(row);
+    }
+}
 
 void GroupRoutingAgent::traceDemand(const char* action, Messagelet m) const {
     if (!_trace || !_demand_policy) return;

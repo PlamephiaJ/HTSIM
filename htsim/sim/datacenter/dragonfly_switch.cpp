@@ -299,7 +299,8 @@ void DragonflySwitch::routeEntryPacket(Packet& packet) {
     if (found == _entry_routes.end()) {
         if (!_entry_decision)
             _entry_decision = makeNetworkDecision(_entry_config.routing.network_decision,
-                                                 _entry_config.routing.commitment_alpha);
+                                                 _entry_config.routing.commitment_alpha,
+                                                 _entry_config.routing.soft_claim.beta);
         NetworkRoute route;
         if (_entry_decision) {
             route = _entry_decision->decide({*_topo, packet.src(), packet.dst(), 0,

@@ -26,6 +26,12 @@ void checkPolicy() {
     assert(policy->pending().size() == 3 && policy->claims().size() == 1);
     assert(policy->claims().at(minimal).owner.key == a);
     assert(policy->pressure(b, minimal) == 8192);
+    assert(policy->observePressure(b, minimal).reason == "applied");
+    assert(policy->observePressure(b, minimal).claim->owner.key == a);
+    assert(policy->observePressure(a, minimal).reason == "self_claim");
+    assert(policy->observePressure(equal, minimal).reason == "equal_priority");
+    assert(policy->observePressure({8, 20, 0}, minimal).reason == "missing_ready");
+    assert(policy->observePressure(b, other).reason == "no_claim");
     assert(policy->pressure(a, minimal) == 0 && policy->pressure(equal, minimal) == 0);
     assert(policy->pressure({8, 20, 0}, minimal) == 0); // missing READY / other DAG
     assert(policy->pressure(b, other) == 0);
@@ -38,6 +44,7 @@ void checkPolicy() {
     });
     assert(policy->claims().size() == 2);
     assert(policy->pressure(b, minimal) == 0 && policy->pressure(b, other) == 2048);
+    assert(policy->observePressure(equal, minimal).reason == "lower_priority");
     bool rejected = false;
     try { policy->ready({b, 0, 24, 9999, 10}); } catch (const std::logic_error&) { rejected = true; }
     assert(rejected);
@@ -66,8 +73,10 @@ void checkEntryLifecycle() {
     auto& gra = topology.groupRoutingAgent(0);
     auto& entry = *static_cast<DragonflySwitch*>(topology.switches[0]);
     gra.setDemandPolicy(makeRoutingDemandPolicy("dag_priority"));
+    assert(gra.observeSoftClaim(std::nullopt, minimal).reason == "missing_identity");
     gra.messageletReady(a, 0, 24, 8192);
     gra.messageletReady(b, 0, 24, 8192);
+    assert(gra.observeSoftClaim(std::nullopt, minimal).claim->owner.key == a);
     assert(gra.query(minimal).r_bytes == 0 && gra.snapshot().messagelets.empty());
     assert(gra.softClaimPressure(b, minimal) == 8192);
     // READY and repeated preference refreshes must preserve the real sample sequence.
@@ -124,6 +133,8 @@ void checkFallbackAndActualPressure() {
     UgalLNetworkDecision policy(true);
     const auto missing = policy.decide({topology, 0, 24, 0, 8192, 8192, 0, b});
     assert(missing.description == "minimum" && missing.log_info.at("soft_claim_min_bytes") == "0");
+    assert(missing.log_info.at("soft_claim_min_reason") == "missing_ready");
+    assert(missing.log_info.at("soft_claim_min_owner_flow_id") == "10");
     // Actual R can make even the highest-priority owner prefer/select Valiant.
     // Restart the candidate sequence: a later sample may equal minimal and
     // legitimately provide no alternative corridor at all.
@@ -139,6 +150,7 @@ void checkFallbackAndActualPressure() {
     assert(gra.demandPolicy()->claims().begin()->first != minimal);
     // Disabled policy has no demand state and uses the same base pressure.
     gra.setDemandPolicy(nullptr);
+    assert(gra.observeSoftClaim(b, minimal).reason == "disabled");
     DragonflySwitch baseline(events, "baseline", DragonflySwitch::GENERAL, 0, 0, &topology);
     topology.switches[0] = &baseline;
     const auto disabled = policy.decide({topology, 0, 24, 0, 8192, 8192, 0, b});

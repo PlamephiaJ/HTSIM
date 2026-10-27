@@ -538,11 +538,14 @@ Soft Claim is disabled by default. For `ENTRY_SWITCH` with
 "routing": {
   "network_decision": "commitment_aware_ugal",
   "commitment_alpha": 1.0,
-  "soft_claim": {"enabled": true, "policy": "dag_priority"}
+  "soft_claim": {"enabled": true, "policy": "dag_priority", "beta": 1.0}
 }
 ```
 
 A complete example is `sim/datacenter/messagelet_configs/soft_claim.json`.
+`routing.soft_claim.beta` controls claim pressure and defaults to the configured
+`routing.commitment_alpha` when omitted. Both must be finite and nonnegative.
+Set beta to zero to ignore claim pressure while keeping READY/claim tracking.
 
 Set `enabled` to `false`, or omit `soft_claim`, to retain the existing routing
 and accounting behavior. Enabling it with SOURCE, transparent mode or another
@@ -567,8 +570,8 @@ single claim. Equal priorities use key order for deterministic ownership and
 never penalize each other. Each messagelet can own at most one claim.
 
 At the first packet's entry decision, the pressure for each candidate corridor is
-`Q + alpha * R + S`, followed by the existing hop-weighted UGAL comparison.
-`S` is the owner's **actual payload bytes**, added once and without alpha scaling,
+`Q + alpha * R + beta * S`, followed by the existing hop-weighted UGAL comparison.
+`S` is the owner's **actual payload bytes**, counted once and scaled by beta,
 only if the owner has strictly greater D than the requester. Self claims are
 ignored. Missing READY or unknown DAG identity gives `S = 0`. A high-priority
 owner can still choose Valiant when actual network costs favor it.
@@ -578,7 +581,57 @@ updated R. Remaining packets and retransmissions retain the cached path and
 the existing first-admission accounting. Soft Claims never contribute to R.
 With `logging.trace_decisions`, `gra_soft_claims.csv` records post-event pending
 counts and claim snapshots; `entry_decisions.csv` adds `soft_claim_min_bytes`
-and `soft_claim_val_bytes` to `policy_state`, alongside total compared pressures.
+and `soft_claim_val_bytes` to `policy_state`, alongside beta and total compared pressures.
+
+With the same trace switch, `gra_pending_preferences.csv` records **every pending
+messagelet** after each preference refresh (READY, routed, cancel, and the
+refresh immediately before a global routing decision). Rows include source and
+destination hosts, actual payload, D priority, preferred corridor, its current
+Claim owner/priority/payload, and `claim_status`:
+
+| Status | Meaning |
+| --- | --- |
+| `owner` | This pending messagelet owns the Claim on its preferred corridor. |
+| `higher_priority_owner` | Another messagelet with greater D owns it. |
+| `equal_priority_tiebreak` | Another equal-D messagelet won the deterministic key tie break. |
+| `no_corridor` | The preference oracle returned no global corridor. |
+| `unclaimed` | The preferred corridor has no Claim. |
+| `preference_unavailable` / `policy_not_selected` | An alternative strategy did not supply a preference or selected an owner for another policy-specific reason. |
+| `empty` | Snapshot marker: no pending messagelets remain. |
+
+Use `(group, snapshot_id)` to collect a full snapshot; `pending_count` gives its
+size (zero uses one empty marker row). `refresh_reason` and the trigger's DAG,
+flow and messagelet IDs identify the event. `entry_decisions.csv`'s
+`policy_state.soft_claim_snapshot_id` references the exact pre-decision snapshot,
+including refreshes that changed preferences without changing the Q/R version.
+
+For compared global candidates, `policy_state` also records
+`soft_claim_min_reason` / `soft_claim_val_reason`, the beta-scaled
+`soft_claim_min_pressure` / `soft_claim_val_pressure`, requester D, and each
+existing owner's DAG/flow/messagelet identity, D and original payload:
+
+| Reason | Meaning |
+| --- | --- |
+| `applied` | A strictly higher-priority owner's demand contributes pressure. |
+| `missing_ready` | Requester is absent from pending; baseline fallback. |
+| `missing_identity` | Caller did not supply a messagelet key. |
+| `no_claim` | No owner exists on this candidate corridor. |
+| `self_claim` | Requester owns this Claim. |
+| `equal_priority` | Owner and requester have equal D. |
+| `lower_priority` | Owner has lower D than the requester. |
+| `beta_zero` | An eligible higher-priority Claim exists, but beta is zero. |
+
+Missing READY takes precedence over corridor/priority exclusions. The existing
+`soft_claim_*_bytes` fields remain **eligible unscaled bytes**, so they can be
+positive with `beta_zero` while `soft_claim_*_pressure` is zero. An existing owner
+is recorded even when ignored; absent-owner fields are omitted. When no candidate
+comparison runs, no candidate pressure/reason is invented;
+`soft_claim_evaluation` distinguishes `not_compared` from `intra_group` (and
+`not_commitment_aware` for a directly installed alternative decision policy).
+Alternative demand policies can provide their own diagnostic reason codes via
+`RoutingDemandPolicy::observePressure()`; the default is `policy_defined`.
+Disabled Soft Claim produces none of these additional demand logs. Preference
+logging reuses the actual refresh results without rerunning the routing oracle.
 
 The experiment is isolated in `routing_demand_policy.{h,cpp}`. The
 `RoutingDemandPolicy` interface takes READY/remove events, a base-network

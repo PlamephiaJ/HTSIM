@@ -75,6 +75,11 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
     readOptional(tree, "routing.commitment_alpha", config.routing.commitment_alpha, filename);
     readOptional(tree, "routing.soft_claim.enabled", config.routing.soft_claim.enabled, filename);
     readOptional(tree, "routing.soft_claim.policy", config.routing.soft_claim.policy, filename);
+    if (tree.get_child_optional("routing.soft_claim.beta")) {
+        double beta = 0;
+        readOptional(tree, "routing.soft_claim.beta", beta, filename);
+        config.routing.soft_claim.beta = beta;
+    }
     readOptional(tree, "logging.trace_decisions", config.logging.trace_decisions, filename);
 
     if (schema_version != kSchemaVersion) {
@@ -121,6 +126,8 @@ void MessageletConfig::validate() const {
     if (!std::isfinite(routing.commitment_alpha) || routing.commitment_alpha < 0) {
         throw std::invalid_argument("routing.commitment_alpha must be finite and nonnegative");
     }
+    if (!std::isfinite(routing.softClaimBeta()) || routing.softClaimBeta() < 0)
+        throw std::invalid_argument("routing.soft_claim.beta must be finite and nonnegative");
     if (routing.default_route != "minimum") {
         throw std::invalid_argument("Unsupported default messagelet route '" +
                                     routing.default_route + "'");
