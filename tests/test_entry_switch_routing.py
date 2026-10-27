@@ -39,7 +39,7 @@ class EntrySwitchRoutingTests(unittest.TestCase):
 
     def run_flow(self, dst_group=3, dst_switch=0, strategy="ugal_l", size=8192,
                  routing="SOURCE", extra=(), granularity=None, mode=None, alpha=None,
-                 routing_mode=None, dag_id=0, soft_claim=None, beta=None, trace_decisions=True):
+                 routing_mode=None, dag_id=0, soft_claim=None, beta=None, trace_decisions=True, priority=None):
         placement = self.root / "placement.json"
         placement.write_text(json.dumps({"schema_version": 1, "placements": [
             {"rank": 0, "group": 0, "switch": 0, "host": 0},
@@ -53,6 +53,8 @@ class EntrySwitchRoutingTests(unittest.TestCase):
             settings["routing"]["soft_claim"] = {"enabled": soft_claim, "policy": "dag_priority"}
         if beta is not None:
             settings["routing"].setdefault("soft_claim", {})["beta"] = beta
+        if priority is not None:
+            settings["routing"].setdefault("soft_claim", {})["priority"] = priority
         if size is not None:
             settings["messagelet"] = {"size_bytes": size}
         if granularity is not None:
@@ -286,6 +288,29 @@ class EntrySwitchRoutingTests(unittest.TestCase):
                                        strategy="commitment_aware_ugal", soft_claim=True, beta=beta)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn("routing.soft_claim.beta", result.stderr)
+
+    def test_soft_claim_priority_selection_and_diagnostics(self):
+        for priority in (None, "join_slack", "dag_downstream"):
+            with self.subTest(priority=priority):
+                result = self.run_flow(routing="ENTRY_SWITCH", routing_mode="ENTRY_SWITCH",
+                                       strategy="commitment_aware_ugal", soft_claim=True, priority=priority)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                with (self.last_run / "output_metrics/gra_pending_preferences.csv").open() as stream:
+                    rows = [r for r in csv.DictReader(stream) if r["dag_id"]]
+                self.assertTrue(rows)
+                self.assertEqual({r["priority_strategy"] for r in rows}, {priority or "join_slack"})
+                if priority == "dag_downstream":
+                    self.assertEqual({r["priority_scope"] for r in rows}, {"static"})
+                    self.assertTrue(all(r["slack_ns"] == "" for r in rows))
+                else:
+                    self.assertEqual({r["priority_scope"] for r in rows}, {"virtual_join"})
+                    self.assertEqual({r["relative_slack"] for r in rows}, {"0"})
+                    self.assertTrue(any(r["finish_at_frontier"] == "true" for r in rows))
+                    self.assertTrue(any(int(r["frontier_events"]) > 0 for r in rows))
+        result = self.run_flow(routing="ENTRY_SWITCH", routing_mode="ENTRY_SWITCH",
+                               strategy="commitment_aware_ugal", soft_claim=True, priority="unknown")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Unsupported soft claim priority", result.stderr)
 
 
 if __name__ == "__main__":

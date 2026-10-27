@@ -11,15 +11,16 @@ public:
         auto inserted = _pending.emplace(demand.key, demand);
         if (!inserted.second) {
             const auto& old = inserted.first->second;
-            if (std::tie(old.from, old.to, old.payload_bytes, old.priority) !=
-                std::tie(demand.from, demand.to, demand.payload_bytes, demand.priority))
+            if (std::tie(old.from, old.to, old.payload_bytes) !=
+                std::tie(demand.from, demand.to, demand.payload_bytes))
                 throw std::logic_error("Inconsistent duplicate READY");
         }
         return inserted.second;
     }
     bool remove(MessageletKey key) override { return _pending.erase(key) != 0; }
-    void refresh(const Preference& preference) override {
+    void refresh(const Preference& preference, const Priority& priority) override {
         _claims.clear();
+        if (priority) for (auto& item : _pending) item.second.priority = priority(item.second);
         // Ordered keys give deterministic ownership for equal priorities;
         // equals never exert pressure on each other.
         for (const auto& item : _pending) {

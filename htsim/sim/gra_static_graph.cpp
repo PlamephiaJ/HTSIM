@@ -149,9 +149,15 @@ GraStaticGraph::GraStaticGraph(std::vector<Dag> dags, uint64_t bps) {
         // Retain the already-built event relations for dynamic Frontier queries.
         // This includes roots and lifecycle edges; no static costs are recomputed.
         for (const auto& key : event_keys) _event_predecessors.emplace(key, std::vector<EventKey>{});
+        for (const auto v : order) _event_order.push_back(event_keys[v]);
         for (size_t v = 0; v < edges.size(); ++v) {
-            for (const auto& edge : edges[v])
+            for (const auto& edge : edges[v]) {
                 _event_predecessors.at(event_keys[edge.target]).push_back(event_keys[v]);
+                const auto branch = edge.join_entry ? std::optional<BranchKey>{
+                    BranchKey{dag_index, edge.join_entry->first, edge.join_entry->second}} : std::nullopt;
+                _event_arcs.push_back({event_keys[v], event_keys[edge.target], edge.cost, branch});
+                if (branch) _join_branches[*branch].push_back(event_keys[v]);
+            }
         }
         for (const auto& key : event_keys) {
             auto& inputs = _event_predecessors.at(key);

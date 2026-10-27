@@ -10,6 +10,7 @@
 #include "gra_static_graph.h"
 #include "gra_execution_progress.h"
 #include "routing_demand_policy.h"
+#include "routing_priority.h"
 
 class DragonflyTopology;
 class Packet;
@@ -54,6 +55,7 @@ public:
     // Optional pre-routing strategy. Disabled GRAs allocate no demand state.
     // Install before READY reports. A replacement policy owns its own state.
     void setDemandPolicy(std::unique_ptr<RoutingDemandPolicy> policy, double alpha = 1.0);
+    void setPriorityStrategy(std::shared_ptr<const RoutingPriorityStrategy> strategy);
     const RoutingDemandPolicy* demandPolicy() const { return _demand_policy.get(); }
     void messageletReady(Messagelet messagelet, uint32_t from, uint32_t to, uint64_t payload_bytes);
     void cancelReady(Messagelet messagelet);
@@ -88,6 +90,8 @@ private:
     std::unique_ptr<RoutingDemandPolicy> _demand_policy;
     double _demand_alpha = 1.0;
     uint64_t _demand_snapshot_id = 0; // trace-only, independent of Q/R version
+    std::shared_ptr<const RoutingPriorityStrategy> _priority_strategy;
+    RoutingPriorityStrategy::Estimates _priority_estimates;
     void tracePreferences(const char* reason, std::optional<Messagelet> trigger,
                           const std::map<Messagelet, std::optional<Corridor>>& preferences);
     void removeDemand(Messagelet messagelet, const char* action);

@@ -27,10 +27,11 @@ public:
         std::optional<Claim> claim;
     };
     using Preference = std::function<std::optional<Corridor>(const Ready&)>;
+    using Priority = std::function<uint64_t(const Ready&)>;
     virtual ~RoutingDemandPolicy() = default;
     virtual bool ready(const Ready& demand) = 0;
     virtual bool remove(MessageletKey key) = 0; // routed or cancelled
-    virtual void refresh(const Preference& preference) = 0;
+    virtual void refresh(const Preference& preference, const Priority& priority = {}) = 0;
     virtual uint64_t pressure(MessageletKey requester, Corridor corridor) const = 0;
     // Diagnostics belong to the strategy that decides eligibility. Other
     // experimental strategies can supply their own reason codes. Observation

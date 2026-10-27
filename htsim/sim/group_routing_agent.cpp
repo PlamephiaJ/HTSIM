@@ -2,6 +2,9 @@
 
 #include <stdexcept>
 #include <cmath>
+#include <iomanip>
+#include <limits>
+#include <sstream>
 #include "datacenter/dragonfly_topology.h"
 #include "data_collector.h"
 #include "dragonfly_source_route.h"
@@ -19,7 +22,10 @@ const GraExecutionProgress& GroupRoutingAgent::executionProgress() const {
 
 GraExecutionProgress::Result GroupRoutingAgent::receiveProgress(const GraProgressReport& report) {
     executionProgress();
-    return _execution_progress->receive(report);
+    const auto result = _execution_progress->receive(report);
+    if (result == GraExecutionProgress::Result::APPLIED && _priority_strategy && _priority_strategy->usesProgress() &&
+        _demand_policy && !_demand_policy->pending().empty()) refreshDemand("progress");
+    return result;
 }
 
 GroupRoutingAgent::GroupRoutingAgent(DragonflyTopology& topology, uint32_t group)
@@ -97,6 +103,12 @@ void GroupRoutingAgent::setDemandPolicy(std::unique_ptr<RoutingDemandPolicy> pol
     if (!std::isfinite(alpha) || alpha < 0) throw std::invalid_argument("Invalid demand alpha");
     _demand_policy = std::move(policy);
     _demand_alpha = alpha;
+    _priority_estimates.clear();
+}
+
+void GroupRoutingAgent::setPriorityStrategy(std::shared_ptr<const RoutingPriorityStrategy> strategy) {
+    _priority_strategy = std::move(strategy);
+    if (_demand_policy) refreshDemand("priority_strategy");
 }
 
 void GroupRoutingAgent::messageletReady(Messagelet m, uint32_t from, uint32_t to, uint64_t bytes) {
@@ -116,6 +128,19 @@ void GroupRoutingAgent::messageletReady(Messagelet m, uint32_t from, uint32_t to
 
 void GroupRoutingAgent::refreshDemand(const char* reason, std::optional<Messagelet> trigger) {
     if (!_demand_policy) return;
+    RoutingDemandPolicy::Priority priority;
+    if (_priority_strategy) {
+        _priority_estimates = _priority_strategy->evaluate(executionProgress(),
+            EventList::getTheEventList().now() / 1000, _demand_policy->pending());
+        priority = [&](const RoutingDemandPolicy::Ready& demand) {
+            return _priority_estimates.at(demand.key).priority;
+        };
+    } else {
+        _priority_estimates.clear();
+        priority = [&](const RoutingDemandPolicy::Ready& demand) {
+            return staticGraph().dTable().at({demand.key.dag_id, demand.key.flow_id});
+        };
+    }
     std::map<Messagelet, std::optional<Corridor>> preferences;
     _demand_policy->refresh([&](const RoutingDemandPolicy::Ready& demand) {
         const auto src = _topology.get_host_switch(demand.from);
@@ -130,7 +155,7 @@ void GroupRoutingAgent::refreshDemand(const char* reason, std::optional<Messagel
             (decision.next_switch << 16) | decision.second_switch);
         if (_trace) preferences.emplace(demand.key, preferred);
         return preferred;
-    });
+    }, priority);
     if (_trace) tracePreferences(reason, trigger, preferences);
 }
 
@@ -169,14 +194,15 @@ void GroupRoutingAgent::tracePreferences(const char* reason, std::optional<Messa
          "trigger_messagelet_index", "pending_count", "dag_id", "flow_id", "messagelet_index", "src_host",
          "dst_host", "payload_bytes", "priority", "preferred_egress_switch", "preferred_remote_switch",
          "claim_status", "claim_dag_id", "claim_flow_id", "claim_messagelet_index", "claim_priority",
-         "claim_payload_bytes"});
+         "claim_payload_bytes", "priority_strategy", "priority_scope", "priority_join_id", "priority_branch_id",
+         "estimated_remaining_ns", "peer_remaining_ns", "slack_ns", "relative_slack", "frontier_events", "finish_at_frontier"});
     const std::vector<std::string> prefix{std::to_string(EventList::getTheEventList().now()),
         std::to_string(_group), std::to_string(_version), std::to_string(_demand_snapshot_id), reason,
         trigger ? std::to_string(trigger->dag_id) : "", trigger ? std::to_string(trigger->flow_id) : "",
         trigger ? std::to_string(trigger->messagelet_idx) : "", std::to_string(_demand_policy->pending().size())};
     if (_demand_policy->pending().empty()) {
         auto row = prefix;
-        row.resize(24);
+        row.resize(34);
         row[18] = "empty";
         metric->LogData(row);
     }
@@ -199,6 +225,26 @@ void GroupRoutingAgent::tracePreferences(const char* reason, std::optional<Messa
             claim ? std::to_string(claim->key.messagelet_idx) : "", claim ? std::to_string(claim->priority) : "",
             claim ? std::to_string(claim->payload_bytes) : ""};
         row.insert(row.end(), detail.begin(), detail.end());
+        const auto estimate = _priority_estimates.find(item.first);
+        if (estimate != _priority_estimates.end()) {
+            const auto& value = estimate->second;
+            const auto number = [](std::optional<long double> number) {
+                if (!number) return std::string{};
+                std::ostringstream out;
+                out << std::setprecision(std::numeric_limits<long double>::max_digits10) << *number;
+                return out.str();
+            };
+            const std::vector<std::string> diagnostic{value.strategy, value.scope,
+                value.join_id ? std::to_string(*value.join_id) : "",
+                value.branch_id ? std::to_string(*value.branch_id) : "", number(value.remaining_ns),
+                number(value.peer_remaining_ns), number(value.slack_ns), number(value.relative_slack),
+                std::to_string(value.frontier_events), value.finish_at_frontier ? "true" : "false"};
+            row.insert(row.end(), diagnostic.begin(), diagnostic.end());
+        } else {
+            row.resize(34);
+            row[24] = "dag_downstream"; // legacy C++ adapter without a strategy
+            row[25] = "static";
+        }
         metric->LogData(row);
     }
 }

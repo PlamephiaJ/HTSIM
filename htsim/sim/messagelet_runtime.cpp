@@ -264,11 +264,14 @@ void MessageletRuntime::initializeGoalGraph(const Parser& parser) {
         (_routing_config_loaded || _flow_metadata_loaded) ? &identities : nullptr);
     topology->initializeGraStaticGraphs({std::move(graph.dag)});
     if (_config.routing.soft_claim.enabled) {
+        const std::shared_ptr<const RoutingPriorityStrategy> priority = makeRoutingPriorityStrategy(
+            _config.routing.soft_claim.priority, topology->groupRoutingAgent(0).staticGraph());
         for (uint32_t group = 0; group < topology->get_no_groups(); ++group) {
             auto& gra = topology->groupRoutingAgent(group);
             gra.setDemandPolicy(makeRoutingDemandPolicy(_config.routing.soft_claim.policy),
                                 _config.routing.commitment_alpha);
             gra.setTrace(_config.logging.trace_decisions);
+            gra.setPriorityStrategy(priority);
         }
     }
     _graph_identities = std::move(graph.identities);

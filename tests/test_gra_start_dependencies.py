@@ -53,7 +53,7 @@ class GraStartDependenciesTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
-    def run_goal(self, ranks, placement=None):
+    def run_goal(self, ranks, placement=None, soft_claim_priority=None):
         run = self.root / f"run-{len(list(self.root.iterdir()))}"
         run.mkdir()
         workload = run / "workload.bin"
@@ -63,8 +63,28 @@ class GraStartDependenciesTests(unittest.TestCase):
             placement_file = run / "placement.json"
             placement_file.write_text(json.dumps({"schema_version": 1, "placements": placement}))
             extra = ["-rank_placement", str(placement_file)]
+        if soft_claim_priority is not None:
+            flows = {}
+            for rank, tasks in enumerate(ranks):
+                for offset, (op, peer, size, tag, _, _) in enumerate(tasks):
+                    if op != 1:
+                        continue
+                    recv = next(i for i, task in enumerate(ranks[peer]) if task[:4] == (2, rank, size, tag))
+                    flow_id = (rank << 32) | offset
+                    flows[str(flow_id)] = {"flow_id": flow_id, "src": rank, "dst": peer, "bytes": size, "tag": tag,
+                                           "send_task": {"rank": rank, "task_id": offset},
+                                           "recv_task": {"rank": peer, "task_id": recv}}
+            workload.with_suffix(".meta.json").write_text(json.dumps(
+                {"schema_version": 1, "workload": {"p2p_flows": len(flows)}, "flows": flows}))
+            config = run / "messagelet.json"
+            config.write_text(json.dumps({"runtime": {"routing_mode": "ENTRY_SWITCH"},
+                "routing": {"network_decision": "commitment_aware_ugal",
+                            "soft_claim": {"enabled": True, "priority": soft_claim_priority}},
+                "logging": {"trace_decisions": True}}))
+            extra += ["-messagelet_config", str(config)]
         result = subprocess.run([str(BINARY), "-basepath", str(self.topology), "-goal", str(workload),
-                                 "-routing", "SOURCE", *extra], cwd=run, capture_output=True, text=True,
+                                 "-routing", "ENTRY_SWITCH" if soft_claim_priority is not None else "SOURCE", *extra],
+                                cwd=run, capture_output=True, text=True,
                                 timeout=10, env={**os.environ, "HTSIM_TRACE_PACKET_HOPS": "0",
                                                 "HTSIM_TRACE_GOAL_SEND_GATE": "0",
                                                 "HTSIM_TRACE_GRA_PROGRESS": "1"})
@@ -138,6 +158,39 @@ class GraStartDependenciesTests(unittest.TestCase):
         with (run / "output_metrics/gra_progress_reports.csv").open() as stream:
             for report in csv.DictReader(stream):
                 self.assertEqual(int(report["group"]), 0 if report["rank"] == "0" else 3)
+
+    def test_join_slack_protects_nearest_join_instead_of_start_only_d(self):
+        # Long A START-only compute makes D(A) larger, but B's longer transfer
+        # limits the shared receive-side Join. Both sends become READY together.
+        ranks = [
+            [(1, 1, 65536, 10, (), (2,)), (1, 1, 262144, 20, (), ()), (3, 0, 100000, 0, (), ())],
+            [(2, 0, 65536, 10, (2,), ()), (2, 0, 262144, 20, (2,), ()), (3, 0, 0, 0, (), ())]]
+        placement = [{"rank": 0, "group": 0, "switch": 0, "host": 0},
+                     {"rank": 1, "group": 3, "switch": 0, "host": 1}]
+        for strategy, expected_owner, expected_route in (("join_slack", "1", "valiant"),
+                                                          ("dag_downstream", "0", "minimum")):
+            with self.subTest(strategy=strategy):
+                result, run = self.run_goal(ranks, placement, strategy)
+                self.completed(result, run, 6)
+                with (run / "output_metrics/entry_decisions.csv").open() as stream:
+                    decisions = list(csv.DictReader(stream))
+                first = decisions[0]
+                self.assertEqual(first["flow_id"], "0")
+                self.assertEqual(first["route"], expected_route)
+                state = dict(item.split("=", 1) for item in first["policy_state"].split(";") if item)
+                self.assertEqual(state["soft_claim_min_owner_flow_id"], expected_owner)
+                with (run / "output_metrics/gra_pending_preferences.csv").open() as stream:
+                    snapshots = list(csv.DictReader(stream))
+                snapshot = [r for r in snapshots if r["group"] == "0" and
+                            r["snapshot_id"] == state["soft_claim_snapshot_id"]]
+                self.assertEqual({r["priority_strategy"] for r in snapshot}, {strategy})
+                self.assertEqual({r["claim_flow_id"] for r in snapshot}, {expected_owner})
+                if strategy == "join_slack":
+                    self.assertEqual({r["priority_scope"] for r in snapshot}, {"join"})
+                    self.assertTrue(any(r["refresh_reason"] == "progress" for r in snapshots))
+                    by_flow = {r["flow_id"]: r for r in snapshot}
+                    self.assertGreater(float(by_flow["0"]["slack_ns"]), 0)
+                    self.assertLess(float(by_flow["1"]["slack_ns"]), 0)
 
 
 if __name__ == "__main__":

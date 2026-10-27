@@ -9,7 +9,7 @@
   "routing": {
     "network_decision": "commitment_aware_ugal",
     "commitment_alpha": 1.0,
-    "soft_claim": {"enabled": true, "policy": "dag_priority", "beta": 1.0}
+    "soft_claim": {"enabled": true, "policy": "dag_priority", "priority": "join_slack", "beta": 1.0}
   },
   "logging": {"trace_decisions": true}
 }

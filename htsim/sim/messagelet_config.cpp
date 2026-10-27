@@ -75,6 +75,7 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
     readOptional(tree, "routing.commitment_alpha", config.routing.commitment_alpha, filename);
     readOptional(tree, "routing.soft_claim.enabled", config.routing.soft_claim.enabled, filename);
     readOptional(tree, "routing.soft_claim.policy", config.routing.soft_claim.policy, filename);
+    readOptional(tree, "routing.soft_claim.priority", config.routing.soft_claim.priority, filename);
     if (tree.get_child_optional("routing.soft_claim.beta")) {
         double beta = 0;
         readOptional(tree, "routing.soft_claim.beta", beta, filename);
@@ -92,6 +93,8 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
 }
 
 void MessageletConfig::validate() const {
+    if (routing.soft_claim.priority != "join_slack" && routing.soft_claim.priority != "dag_downstream")
+        throw std::invalid_argument("Unsupported soft claim priority '" + routing.soft_claim.priority + "'");
     if (routing.soft_claim.policy != "dag_priority")
         throw std::invalid_argument("Unsupported soft claim policy '" + routing.soft_claim.policy + "'");
     if (routing.soft_claim.enabled &&

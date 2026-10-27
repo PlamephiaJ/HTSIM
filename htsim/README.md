@@ -523,7 +523,7 @@ Build and validate:
 
 ```bash
 cmake -S htsim/sim -B htsim/sim/build -DENABLE_NETWORK_DECISION_TESTS=ON
-cmake --build htsim/sim/build --target htsim_uec_df network_decision_test soft_claim_test gra_static_graph_test gra_execution_progress_test -j 4
+cmake --build htsim/sim/build --target htsim_uec_df network_decision_test soft_claim_test routing_priority_test gra_static_graph_test gra_execution_progress_test -j 4
 ctest --test-dir htsim/sim/build --output-on-failure
 python3 -m unittest discover -s tests -p test_entry_switch_routing.py -v
 python3 -m unittest discover -s tests -p test_gra_start_dependencies.py -v
@@ -538,7 +538,7 @@ Soft Claim is disabled by default. For `ENTRY_SWITCH` with
 "routing": {
   "network_decision": "commitment_aware_ugal",
   "commitment_alpha": 1.0,
-  "soft_claim": {"enabled": true, "policy": "dag_priority", "beta": 1.0}
+  "soft_claim": {"enabled": true, "policy": "dag_priority", "priority": "join_slack", "beta": 1.0}
 }
 ```
 
@@ -546,6 +546,12 @@ A complete example is `sim/datacenter/messagelet_configs/soft_claim.json`.
 `routing.soft_claim.beta` controls claim pressure and defaults to the configured
 `routing.commitment_alpha` when omitted. Both must be finite and nonnegative.
 Set beta to zero to ignore claim pressure while keeping READY/claim tracking.
+`routing.soft_claim.priority` defaults to `join_slack`, which uses confirmed
+progress and Frontier to protect the branches most likely to limit their next
+Join. Set it to `dag_downstream` to reproduce the previous D-only priority for
+controlled comparisons. `soft_claim.policy: "dag_priority"` retains the existing
+Claim arbitration mechanism; the independent `priority` setting chooses how
+its priorities are calculated. Unknown priority names are rejected.
 
 Set `enabled` to `false`, or omit `soft_claim`, to retain the existing routing
 and accounting behavior. Enabling it with SOURCE, transparent mode or another
@@ -565,8 +571,8 @@ Prediction previews the source switch's current routing RNG state without
 advancing it. Predictions refresh on READY, decision, cancellation, and just
 before a routing query, so they use current Q/R. They do not fix the actual path
 or guarantee the same future Valiant sample. Intra-group traffic has no claim.
-The highest `dTable()[(dag_id, flow_id)]` on each preferred corridor owns its
-single claim. Equal priorities use key order for deterministic ownership and
+The most urgent pending messagelet on each preferred corridor owns its single
+claim. Equal priorities use key order for deterministic ownership and
 never penalize each other. Each messagelet can own at most one claim.
 
 At the first packet's entry decision, the pressure for each candidate corridor is
@@ -575,6 +581,62 @@ At the first packet's entry decision, the pressure for each candidate corridor i
 only if the owner has strictly greater D than the requester. Self claims are
 ignored. Missing READY or unknown DAG identity gives `S = 0`. A high-priority
 owner can still choose Valiant when actual network costs favor it.
+
+#### Progress-aware Join slack priority
+
+The strategy uses the same immutable weighted event DAG as static analysis.
+At simulator time `t`, it anchors confirmed events at their actual timestamps.
+Unconfirmed Frontier START/RECEIVE_START events are estimated to run now;
+blocked events wait for their estimated predecessor events. For a FINISH, the
+estimate takes the maximum of incoming weighted event times. Thus an active
+COMP uses its remaining nominal duration, and COMM completion remains
+`max(send_start + nominal_transfer_duration, receive_start)`. Nominal transfer
+duration uses the parent COMM's payload and the graph's reference bandwidth,
+not packet-level FCT predictions or future scheduler state. If an unconfirmed
+FINISH is already overdue, its estimate keeps a one-ns residual; prediction
+never manufactures a real FINISH or changes the actual Frontier.
+
+For each first reachable physical Join from the communication's FINISH,
+`T_b` is the maximum remaining ETA of that branch's entry-release events. All
+branches participate, including remote, compute-only, blocked, committed and
+not-yet-READY branches. Multiple typed edges from one logical predecessor form
+one branch. For the other branches, `T_peer = max(T_k, k != b)`, and:
+
+```
+slack_ns       = T_peer - T_b
+relative_slack = slack_ns / max(T_peer, T_b, 1 ns)
+```
+
+Smaller relative slack receives greater urgency. Negative values identify a
+uniquely limiting branch; zero includes ties for the limiting branch; positive
+values represent tolerable delay. Normalization makes comparison between Join
+contexts dimensionless rather than comparing raw D or raw remaining durations.
+A branch without siblings gets zero slack. If a communication fans out toward
+several first Joins, its smallest relative slack determines its urgency. No D
+tie break is used. Equal scores receive the same ordinal integer `priority`,
+with larger ranks winning; ranks are local to the current pending snapshot and
+are not durations or comparable across snapshots. Confirmed-complete flows get
+rank zero. A context whose entry releases are all confirmed is retired; if no
+open context remains, the messagelet uses neutral zero relative slack.
+
+Paths that terminate before reaching a physical Join use a **virtual final
+Join per `dag_id`**. Its branches are the terminal events of that DAG, so an
+independent START-only task still participates in final completion, but is not
+incorrectly attributed to its originating communication's FINISH. A physical
+Join stops the upstream path; work after it does not inflate that upstream
+communication's priority. A terminal bypass may supply a virtual context even
+if another fanout path reaches a physical Join. The current graph has no finer
+collective-boundary metadata: the configured DAG is the final-completion scope.
+Independent DAGs have independent virtual Joins and only their relative slack
+scores are compared.
+
+Priorities are recomputed before **every Claim refresh**, including READY,
+decision and cancellation. Applied progress reports additionally refresh claims
+when pending demands exist; duplicates and still-buffered reports do not.
+Time elapsed since START is reconsidered at the next refresh without adding a
+timer or packet wait. `dag_downstream` retains the former event triggers and
+static priorities. Both modes keep the same READY lifecycle, preference oracle,
+beta-scaled pressure, cached routes, commitments and first-admission accounting.
 
 Commit removes that messagelet's pending demand and recomputes claims using the
 updated R. Remaining packets and retransmissions retain the cached path and
@@ -586,14 +648,14 @@ and `soft_claim_val_bytes` to `policy_state`, alongside beta and total compared 
 With the same trace switch, `gra_pending_preferences.csv` records **every pending
 messagelet** after each preference refresh (READY, routed, cancel, and the
 refresh immediately before a global routing decision). Rows include source and
-destination hosts, actual payload, D priority, preferred corridor, its current
+destination hosts, actual payload, current priority, preferred corridor, its current
 Claim owner/priority/payload, and `claim_status`:
 
 | Status | Meaning |
 | --- | --- |
 | `owner` | This pending messagelet owns the Claim on its preferred corridor. |
-| `higher_priority_owner` | Another messagelet with greater D owns it. |
-| `equal_priority_tiebreak` | Another equal-D messagelet won the deterministic key tie break. |
+| `higher_priority_owner` | Another messagelet with greater urgency owns it. |
+| `equal_priority_tiebreak` | Another equal-priority messagelet won the deterministic key tie break. |
 | `no_corridor` | The preference oracle returned no global corridor. |
 | `unclaimed` | The preferred corridor has no Claim. |
 | `preference_unavailable` / `policy_not_selected` | An alternative strategy did not supply a preference or selected an owner for another policy-specific reason. |
@@ -604,11 +666,19 @@ size (zero uses one empty marker row). `refresh_reason` and the trigger's DAG,
 flow and messagelet IDs identify the event. `entry_decisions.csv`'s
 `policy_state.soft_claim_snapshot_id` references the exact pre-decision snapshot,
 including refreshes that changed preferences without changing the Q/R version.
+Additional columns explain the priority: `priority_strategy`, `priority_scope`
+(`join`, `virtual_join`, `completed`, `no_open_join`, or legacy `static`),
+`priority_join_id`, `priority_branch_id`, `estimated_remaining_ns`,
+`peer_remaining_ns`, `slack_ns`, `relative_slack`, `frontier_events`, and
+`finish_at_frontier`. A virtual Join has a blank Join ID and uses the terminal
+node index as branch ID. `refresh_reason: "progress"` identifies updates caused
+by applied START/FINISH observations. The same parent COMM gives all its pending
+messagelets the same urgency; no per-packet progress estimator is introduced.
 
 For compared global candidates, `policy_state` also records
 `soft_claim_min_reason` / `soft_claim_val_reason`, the beta-scaled
-`soft_claim_min_pressure` / `soft_claim_val_pressure`, requester D, and each
-existing owner's DAG/flow/messagelet identity, D and original payload:
+`soft_claim_min_pressure` / `soft_claim_val_pressure`, requester priority, and each
+existing owner's DAG/flow/messagelet identity, priority and original payload:
 
 | Reason | Meaning |
 | --- | --- |
@@ -617,8 +687,8 @@ existing owner's DAG/flow/messagelet identity, D and original payload:
 | `missing_identity` | Caller did not supply a messagelet key. |
 | `no_claim` | No owner exists on this candidate corridor. |
 | `self_claim` | Requester owns this Claim. |
-| `equal_priority` | Owner and requester have equal D. |
-| `lower_priority` | Owner has lower D than the requester. |
+| `equal_priority` | Owner and requester have equal priority. |
+| `lower_priority` | Owner has lower priority than the requester. |
 | `beta_zero` | An eligible higher-priority Claim exists, but beta is zero. |
 
 Missing READY takes precedence over corridor/priority exclusions. The existing
@@ -639,7 +709,13 @@ preference callback and pressure queries; it has no topology, packet, queue or
 Commitment ownership. To try another strategy, implement this interface and
 extend `makeRoutingDemandPolicy()` and config validation, or install one through
 `GroupRoutingAgent::setDemandPolicy()` before READY reports. The GRA adapter
-supplies D and network observations; runtime and transport hooks stay intact.
+supplies priorities and network observations; runtime and transport hooks stay intact.
+Priority estimation is separately isolated in `routing_priority.{h,cpp}` behind
+`RoutingPriorityStrategy`, with no route, packet or Commitment ownership. Extend
+`makeRoutingPriorityStrategy()` and config validation to try a different
+estimator, or install one through `GroupRoutingAgent::setPriorityStrategy()`.
+Immutable graph-derived estimator indexes are shared between GRAs; each query
+uses only that GRA's own visible progress and local pending set.
 `MessageletRuntime::cancelMessageletReady()` (or GRA's `cancelReady()`) retracts
 pre-routing demand and promotes the next owner. The existing GOAL scheduler has
 no cancellation event; a future transport cancellation caller must invoke this
@@ -778,9 +854,11 @@ eligible after both endpoint starts but remains unconfirmed until completion
 is reported. Nominal costs do not act as dynamic completion timers, including
 for zero-duration tasks. The Frontier is recomputed on demand from retained
 event relations and received observations, without a persistent Frontier table.
-It does not affect routing or urgency calculations.
+With `soft_claim.priority: "join_slack"` enabled, it supplies the priority
+estimator's current readiness boundary. Static D analysis remains immutable.
 
 Set `HTSIM_TRACE_GRA_PROGRESS=1` to export `gra_progress_reports.csv`, containing
 each Host report, its source group, the resulting confirmed-event count, and
 that group's Frontier after delivery. Tracing is optional; normal progress
-updates do not calculate or cache the Frontier.
+updates do not calculate or cache the Frontier unless the enabled progress-aware
+priority strategy needs it for pending claims.

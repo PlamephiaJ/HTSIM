@@ -6,6 +6,7 @@
 #include <map>
 #include <memory>
 #include <tuple>
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -48,6 +49,12 @@ public:
         }
     };
     using EventPredecessors = std::map<EventKey, std::vector<EventKey>>;
+    using BranchKey = std::tuple<uint64_t, uint64_t, uint64_t>; // DAG, Join, branch
+    struct EventArc {
+        EventKey source, target;
+        uint64_t cost_ns;
+        std::optional<BranchKey> join_entry;
+    };
     struct Dag {
         uint64_t dag_index;
         std::vector<Node> nodes;
@@ -81,6 +88,9 @@ public:
     const StructureTable& structureTable() const { return _structure; }
     const JoinTable& joinTable() const { return _joins; }
     const EventPredecessors& eventPredecessors() const { return _event_predecessors; }
+    const std::vector<EventKey>& eventOrder() const { return _event_order; }
+    const std::vector<EventArc>& eventArcs() const { return _event_arcs; }
+    const std::map<BranchKey, std::vector<EventKey>>& joinBranches() const { return _join_branches; }
 
 private:
     GraStaticGraph(std::vector<Dag> dags, uint64_t reference_bandwidth_bps);
@@ -89,6 +99,9 @@ private:
     StructureTable _structure;
     JoinTable _joins;
     EventPredecessors _event_predecessors;
+    std::vector<EventKey> _event_order;
+    std::vector<EventArc> _event_arcs;
+    std::map<BranchKey, std::vector<EventKey>> _join_branches;
 };
 
 #endif

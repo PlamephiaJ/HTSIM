@@ -134,6 +134,7 @@ set(SOURCE_FILES
     network_decision.cpp
     group_routing_agent.cpp
     routing_demand_policy.cpp
+    routing_priority.cpp
     gra_static_graph.cpp
     gra_execution_progress.cpp
     gra_goal_graph.cpp
@@ -154,6 +155,10 @@ target_link_libraries(parse_output PRIVATE htsim)
 
 if (ENABLE_TESTS OR ENABLE_NETWORK_DECISION_TESTS)
     enable_testing()
+    add_executable(routing_priority_test routing_priority_test.cpp)
+    target_link_libraries(routing_priority_test PRIVATE htsim_dc htsim htsim_dc htsim)
+    add_test(NAME routing_priority_test COMMAND routing_priority_test)
+    set_tests_properties(routing_priority_test PROPERTIES TIMEOUT 30)
     add_executable(soft_claim_test soft_claim_test.cpp)
     target_link_libraries(soft_claim_test PRIVATE htsim_dc htsim htsim_dc htsim)
     add_test(NAME soft_claim_test COMMAND soft_claim_test)
