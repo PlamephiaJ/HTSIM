@@ -9,6 +9,7 @@
 #include "messagelet.h"
 #include "gra_static_graph.h"
 #include "gra_execution_progress.h"
+#include "routing_demand_policy.h"
 
 class DragonflyTopology;
 class Packet;
@@ -50,6 +51,16 @@ public:
     uint64_t remaining(Messagelet messagelet) const;
     Snapshot snapshot() const;
 
+    // Optional pre-routing strategy. Disabled GRAs allocate no demand state.
+    // Install before READY reports. A replacement policy owns its own state.
+    void setDemandPolicy(std::unique_ptr<RoutingDemandPolicy> policy, double alpha = 1.0);
+    const RoutingDemandPolicy* demandPolicy() const { return _demand_policy.get(); }
+    void messageletReady(Messagelet messagelet, uint32_t from, uint32_t to, uint64_t payload_bytes);
+    void cancelReady(Messagelet messagelet);
+    void routeDecided(Messagelet messagelet);
+    void refreshDemand();
+    uint64_t softClaimPressure(Messagelet requester, Corridor corridor) const;
+
     void commit(Messagelet messagelet, Corridor corridor, uint64_t payload_bytes,
                 std::optional<uint64_t> transport_flow_id = std::nullopt);
     void bindPacket(Messagelet messagelet, uint64_t seqno, uint64_t payload_bytes);
@@ -71,6 +82,10 @@ private:
     std::map<Corridor, Queue*> _queues;
     std::map<Corridor, uint64_t> _remaining;
     std::map<Messagelet, Commitment> _commitments;
+    std::unique_ptr<RoutingDemandPolicy> _demand_policy;
+    double _demand_alpha = 1.0;
+    void removeDemand(Messagelet messagelet, const char* action);
+    void traceDemand(const char* action, Messagelet messagelet) const;
     struct PacketState { Messagelet messagelet; uint64_t bytes; bool entered = false; };
     std::map<std::pair<uint64_t, uint64_t>, PacketState> _packets; // flow, seqno
 };

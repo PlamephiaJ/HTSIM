@@ -1,6 +1,7 @@
 #include "group_routing_agent.h"
 
 #include <stdexcept>
+#include <cmath>
 #include "datacenter/dragonfly_topology.h"
 #include "data_collector.h"
 #include "dragonfly_source_route.h"
@@ -89,6 +90,86 @@ void GroupRoutingAgent::commit(Messagelet m, Corridor c, uint64_t bytes,
     _remaining.at(c) += bytes;
     ++_version;
     log("commit", m, inserted.first->second, bytes);
+    routeDecided(m); // refresh after R changes; never count both R and a claim
+}
+
+void GroupRoutingAgent::setDemandPolicy(std::unique_ptr<RoutingDemandPolicy> policy, double alpha) {
+    if (!std::isfinite(alpha) || alpha < 0) throw std::invalid_argument("Invalid demand alpha");
+    _demand_policy = std::move(policy);
+    _demand_alpha = alpha;
+}
+
+void GroupRoutingAgent::messageletReady(Messagelet m, uint32_t from, uint32_t to, uint64_t bytes) {
+    if (!_demand_policy || _commitments.count(m)) return; // late READY after commit
+    const auto src = _topology.get_host_switch(from);
+    const auto dst = _topology.get_host_switch(to);
+    if (src / _topology.get_a() != _group) throw std::invalid_argument("READY outside GRA group");
+    if (src / _topology.get_a() == dst / _topology.get_a()) return; // no global demand
+    const auto priority = staticGraph().dTable().find({m.dag_id, m.flow_id});
+    if (priority == staticGraph().dTable().end()) return; // unknown DAG identity: baseline
+    if (_demand_policy->ready({m, from, to, bytes, priority->second})) {
+        ++_version;
+        refreshDemand();
+        traceDemand("ready", m);
+    }
+}
+
+void GroupRoutingAgent::refreshDemand() {
+    if (!_demand_policy) return;
+    _demand_policy->refresh([&](const RoutingDemandPolicy::Ready& demand) {
+        const auto src = _topology.get_host_switch(demand.from);
+        const auto dst = _topology.get_host_switch(demand.to);
+        auto* source = static_cast<DragonflySwitch*>(_topology.switches.at(src));
+        const auto decision = source->previewUgalDecision(src, dst, [&](uint32_t first, uint32_t second) {
+            const auto corridor = corridorForRoute(demand.from, demand.to, (first << 16) | second);
+            const auto state = query(*corridor);
+            return state.q_bytes + _demand_alpha * state.r_bytes;
+        });
+        return corridorForRoute(demand.from, demand.to,
+            (decision.next_switch << 16) | decision.second_switch);
+    });
+}
+
+uint64_t GroupRoutingAgent::softClaimPressure(Messagelet requester, Corridor corridor) const {
+    return _demand_policy ? _demand_policy->pressure(requester, corridor) : 0;
+}
+
+void GroupRoutingAgent::removeDemand(Messagelet m, const char* action) {
+    if (!_demand_policy) return;
+    if (_demand_policy->remove(m)) ++_version;
+    // Even a missing-READY commit may change remaining demands' preferences.
+    refreshDemand();
+    traceDemand(action, m);
+}
+
+void GroupRoutingAgent::cancelReady(Messagelet m) { removeDemand(m, "cancel"); }
+void GroupRoutingAgent::routeDecided(Messagelet m) { removeDemand(m, "routed"); }
+
+void GroupRoutingAgent::traceDemand(const char* action, Messagelet m) const {
+    if (!_trace || !_demand_policy) return;
+    auto* metric = htsim::DataCollector::get_instance().RegisterCsvMetric("gra_soft_claims",
+        {"time_ps", "group", "version", "action", "dag_id", "flow_id", "messagelet_index",
+         "ready_payload_bytes", "ready_priority", "pending_count", "claim_dag_id", "claim_flow_id", "claim_messagelet_index", "priority",
+         "payload_bytes", "egress_switch", "remote_switch"});
+    const auto ready = _demand_policy->pending().find(m);
+    std::vector<std::string> row{std::to_string(EventList::getTheEventList().now()),
+        std::to_string(_group), std::to_string(_version), action, std::to_string(m.dag_id),
+        std::to_string(m.flow_id), std::to_string(m.messagelet_idx),
+        ready == _demand_policy->pending().end() ? "" : std::to_string(ready->second.payload_bytes),
+        ready == _demand_policy->pending().end() ? "" : std::to_string(ready->second.priority),
+        std::to_string(_demand_policy->pending().size())};
+    if (_demand_policy->claims().empty()) {
+        row.resize(17);
+        metric->LogData(row);
+    } else for (const auto& item : _demand_policy->claims()) {
+        auto claim_row = row;
+        const auto& owner = item.second.owner;
+        const std::vector<std::string> claim{std::to_string(owner.key.dag_id), std::to_string(owner.key.flow_id),
+            std::to_string(owner.key.messagelet_idx), std::to_string(owner.priority), std::to_string(owner.payload_bytes),
+            std::to_string(item.first.first), std::to_string(item.first.second)};
+        claim_row.insert(claim_row.end(), claim.begin(), claim.end());
+        metric->LogData(claim_row);
+    }
 }
 
 void GroupRoutingAgent::bindPacket(Messagelet m, uint64_t seqno, uint64_t bytes) {

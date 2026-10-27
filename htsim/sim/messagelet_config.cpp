@@ -73,6 +73,8 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
     readOptional(tree, "routing.default", config.routing.default_route, filename);
     readOptional(tree, "routing.network_decision", config.routing.network_decision, filename);
     readOptional(tree, "routing.commitment_alpha", config.routing.commitment_alpha, filename);
+    readOptional(tree, "routing.soft_claim.enabled", config.routing.soft_claim.enabled, filename);
+    readOptional(tree, "routing.soft_claim.policy", config.routing.soft_claim.policy, filename);
     readOptional(tree, "logging.trace_decisions", config.logging.trace_decisions, filename);
 
     if (schema_version != kSchemaVersion) {
@@ -85,6 +87,12 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
 }
 
 void MessageletConfig::validate() const {
+    if (routing.soft_claim.policy != "dag_priority")
+        throw std::invalid_argument("Unsupported soft claim policy '" + routing.soft_claim.policy + "'");
+    if (routing.soft_claim.enabled &&
+        (runtime.mode != Mode::Label || runtime.routing_mode != RoutingMode::ENTRY_SWITCH ||
+         routing.network_decision != "commitment_aware_ugal"))
+        throw std::invalid_argument("Soft claim requires label ENTRY_SWITCH with commitment_aware_ugal");
     if (runtime.routing_mode != RoutingMode::SOURCE && runtime.routing_mode != RoutingMode::ENTRY_SWITCH)
         throw std::invalid_argument("Unsupported runtime routing_mode");
     if (runtime.mode == Mode::Transparent && runtime.routing_mode == RoutingMode::ENTRY_SWITCH)

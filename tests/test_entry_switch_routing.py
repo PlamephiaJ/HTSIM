@@ -39,7 +39,7 @@ class EntrySwitchRoutingTests(unittest.TestCase):
 
     def run_flow(self, dst_group=3, dst_switch=0, strategy="ugal_l", size=8192,
                  routing="SOURCE", extra=(), granularity=None, mode=None, alpha=None,
-                 routing_mode=None, dag_id=0):
+                 routing_mode=None, dag_id=0, soft_claim=None):
         placement = self.root / "placement.json"
         placement.write_text(json.dumps({"schema_version": 1, "placements": [
             {"rank": 0, "group": 0, "switch": 0, "host": 0},
@@ -49,6 +49,8 @@ class EntrySwitchRoutingTests(unittest.TestCase):
                     "logging": {"trace_decisions": True}}
         if alpha is not None:
             settings["routing"]["commitment_alpha"] = alpha
+        if soft_claim is not None:
+            settings["routing"]["soft_claim"] = {"enabled": soft_claim, "policy": "dag_priority"}
         if size is not None:
             settings["messagelet"] = {"size_bytes": size}
         if granularity is not None:
@@ -136,6 +138,92 @@ class EntrySwitchRoutingTests(unittest.TestCase):
         result = self.run_flow(routing="ENTRY_SWITCH", routing_mode="ENTRY_SWITCH")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("requires workload flow metadata", result.stderr)
+
+    def test_soft_claim_runtime_ready_and_tail(self):
+        self.write_workload(65537)
+        for granularity, size, expected in (
+                ("messagelet", 8321, [12288] * 5 + [4097]),
+                ("flow", 0, [65537]),
+                ("packet", 0, [4096] * 16 + [1])):
+            with self.subTest(granularity=granularity):
+                result = self.run_flow(routing="ENTRY_SWITCH", routing_mode="ENTRY_SWITCH",
+                                       strategy="commitment_aware_ugal", soft_claim=True,
+                                       granularity=granularity, size=size, dag_id=7)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                metrics = self.last_run / "output_metrics"
+                with (metrics / "entry_decisions.csv").open() as stream:
+                    decisions = list(csv.DictReader(stream))
+                with (metrics / "gra_soft_claims.csv").open() as stream:
+                    claims = list(csv.DictReader(stream))
+                with (metrics / "gra_events.csv").open() as stream:
+                    events = list(csv.DictReader(stream))
+                ready = [r for r in claims if r["action"] == "ready"]
+                self.assertEqual([int(r["ready_payload_bytes"]) for r in ready], expected)
+                self.assertEqual([int(r["messagelet_index"]) for r in ready], list(range(len(expected))))
+                self.assertEqual({r["claim_dag_id"] for r in ready}, {"7"})
+                self.assertTrue(all(int(r["priority"]) > 0 for r in ready))
+                for decision, report in zip(decisions, ready):
+                    self.assertLess(int(report["time_ps"]), int(decision["time_ps"]))
+                    state = dict(item.split("=", 1) for item in decision["policy_state"].split(";") if item)
+                    if state.get("compared") == "true":
+                        self.assertEqual(state["soft_claim_min_bytes"], "0")
+                        self.assertEqual(state["soft_claim_val_bytes"], "0")
+                self.assertEqual(claims[-1]["pending_count"], "0")
+                self.assertEqual(claims[-1]["claim_flow_id"], "")
+                commits = [r for r in events if r["action"] == "commit"]
+                admissions = [r for r in events if r["action"] == "first_admission"]
+                self.assertEqual([int(r["payload_bytes"]) for r in commits], expected)
+                self.assertEqual(sum(int(r["payload_bytes"]) for r in admissions), 65537)
+
+    def test_soft_claim_disabled_preserves_baseline(self):
+        outputs = []
+        for enabled in (None, False):
+            result = self.run_flow(routing="ENTRY_SWITCH", routing_mode="ENTRY_SWITCH",
+                                   strategy="commitment_aware_ugal", soft_claim=enabled)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            metrics = self.last_run / "output_metrics"
+            self.assertFalse((metrics / "gra_soft_claims.csv").exists())
+            outputs.append(tuple((metrics / name).read_bytes() for name in
+                                 ("entry_decisions.csv", "gra_events.csv", "flow_dag_info.csv")))
+        self.assertEqual(outputs[0], outputs[1])
+        for routing, routing_mode, strategy in (("SOURCE", "SOURCE", "commitment_aware_ugal"),
+                                               ("ENTRY_SWITCH", "ENTRY_SWITCH", "ugal_l")):
+            result = self.run_flow(routing=routing, routing_mode=routing_mode,
+                                   strategy=strategy, soft_claim=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("Soft claim requires", result.stderr)
+
+    def test_soft_claim_ready_competition_from_goal(self):
+        spec = {"schema_version": 1, "kind": "flow", "name": "competition", "world_size": 2,
+                "nodes": [
+                    {"id": "start", "op": "compute", "ranks": "all", "duration_ns": 2000},
+                    {"id": "low", "op": "flow", "flow_id": 20, "src": 0, "dst": 1,
+                     "bytes": 8192, "tag": 20, "depends_on": ["start"]},
+                    {"id": "high", "op": "flow", "flow_id": 10, "src": 0, "dst": 1,
+                     "bytes": 8192, "tag": 10, "depends_on": ["start"]},
+                    {"id": "tail", "op": "compute", "ranks": [1], "duration_ns": 100000,
+                     "depends_on": ["high"]}]}
+        path = self.root / "competition.json"
+        path.write_text(json.dumps(spec))
+        subprocess.run(["python3", str(REPO_ROOT / "workload_gen/generate.py"), str(path),
+                        "--output-root", str(self.root)], check=True, capture_output=True, text=True)
+        self.workload = self.root / "competition/workload.bin"
+        result = self.run_flow(routing="ENTRY_SWITCH", routing_mode="ENTRY_SWITCH",
+                               strategy="commitment_aware_ugal", soft_claim=True,
+                               granularity="flow", size=0)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        metrics = self.last_run / "output_metrics"
+        with (metrics / "entry_decisions.csv").open() as stream:
+            decisions = list(csv.DictReader(stream))
+        self.assertEqual([r["flow_id"] for r in decisions], ["20", "10"])
+        low_state = dict(item.split("=", 1) for item in decisions[0]["policy_state"].split(";") if item)
+        self.assertEqual(low_state["soft_claim_min_bytes"], "8192")
+        self.assertEqual(low_state["r_min_bytes"], "0")
+        self.assertEqual(decisions[0]["route"], "valiant")
+        self.assertEqual(decisions[1]["route"], "minimum")
+        with (metrics / "flow_dag_info.csv").open() as stream:
+            tasks = list(csv.DictReader(stream))
+        self.assertTrue(all(r["finishTimeNs"] for r in tasks))
 
 
 if __name__ == "__main__":

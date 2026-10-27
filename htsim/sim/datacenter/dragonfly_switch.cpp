@@ -275,6 +275,19 @@ DragonflySwitch::UgalDecision DragonflySwitch::ugalDecision(uint32_t src_switch,
     return decision;
 }
 
+DragonflySwitch::UgalDecision DragonflySwitch::previewUgalDecision(
+    uint32_t src_switch, uint32_t dst_switch, const PressureQuery& pressure) {
+    const auto saved = _generator;
+    try {
+        const auto result = ugalDecision(src_switch, dst_switch, pressure);
+        _generator = saved;
+        return result;
+    } catch (...) {
+        _generator = saved;
+        throw;
+    }
+}
+
 void DragonflySwitch::routeEntryPacket(Packet& packet) {
     auto& data = static_cast<UecDataPacket&>(packet);
     const auto& info = *data.messagelet();
@@ -290,7 +303,7 @@ void DragonflySwitch::routeEntryPacket(Packet& packet) {
         NetworkRoute route;
         if (_entry_decision) {
             route = _entry_decision->decide({*_topo, packet.src(), packet.dst(), 0,
-                info.meta.mlet_size, info.meta.mlet_size, info.key.messagelet_idx});
+                info.meta.mlet_size, info.meta.mlet_size, info.key.messagelet_idx, info.key});
         } else if (_id != _topo->get_host_switch(packet.dst())) {
             const auto first = get_next_switch_minimal(_id, _topo->get_host_switch(packet.dst()));
             const auto second = first == _topo->get_host_switch(packet.dst()) ? 0 :
@@ -319,6 +332,7 @@ void DragonflySwitch::routeEntryPacket(Packet& packet) {
         // can release this first packet into any egress queue. Subsequent
         // decisions therefore see its R even when Q is still zero.
         if (corridor) gra.commit(info.key, *corridor, info.meta.mlet_size, packet.flow_id());
+        else gra.routeDecided(info.key);
         found = _entry_routes.emplace(info.key, EntryRoute{
             std::move(route), info.meta, packet.src(), packet.dst(), packet.flow_id()}).first;
     }

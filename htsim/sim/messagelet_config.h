@@ -30,6 +30,10 @@ struct MessageletConfig {
         std::string default_route = "minimum";
         std::string network_decision = "none";
         double commitment_alpha = 1.0;
+        struct SoftClaimSettings {
+            bool enabled = false;
+            std::string policy = "dag_priority";
+        } soft_claim;
     } routing;
 
     struct LoggingSettings {

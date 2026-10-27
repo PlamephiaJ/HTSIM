@@ -262,6 +262,14 @@ void MessageletRuntime::initializeGoalGraph(const Parser& parser) {
     auto graph = buildGraGoalGraph(parser, _config.runtime.dag_id,
         (_routing_config_loaded || _flow_metadata_loaded) ? &identities : nullptr);
     topology->initializeGraStaticGraphs({std::move(graph.dag)});
+    if (_config.routing.soft_claim.enabled) {
+        for (uint32_t group = 0; group < topology->get_no_groups(); ++group) {
+            auto& gra = topology->groupRoutingAgent(group);
+            gra.setDemandPolicy(makeRoutingDemandPolicy(_config.routing.soft_claim.policy),
+                                _config.routing.commitment_alpha);
+            gra.setTrace(_config.logging.trace_decisions);
+        }
+    }
     _graph_identities = std::move(graph.identities);
     _static_graph_initialized = true;
 }
@@ -400,6 +408,33 @@ void MessageletRuntime::bindPacket(const UecSrc& source, uint64_t index, uint64_
         if (corridor) gra.bindPacket(info.key, seqno, bytes);
     }
     state.original_payload_sent += bytes;
+    if (_config.routing.soft_claim.enabled && state.original_payload_sent < state.flow_size) {
+        // Original data progresses monotonically. Only the next sendable
+        // messagelet becomes READY, never the entire unsent flow suffix.
+        const uint64_t mtu = Packet::data_packet_size();
+        const uint64_t payload_unit = (state.messagelet_size / mtu + (state.messagelet_size % mtu != 0)) *
+            (mtu - UecSrc::_hdr_size);
+        if (state.granularity != Granularity::Flow && state.original_payload_sent % payload_unit == 0)
+            reportMessageletReady(source, index + 1);
+    }
+}
+
+void MessageletRuntime::reportMessageletReady(const UecSrc& source, uint64_t index) {
+    if (!_config.routing.soft_claim.enabled) return;
+    const auto& state = flowState(source);
+    const auto info = messageletInfo(source, index);
+    if (!info.meta.mlet_size) return;
+    auto& topology = *_goal_runtime.getDragonflyTopology();
+    topology.groupRoutingAgent(topology.get_host_switch(state.from) / topology.get_a())
+        .messageletReady(info.key, state.from, state.to, info.meta.mlet_size);
+}
+
+void MessageletRuntime::cancelMessageletReady(const UecSrc& source, uint64_t index) {
+    if (!_config.routing.soft_claim.enabled) return;
+    const auto& state = flowState(source);
+    auto& topology = *_goal_runtime.getDragonflyTopology();
+    topology.groupRoutingAgent(topology.get_host_switch(state.from) / topology.get_a())
+        .cancelReady({_config.runtime.dag_id, state.flow_id, index});
 }
 
 void MessageletRuntime::setNetworkDecision(std::unique_ptr<NetworkDecision> decision) {
@@ -501,6 +536,7 @@ void MessageletRuntime::registerFlow(UecSrc& source,
     if (!inserted.second) {
         throw std::logic_error("UecSrc is already registered with the messagelet runtime");
     }
+    reportMessageletReady(source, 0); // GOAL has satisfied SEND dependencies
 }
 
 MessageletRuntime::RouteInfo MessageletRuntime::minimumRoute(uint32_t from, uint32_t to) const {

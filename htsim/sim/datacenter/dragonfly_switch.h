@@ -50,6 +50,9 @@ public:
     using PressureQuery = std::function<double(uint32_t first, uint32_t second)>;
     UgalDecision ugalDecision(uint32_t src_switch, uint32_t dst_switch,
                               const PressureQuery& pressure = {});
+    // Demand prediction must not consume the actual routing RNG sequence.
+    UgalDecision previewUgalDecision(uint32_t src_switch, uint32_t dst_switch,
+                                     const PressureQuery& pressure);
 
     static void set_config(RoutingStrategy routing_strategy,
                            bool trim_disable,

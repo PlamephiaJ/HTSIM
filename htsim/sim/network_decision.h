@@ -5,6 +5,8 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <optional>
+#include "messagelet.h"
 
 class DragonflyTopology;
 
@@ -22,6 +24,7 @@ struct NetworkDecisionContext {
     uint64_t flow_size;
     uint64_t messagelet_size;
     uint64_t messagelet_index;
+    std::optional<MessageletKey> messagelet = std::nullopt;
 };
 
 // Called before a messagelet is labelled. The host runtime or entry switch

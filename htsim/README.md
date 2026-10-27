@@ -523,11 +523,75 @@ Build and validate:
 
 ```bash
 cmake -S htsim/sim -B htsim/sim/build -DENABLE_NETWORK_DECISION_TESTS=ON
-cmake --build htsim/sim/build --target htsim_uec_df network_decision_test gra_static_graph_test gra_execution_progress_test -j 4
+cmake --build htsim/sim/build --target htsim_uec_df network_decision_test soft_claim_test gra_static_graph_test gra_execution_progress_test -j 4
 ctest --test-dir htsim/sim/build --output-on-failure
 python3 -m unittest discover -s tests -p test_entry_switch_routing.py -v
 python3 -m unittest discover -s tests -p test_gra_start_dependencies.py -v
 ```
+
+### Optional DAG-aware Soft Claim
+
+Soft Claim is disabled by default. For `ENTRY_SWITCH` with
+`routing.network_decision: "commitment_aware_ugal"`, add:
+
+```json
+"routing": {
+  "network_decision": "commitment_aware_ugal",
+  "commitment_alpha": 1.0,
+  "soft_claim": {"enabled": true, "policy": "dag_priority"}
+}
+```
+
+A complete example is `sim/datacenter/messagelet_configs/soft_claim.json`.
+
+Set `enabled` to `false`, or omit `soft_claim`, to retain the existing routing
+and accounting behavior. Enabling it with SOURCE, transparent mode or another
+network decision is rejected. Flow, messagelet and packet granularities work.
+
+At GOAL SEND submission (after its dependencies and send gate are satisfied),
+the runtime reports the first messagelet READY, with actual payload bytes and
+DAG identity. When all original data in that messagelet has been handed to the
+sender, the next messagelet becomes READY. This is a logical sending eligibility
+signal, not a guarantee of immediate NIC/credit availability. Unsubmitted DAG
+tasks and the rest of a flow's unsent suffix do not receive claims. No packets
+are delayed by this mechanism.
+
+Each GRA predicts a preferred outgoing global corridor for each pending READY
+messagelet using UGAL's sampled candidates, hop weights and **only** `Q + alpha * R`.
+Prediction previews the source switch's current routing RNG state without
+advancing it. Predictions refresh on READY, decision, cancellation, and just
+before a routing query, so they use current Q/R. They do not fix the actual path
+or guarantee the same future Valiant sample. Intra-group traffic has no claim.
+The highest `dTable()[(dag_id, flow_id)]` on each preferred corridor owns its
+single claim. Equal priorities use key order for deterministic ownership and
+never penalize each other. Each messagelet can own at most one claim.
+
+At the first packet's entry decision, the pressure for each candidate corridor is
+`Q + alpha * R + S`, followed by the existing hop-weighted UGAL comparison.
+`S` is the owner's **actual payload bytes**, added once and without alpha scaling,
+only if the owner has strictly greater D than the requester. Self claims are
+ignored. Missing READY or unknown DAG identity gives `S = 0`. A high-priority
+owner can still choose Valiant when actual network costs favor it.
+
+Commit removes that messagelet's pending demand and recomputes claims using the
+updated R. Remaining packets and retransmissions retain the cached path and
+the existing first-admission accounting. Soft Claims never contribute to R.
+With `logging.trace_decisions`, `gra_soft_claims.csv` records post-event pending
+counts and claim snapshots; `entry_decisions.csv` adds `soft_claim_min_bytes`
+and `soft_claim_val_bytes` to `policy_state`, alongside total compared pressures.
+
+The experiment is isolated in `routing_demand_policy.{h,cpp}`. The
+`RoutingDemandPolicy` interface takes READY/remove events, a base-network
+preference callback and pressure queries; it has no topology, packet, queue or
+Commitment ownership. To try another strategy, implement this interface and
+extend `makeRoutingDemandPolicy()` and config validation, or install one through
+`GroupRoutingAgent::setDemandPolicy()` before READY reports. The GRA adapter
+supplies D and network observations; runtime and transport hooks stay intact.
+`MessageletRuntime::cancelMessageletReady()` (or GRA's `cancelReady()`) retracts
+pre-routing demand and promotes the next owner. The existing GOAL scheduler has
+no cancellation event; a future transport cancellation caller must invoke this
+hook and stop the cancelled transmission itself. Replacing/disabling a policy
+discards its pending soft state and leaves real commitments intact.
 
 ### GRA static computation graphs
 

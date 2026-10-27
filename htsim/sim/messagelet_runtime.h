@@ -74,6 +74,9 @@ public:
     const MessageletInfo& messageletInfo(const UecSrc& source, uint64_t messagelet_index);
 
     void bindPacket(const UecSrc& source, uint64_t messagelet_index, uint64_t seqno, uint64_t payload_bytes);
+    // Cancellation of pre-routing demand only; transport cancellation is owned
+    // by the caller. The current GOAL scheduler has no cancellation events.
+    void cancelMessageletReady(const UecSrc& source, uint64_t messagelet_index);
 
     // Replacement affects only messagelets that have not yet been labelled.
     // A null policy restores static/default routing for future messagelets.
@@ -98,6 +101,7 @@ private:
     RouteInfo minimumRoute(uint32_t from, uint32_t to) const;
     RouteInfo valiantRoute(uint32_t from, uint32_t to, uint64_t flow_id) const;
     FlowState& mutableFlowState(const UecSrc& source);
+    void reportMessageletReady(const UecSrc& source, uint64_t messagelet_index);
 
     AtlahsDragonflyApi& _goal_runtime;
     MessageletConfig _config;

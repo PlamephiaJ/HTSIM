@@ -30,14 +30,18 @@ NetworkRoute UgalLNetworkDecision::decide(const NetworkDecisionContext& context)
     auto* source = static_cast<DragonflySwitch*>(topology.switches.at(src_switch));
     auto& gra = topology.groupRoutingAgent(src_switch / topology.get_a());
     std::vector<GroupRoutingAgent::CorridorState> observations;
+    std::vector<uint64_t> claims;
     DragonflySwitch::PressureQuery pressure;
     // Intra-group routes do not enter a global corridor; retain local UGAL.
     if (_commitment_aware && src_switch / topology.get_a() != dst_switch / topology.get_a()) {
+        gra.refreshDemand(); // base Q/R may have changed since the last READY
         pressure = [&](uint32_t first, uint32_t second) {
             const auto c = gra.corridorForRoute(context.from, context.to, (first << 16) | second);
             const auto state = gra.query(*c);
             observations.push_back(state);
-            return state.q_bytes + _alpha * state.r_bytes;
+            const uint64_t claim = context.messagelet ? gra.softClaimPressure(*context.messagelet, *c) : 0;
+            claims.push_back(claim);
+            return state.q_bytes + _alpha * state.r_bytes + claim;
         };
     }
     const auto decision = source->ugalDecision(src_switch, dst_switch, pressure);
@@ -57,8 +61,14 @@ NetworkRoute UgalLNetworkDecision::decide(const NetworkDecisionContext& context)
         route.log_info.emplace("q_val_bytes", std::to_string(q_val));
         route.log_info.emplace("r_min_bytes", std::to_string(r_min));
         route.log_info.emplace("r_val_bytes", std::to_string(r_val));
-        route.log_info.emplace("pressure_min", number(q_min + (_commitment_aware ? _alpha * r_min : 0)));
-        route.log_info.emplace("pressure_val", number(q_val + (_commitment_aware ? _alpha * r_val : 0)));
+        const uint64_t s_min = claims.empty() ? 0 : claims.at(0);
+        const uint64_t s_val = claims.empty() ? 0 : claims.at(1);
+        if (gra.demandPolicy()) {
+            route.log_info.emplace("soft_claim_min_bytes", std::to_string(s_min));
+            route.log_info.emplace("soft_claim_val_bytes", std::to_string(s_val));
+        }
+        route.log_info.emplace("pressure_min", number(q_min + (_commitment_aware ? _alpha * r_min : 0) + s_min));
+        route.log_info.emplace("pressure_val", number(q_val + (_commitment_aware ? _alpha * r_val : 0) + s_val));
         for (size_t i = 0; i < observations.size(); ++i) {
             const std::string prefix = i == 0 ? "min_" : "val_";
             route.log_info.emplace(prefix + "egress_switch", std::to_string(observations[i].corridor.first));
