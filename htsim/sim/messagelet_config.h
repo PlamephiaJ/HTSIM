@@ -34,7 +34,7 @@ struct MessageletConfig {
         struct SoftClaimSettings {
             bool enabled = false;
             std::string policy = "dag_priority";
-            std::string priority = "join_slack";
+            std::string priority = "global_slack";
             // Unset follows commitment_alpha, including programmatic changes.
             std::optional<double> beta;
         } soft_claim;

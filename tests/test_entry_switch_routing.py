@@ -290,7 +290,7 @@ class EntrySwitchRoutingTests(unittest.TestCase):
                 self.assertIn("routing.soft_claim.beta", result.stderr)
 
     def test_soft_claim_priority_selection_and_diagnostics(self):
-        for priority in (None, "join_slack", "dag_downstream"):
+        for priority in (None, "global_slack", "join_slack", "dag_downstream"):
             with self.subTest(priority=priority):
                 result = self.run_flow(routing="ENTRY_SWITCH", routing_mode="ENTRY_SWITCH",
                                        strategy="commitment_aware_ugal", soft_claim=True, priority=priority)
@@ -298,15 +298,21 @@ class EntrySwitchRoutingTests(unittest.TestCase):
                 with (self.last_run / "output_metrics/gra_pending_preferences.csv").open() as stream:
                     rows = [r for r in csv.DictReader(stream) if r["dag_id"]]
                 self.assertTrue(rows)
-                self.assertEqual({r["priority_strategy"] for r in rows}, {priority or "join_slack"})
+                self.assertEqual({r["priority_strategy"] for r in rows}, {priority or "global_slack"})
                 if priority == "dag_downstream":
                     self.assertEqual({r["priority_scope"] for r in rows}, {"static"})
                     self.assertTrue(all(r["slack_ns"] == "" for r in rows))
                 else:
-                    self.assertEqual({r["priority_scope"] for r in rows}, {"virtual_join"})
+                    self.assertEqual({r["priority_scope"] for r in rows},
+                                     {"virtual_join" if priority == "join_slack" else "global"})
                     self.assertEqual({r["relative_slack"] for r in rows}, {"0"})
                     self.assertTrue(any(r["finish_at_frontier"] == "true" for r in rows))
                     self.assertTrue(any(int(r["frontier_events"]) > 0 for r in rows))
+                    if priority != "join_slack":
+                        for row in rows:
+                            self.assertEqual(float(row["global_slack_ns"]), float(row["estimated_workload_end_ns"]) -
+                                             (float(row["estimated_finish_time_ns"]) + float(row["nominal_tail_ns"])))
+                            self.assertEqual(row["slack_ns"], row["global_slack_ns"])
         result = self.run_flow(routing="ENTRY_SWITCH", routing_mode="ENTRY_SWITCH",
                                strategy="commitment_aware_ugal", soft_claim=True, priority="unknown")
         self.assertNotEqual(result.returncode, 0)

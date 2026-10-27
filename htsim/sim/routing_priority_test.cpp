@@ -163,6 +163,99 @@ void checkTerminalBypassAndEventCycles() {
     assert(crossed_estimates.at({0, 10, 0}).remaining_ns == 10);
     assert(crossed_estimates.at({0, 20, 0}).remaining_ns == 20);
 }
+
+std::shared_ptr<const G> globalFixture(uint64_t a_bytes = 100, uint64_t b_bytes = 50) {
+    // A limits a short local Join; B has local slack but a long tail after
+    // another Join. Only the global completion perspective sees B's urgency.
+    return G::build({{0, {{Type::COMM, 10, a_bytes, {2}}, {Type::COMM, 11, 1, {2}},
+        {Type::COMP, 0, 0, {}}, {Type::COMM, 20, b_bytes, {5}},
+        {Type::COMM, 21, 100, {5}}, {Type::COMP, 0, 1000, {}}}}}, bps);
+}
+
+void checkGlobalSlackAndDelayBudget() {
+    const auto graph = globalFixture();
+    GraExecutionProgress progress(graph);
+    const auto demands = pending({{0, 10, 0}, {0, 20, 0}});
+    const auto local = makeRoutingPriorityStrategy("join_slack", *graph)->evaluate(progress, 0, demands);
+    const auto global = makeRoutingPriorityStrategy("global_slack", *graph)->evaluate(progress, 0, demands);
+    assert(local.at({0, 10, 0}).priority > local.at({0, 20, 0}).priority);
+    assert(global.at({0, 20, 0}).priority > global.at({0, 10, 0}).priority);
+    const auto& a = global.at({0, 10, 0});
+    const auto& b = global.at({0, 20, 0});
+    assert(a.scope == "global" && b.scope == "global");
+    assert(a.estimated_finish_time_ns == 100 && a.nominal_tail_ns == 0);
+    assert(b.estimated_finish_time_ns == 50 && b.nominal_tail_ns == 1000);
+    assert(a.estimated_workload_end_ns == 1100 && b.estimated_workload_end_ns == 1100);
+    assert(a.global_end_node_index == 5 && b.global_end_node_index == 5);
+    assert(a.global_slack_ns == 1000 && b.global_slack_ns == 50);
+    assert(a.slack_ns == a.global_slack_ns && b.slack_ns == b.global_slack_ns);
+    for (const auto& item : global) {
+        const auto& value = item.second;
+        assert(value.global_slack_ns == *value.estimated_workload_end_ns -
+            (*value.estimated_finish_time_ns + *value.nominal_tail_ns));
+    }
+    // Perturb the communication's nominal duration by exactly its slack, and
+    // by one ns more: this budget must predict when final completion changes.
+    for (bool change_a : {false, true}) {
+        const uint64_t budget = change_a ? 1000 : 50;
+        for (uint64_t extra : {budget, budget + 1}) {
+            const auto changed = globalFixture(change_a ? 100 + extra : 100, change_a ? 50 : 50 + extra);
+            GraExecutionProgress changed_progress(changed);
+            const auto estimates = makeRoutingPriorityStrategy("global_slack", *changed)->evaluate(
+                changed_progress, 0, demands);
+            assert(estimates.at({0, 10, 0}).estimated_workload_end_ns == 1100 + (extra > budget));
+        }
+    }
+}
+
+void checkGlobalNestedJoinsAndStartSemantics() {
+    const auto graph = G::build({{0, {{Type::COMM, 10, 10, {2}}, {Type::COMM, 20, 20, {2}},
+        {Type::COMP, 0, 100, {4}}, {Type::COMM, 30, 200, {4}}, {Type::COMP, 0, 1000, {}}}}}, bps);
+    GraExecutionProgress progress(graph);
+    const auto estimates = makeRoutingPriorityStrategy("global_slack", *graph)->evaluate(
+        progress, 0, pending({{0, 10, 0}, {0, 20, 0}, {0, 30, 0}}));
+    assert(estimates.at({0, 10, 0}).nominal_tail_ns == 1100); // crosses both Joins
+    assert(estimates.at({0, 20, 0}).global_slack_ns == 80);
+    assert(estimates.at({0, 30, 0}).global_slack_ns == 0);
+    assert(estimates.at({0, 30, 0}).priority > estimates.at({0, 20, 0}).priority);
+    G::Dag fork{0, {{Type::COMM, 10, 10, {1}}, {Type::COMP, 0, 5, {}}, {Type::COMP, 0, 100, {}}},
+        {{0, 2, Event::START}}};
+    bind(fork);
+    const auto fork_graph = G::build({fork}, bps);
+    GraExecutionProgress fork_progress(fork_graph);
+    const auto strategy = makeRoutingPriorityStrategy("global_slack", *fork_graph);
+    const auto demands = pending({{0, 10, 0}, {0, 10, 1}});
+    const auto initial = strategy->evaluate(fork_progress, 0, demands);
+    assert(initial.at({0, 10, 0}).nominal_tail_ns == 5); // excludes own transfer and START-only branch
+    assert(initial.at({0, 10, 0}).estimated_workload_end_ns == 100);
+    assert(initial.at({0, 10, 0}).global_slack_ns == 85);
+    assert(initial.at({0, 10, 0}).priority == initial.at({0, 10, 1}).priority);
+    start(fork_progress, 0, true);
+    start(fork_progress, 2, false);
+    const auto active = strategy->evaluate(fork_progress, 5, demands);
+    assert(active.at({0, 10, 0}).remaining_ns == 5);
+    assert(active.at({0, 10, 0}).estimated_finish_time_ns == 10);
+    assert(active.at({0, 10, 0}).global_slack_ns == 85);
+    assert(active.at({0, 10, 0}).finish_at_frontier);
+    fork_progress.receive({0, 0, 0, GraTaskEvent::FINISH, 2, 10});
+    const auto done = strategy->evaluate(fork_progress, 10, demands);
+    assert(done.at({0, 10, 0}).scope == "completed" && done.at({0, 10, 0}).priority == 0);
+}
+
+void checkGlobalWorkloadIsolation() {
+    const auto graph = G::build({{0, {{Type::COMM, 10, 10, {}}, {Type::COMM, 20, 20, {}}}},
+        {7, {{Type::COMM, 10, 1000, {}}, {Type::COMM, 20, 2000, {}}}}}, bps);
+    GraExecutionProgress progress(graph);
+    const auto estimates = makeRoutingPriorityStrategy("global_slack", *graph)->evaluate(progress, 0,
+        pending({{0, 10, 0}, {0, 20, 0}, {7, 10, 0}, {7, 20, 0}}));
+    assert(estimates.at({0, 10, 0}).estimated_workload_end_ns == 20);
+    assert(estimates.at({7, 10, 0}).estimated_workload_end_ns == 2000);
+    assert(estimates.at({0, 10, 0}).global_slack_ns == 10);
+    assert(estimates.at({7, 10, 0}).global_slack_ns == 1000);
+    assert(estimates.at({0, 10, 0}).priority == estimates.at({7, 10, 0}).priority);
+    assert(estimates.at({0, 20, 0}).priority == estimates.at({7, 20, 0}).priority);
+    assert(estimates.at({0, 20, 0}).priority > estimates.at({0, 10, 0}).priority);
+}
 }
 
 int main() {
@@ -171,5 +264,8 @@ int main() {
     checkVirtualJoinAndCrossDagNormalization();
     checkRecvGateAndBufferedProgress();
     checkTerminalBypassAndEventCycles();
+    checkGlobalSlackAndDelayBudget();
+    checkGlobalNestedJoinsAndStartSemantics();
+    checkGlobalWorkloadIsolation();
     std::cout << "routing priority tests passed\n";
 }

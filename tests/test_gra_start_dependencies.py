@@ -192,6 +192,43 @@ class GraStartDependenciesTests(unittest.TestCase):
                     self.assertGreater(float(by_flow["0"]["slack_ns"]), 0)
                     self.assertLess(float(by_flow["1"]["slack_ns"]), 0)
 
+    def test_global_slack_sees_past_a_local_join(self):
+        # A limits a short Join; B has local compute-peer slack, but the work
+        # after B's Join determines final completion. Global priority protects B.
+        ranks = [
+            [(1, 1, 65536, 10, (), ()), (1, 1, 65536, 20, (), ())],
+            [(2, 0, 65536, 10, (4,), ()), (2, 0, 65536, 20, (5,), ()),
+             (3, 0, 100, 0, (4,), ()), (3, 0, 10000, 0, (5,), ()),
+             (3, 0, 0, 0, (), ()), (3, 0, 100000, 0, (), ())]]
+        placement = [{"rank": 0, "group": 0, "switch": 0, "host": 0},
+                     {"rank": 1, "group": 3, "switch": 0, "host": 1}]
+        for strategy, owner, route in (("global_slack", "1", "valiant"), ("join_slack", "0", "minimum")):
+            with self.subTest(strategy=strategy):
+                result, run = self.run_goal(ranks, placement, strategy)
+                self.completed(result, run, 8)
+                with (run / "output_metrics/entry_decisions.csv").open() as stream:
+                    decision = next(csv.DictReader(stream))
+                self.assertEqual(decision["flow_id"], "0")
+                self.assertEqual(decision["route"], route)
+                state = dict(item.split("=", 1) for item in decision["policy_state"].split(";") if item)
+                self.assertEqual(state["soft_claim_min_owner_flow_id"], owner)
+                self.assertEqual(state["r_min_bytes"], "0")
+                with (run / "output_metrics/gra_pending_preferences.csv").open() as stream:
+                    snapshot = [r for r in csv.DictReader(stream) if r["group"] == "0" and
+                                r["snapshot_id"] == state["soft_claim_snapshot_id"]]
+                by_flow = {r["flow_id"]: r for r in snapshot}
+                if strategy == "global_slack":
+                    self.assertEqual({r["priority_scope"] for r in snapshot}, {"global"})
+                    self.assertEqual(float(by_flow["0"]["nominal_tail_ns"]), 0)
+                    self.assertEqual(float(by_flow["1"]["nominal_tail_ns"]), 100000)
+                    self.assertLess(float(by_flow["1"]["global_slack_ns"]), float(by_flow["0"]["global_slack_ns"]))
+                    for row in snapshot:
+                        self.assertEqual(float(row["global_slack_ns"]), float(row["estimated_workload_end_ns"]) -
+                                         (float(row["estimated_finish_time_ns"]) + float(row["nominal_tail_ns"])))
+                else:
+                    self.assertLess(float(by_flow["0"]["slack_ns"]), 0)
+                    self.assertGreater(float(by_flow["1"]["slack_ns"]), 0)
+
 
 if __name__ == "__main__":
     unittest.main()

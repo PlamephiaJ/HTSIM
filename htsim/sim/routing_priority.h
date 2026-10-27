@@ -14,6 +14,8 @@ public:
         std::string scope;
         std::optional<uint64_t> join_id, branch_id;
         std::optional<long double> remaining_ns, peer_remaining_ns, slack_ns, relative_slack;
+        std::optional<long double> estimated_finish_time_ns, nominal_tail_ns, estimated_workload_end_ns, global_slack_ns;
+        std::optional<uint64_t> global_end_node_index;
         size_t frontier_events = 0;
         bool finish_at_frontier = false;
     };

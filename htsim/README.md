@@ -538,7 +538,7 @@ Soft Claim is disabled by default. For `ENTRY_SWITCH` with
 "routing": {
   "network_decision": "commitment_aware_ugal",
   "commitment_alpha": 1.0,
-  "soft_claim": {"enabled": true, "policy": "dag_priority", "priority": "join_slack", "beta": 1.0}
+  "soft_claim": {"enabled": true, "policy": "dag_priority", "priority": "global_slack", "beta": 1.0}
 }
 ```
 
@@ -546,10 +546,11 @@ A complete example is `sim/datacenter/messagelet_configs/soft_claim.json`.
 `routing.soft_claim.beta` controls claim pressure and defaults to the configured
 `routing.commitment_alpha` when omitted. Both must be finite and nonnegative.
 Set beta to zero to ignore claim pressure while keeping READY/claim tracking.
-`routing.soft_claim.priority` defaults to `join_slack`, which uses confirmed
-progress and Frontier to protect the branches most likely to limit their next
-Join. Set it to `dag_downstream` to reproduce the previous D-only priority for
-controlled comparisons. `soft_claim.policy: "dag_priority"` retains the existing
+`routing.soft_claim.priority` defaults to `global_slack`, which uses confirmed
+progress and Frontier to protect communications with the least slack to final
+workload completion. Select `join_slack` for the previous nearest-Join strategy,
+or `dag_downstream` for the original D-only priority, for controlled comparisons.
+`soft_claim.policy: "dag_priority"` retains the existing
 Claim arbitration mechanism; the independent `priority` setting chooses how
 its priorities are calculated. Unknown priority names are rejected.
 
@@ -582,9 +583,43 @@ only if the owner has strictly greater D than the requester. Self claims are
 ignored. Missing READY or unknown DAG identity gives `S = 0`. A high-priority
 owner can still choose Valiant when actual network costs favor it.
 
-#### Progress-aware Join slack priority
+#### Global final-completion slack (default)
 
-The strategy uses the same immutable weighted event DAG as static analysis.
+`global_slack` reuses the same progress-aware forward event-time prediction as
+`join_slack`, described below. For each workload (`dag_id`), every terminal of
+the full weighted event DAG participates, including non-READY, remote,
+compute-only and START-released independent work. Define:
+
+```
+t_hat(v) = the current forward event ETA (absolute ns)
+L(v)     = max(cost(v, u) + L(u)) over outgoing event edges; zero at terminals
+T_end    = max(t_hat(z)) over this workload's terminals
+S_global = T_end - (t_hat(FINISH(messagelet's COMM)) + L(FINISH))
+```
+
+The reverse recurrence crosses **all** downstream Joins instead of stopping at
+the nearest Join. L contains nominal edge costs strictly after the event; it
+excludes the communication's own transfer cost and work released only at its
+START. Such independent work can still determine T_end. Because graph edges
+and nominal costs are immutable, L is precomputed once; event ETAs, T_end and
+S_global are recomputed on each Claim refresh. No extra path decision, RNG draw,
+packet wait, commitment, or future scheduler observation is introduced.
+
+Smaller S_global wins. Zero is globally limiting under the nominal model;
+positive slack is the additional FINISH delay that the model can absorb
+without postponing final completion. This is a conditional nominal budget,
+not a prediction of actual future FCT. Unlike local Join slack, global critical
+paths have zero slack rather than a negative branch-to-peer margin.
+The ranking score is `S_global / max(T_end - now, 1 ns)`. Its denominator is
+constant within a workload, preserving S_global ordering exactly, while keeping
+comparison between independent DAGs dimensionless. Equal scores have equal
+ordinal priority, with no raw-D tie break. Confirmed-complete communications
+retain rank zero and do not compete. The final-completion scope remains the
+whole configured DAG; no finer collective boundaries are available in this graph.
+
+#### Nearest-Join slack (`priority: "join_slack"`)
+
+Both dynamic strategies use the same immutable weighted event DAG as static analysis.
 At simulator time `t`, it anchors confirmed events at their actual timestamps.
 Unconfirmed Frontier START/RECEIVE_START events are estimated to run now;
 blocked events wait for their estimated predecessor events. For a FINISH, the
@@ -630,7 +665,7 @@ collective-boundary metadata: the configured DAG is the final-completion scope.
 Independent DAGs have independent virtual Joins and only their relative slack
 scores are compared.
 
-Priorities are recomputed before **every Claim refresh**, including READY,
+Both dynamic strategies recompute priorities before **every Claim refresh**, including READY,
 decision and cancellation. Applied progress reports additionally refresh claims
 when pending demands exist; duplicates and still-buffered reports do not.
 Time elapsed since START is reconsidered at the next refresh without adding a
@@ -667,13 +702,20 @@ flow and messagelet IDs identify the event. `entry_decisions.csv`'s
 `policy_state.soft_claim_snapshot_id` references the exact pre-decision snapshot,
 including refreshes that changed preferences without changing the Q/R version.
 Additional columns explain the priority: `priority_strategy`, `priority_scope`
-(`join`, `virtual_join`, `completed`, `no_open_join`, or legacy `static`),
+(`global`, `join`, `virtual_join`, `completed`, `no_open_join`, or legacy `static`),
 `priority_join_id`, `priority_branch_id`, `estimated_remaining_ns`,
 `peer_remaining_ns`, `slack_ns`, `relative_slack`, `frontier_events`, and
 `finish_at_frontier`. A virtual Join has a blank Join ID and uses the terminal
 node index as branch ID. `refresh_reason: "progress"` identifies updates caused
 by applied START/FINISH observations. The same parent COMM gives all its pending
 messagelets the same urgency; no per-packet progress estimator is introduced.
+For `global_slack`, `slack_ns` and `relative_slack` hold S_global and its
+normalized score. Additional columns expose the formula directly:
+`estimated_finish_time_ns` (t_hat of COMM FINISH), `nominal_tail_ns` (L),
+`estimated_workload_end_ns` (T_end), and `global_slack_ns` (S_global).
+`global_end_node_index` identifies a terminal currently attaining T_end.
+Join/branch IDs and peer-remaining time are blank for this strategy. The global
+formula columns are blank for other strategies and confirmed-complete flows.
 
 For compared global candidates, `policy_state` also records
 `soft_claim_min_reason` / `soft_claim_val_reason`, the beta-scaled
@@ -854,7 +896,7 @@ eligible after both endpoint starts but remains unconfirmed until completion
 is reported. Nominal costs do not act as dynamic completion timers, including
 for zero-duration tasks. The Frontier is recomputed on demand from retained
 event relations and received observations, without a persistent Frontier table.
-With `soft_claim.priority: "join_slack"` enabled, it supplies the priority
+With `soft_claim.priority: "global_slack"` or `"join_slack"` enabled, it supplies the priority
 estimator's current readiness boundary. Static D analysis remains immutable.
 
 Set `HTSIM_TRACE_GRA_PROGRESS=1` to export `gra_progress_reports.csv`, containing
