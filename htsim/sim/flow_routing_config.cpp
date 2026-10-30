@@ -48,6 +48,8 @@ FlowRoutingConfig FlowRoutingConfig::loadFromFile(const std::string& filename, b
                     throw std::invalid_argument("Inconsistent metadata receive rank " + item.first);
                 entry.recv_task_id = field32(row, "recv_task.task_id");
             }
+            if (metadata && row.get_optional<std::string>("collective_id"))
+                entry.collective_id = number(row, "collective_id");
             if (entry.label != "minimum" && entry.label != "valiant") {
                 throw std::invalid_argument("Unknown routing label '" + entry.label + "'");
             }

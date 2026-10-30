@@ -20,6 +20,7 @@ class SendEvent;
 class UecSrc;
 class graph_node_properties;
 class Parser;
+class OnlineFctPredictor;
 
 // Boundary between the GOAL scheduler and Dragonfly's HTSim transport.
 // Host communication submissions and execution observations enter here;
@@ -54,6 +55,7 @@ public:
 
     void submit(const SendEvent& event, graph_node_properties node);
     void eventFinished(const EventOver& event);
+    void reportNetworkFlowCompletion(const UecSrc& source, uint64_t start_ps, uint64_t end_ps);
     void reportTaskProgress(uint32_t rank, uint32_t task_offset, bool finished,
                             uint64_t event_time_ns, uint8_t nic);
 
@@ -115,6 +117,7 @@ private:
     std::unordered_map<const UecSrc*, FlowState> _flows;
     uint64_t _decision_index = 0;
     std::map<uint32_t, uint64_t> _rank_progress_versions;
+    std::shared_ptr<OnlineFctPredictor> _fct_predictor;
 };
 
 #endif // MESSAGELET_RUNTIME_H

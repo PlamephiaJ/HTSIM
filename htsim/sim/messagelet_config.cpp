@@ -93,7 +93,8 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
 }
 
 void MessageletConfig::validate() const {
-    if (routing.soft_claim.priority != "global_slack" && routing.soft_claim.priority != "join_slack" &&
+    if (routing.soft_claim.priority != "global_slack" && routing.soft_claim.priority != "global_slack_online" &&
+        routing.soft_claim.priority != "join_slack" &&
         routing.soft_claim.priority != "dag_downstream")
         throw std::invalid_argument("Unsupported soft claim priority '" + routing.soft_claim.priority + "'");
     if (routing.soft_claim.policy != "dag_priority")

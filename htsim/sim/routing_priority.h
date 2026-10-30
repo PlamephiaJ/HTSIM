@@ -4,8 +4,11 @@
 #include "gra_execution_progress.h"
 #include "routing_demand_policy.h"
 
+class OnlineFctPredictor;
+
 // Priority estimation has no packet, topology, path selection or Commitment
-// ownership. All observations are the selected GRA's confirmed progress.
+// ownership. It reads the selected GRA's confirmed progress and, for the online
+// strategy, shared completed network FCT history. Evaluation never trains it.
 class RoutingPriorityStrategy {
 public:
     struct Estimate {
@@ -16,6 +19,10 @@ public:
         std::optional<long double> remaining_ns, peer_remaining_ns, slack_ns, relative_slack;
         std::optional<long double> estimated_finish_time_ns, nominal_tail_ns, estimated_workload_end_ns, global_slack_ns;
         std::optional<uint64_t> global_end_node_index;
+        std::optional<uint64_t> collective_id, prediction_time_ns;
+        std::optional<long double> predicted_fct_ns, dynamic_tail_ns;
+        std::optional<size_t> fct_sample_count;
+        std::optional<bool> nominal_fallback;
         size_t frontier_events = 0;
         bool finish_at_frontier = false;
     };
@@ -27,6 +34,7 @@ public:
 };
 
 std::unique_ptr<RoutingPriorityStrategy> makeRoutingPriorityStrategy(
-    const std::string& strategy, const GraStaticGraph& graph);
+    const std::string& strategy, const GraStaticGraph& graph,
+    std::shared_ptr<const OnlineFctPredictor> predictor = nullptr);
 
 #endif

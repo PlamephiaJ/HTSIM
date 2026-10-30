@@ -15,6 +15,7 @@
 #include "dragonfly_source_route.h"
 #include "data_collector.h"
 #include "gra_goal_graph.h"
+#include "online_fct_predictor.h"
 #include "uec.h"
 
 namespace {
@@ -160,6 +161,20 @@ void MessageletRuntime::eventFinished(const EventOver& event) {
     _goal_runtime.EventFinished(event);
 }
 
+void MessageletRuntime::reportNetworkFlowCompletion(const UecSrc& source, uint64_t start_ps, uint64_t end_ps) {
+    if (!_fct_predictor) return;
+    // UecSrc allocation/transport IDs are deliberately not used as DAG IDs.
+    const auto& state = flowState(source);
+    if (!state.has_flow_id) throw std::logic_error("Online FCT completion has no DAG flow identity");
+    const auto now_ps = _goal_runtime.getEventList()->now();
+    if (!_fct_predictor->observeCompletion({_config.runtime.dag_id, state.flow_id}, start_ps, end_ps, now_ps)) return;
+    auto* topology = _goal_runtime.getDragonflyTopology();
+    // Same immediate ground-truth sharing model as reportHostProgress. Observe
+    // once before sharing; neither GRA evaluation nor GOAL FINISH trains it.
+    for (uint32_t group = 0; group < topology->get_no_groups(); ++group)
+        topology->groupRoutingAgent(group).refreshDemand("fct_completion");
+}
+
 void MessageletRuntime::reportTaskProgress(uint32_t rank, uint32_t task_offset, bool finished,
                                           uint64_t event_time_ns, uint8_t nic) {
     auto* topology = _goal_runtime.getDragonflyTopology();
@@ -258,14 +273,17 @@ void MessageletRuntime::initializeGoalGraph(const Parser& parser) {
                 std::tie(meta.flow_id, meta.src, meta.dst, meta.tag, meta.bytes))
                 throw std::invalid_argument("GRA routing and metadata flow identities differ");
             route.recv_task_id = meta.recv_task_id;
+            route.collective_id = meta.collective_id;
         }
     }
     auto graph = buildGraGoalGraph(parser, _config.runtime.dag_id,
         (_routing_config_loaded || _flow_metadata_loaded) ? &identities : nullptr);
     topology->initializeGraStaticGraphs({std::move(graph.dag)});
     if (_config.routing.soft_claim.enabled) {
+        if (_config.routing.soft_claim.priority == "global_slack_online")
+            _fct_predictor = std::make_shared<OnlineFctPredictor>(topology->groupRoutingAgent(0).staticGraph());
         const std::shared_ptr<const RoutingPriorityStrategy> priority = makeRoutingPriorityStrategy(
-            _config.routing.soft_claim.priority, topology->groupRoutingAgent(0).staticGraph());
+            _config.routing.soft_claim.priority, topology->groupRoutingAgent(0).staticGraph(), _fct_predictor);
         for (uint32_t group = 0; group < topology->get_no_groups(); ++group) {
             auto& gra = topology->groupRoutingAgent(group);
             gra.setDemandPolicy(makeRoutingDemandPolicy(_config.routing.soft_claim.policy),

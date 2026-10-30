@@ -1,4 +1,5 @@
 #include "routing_priority.h"
+#include "online_fct_predictor.h"
 
 #include <algorithm>
 #include <set>
@@ -9,10 +10,11 @@ using G = GraStaticGraph;
 using Key = G::EventKey;
 using Flow = G::FlowKey;
 
-// Shared nominal forward model. Local and global slack strategies must see
-// exactly the same Frontier and timestamp-anchored event ETAs.
+// Shared event semantics. An optional cost snapshot replaces only COMM's
+// SEND START -> FINISH edge, identically in forward and backward propagation.
 class EventTimeEstimator {
 public:
+    using CommCosts = std::map<Key, long double>; // keyed by SEND START
     struct Prediction {
         std::set<uint64_t> dags;
         std::set<Key> frontier;
@@ -40,7 +42,8 @@ public:
         }
     }
     Prediction predict(const GraExecutionProgress& progress, uint64_t now_ns,
-        const std::map<MessageletKey, RoutingDemandPolicy::Ready>& pending) const {
+        const std::map<MessageletKey, RoutingDemandPolicy::Ready>& pending,
+        const CommCosts* costs = nullptr) const {
         Prediction result;
         for (const auto& item : pending) result.dags.insert(item.first.dag_id);
         for (auto dag : result.dags) {
@@ -61,17 +64,36 @@ public:
             if (incoming != inputs.end() &&
                 (event.event == G::Event::FINISH || !result.frontier.count(event)))
                 for (const auto& arc : incoming->second)
-                    arrival = std::max(arrival, result.eta.at(arc.source) + arc.cost_ns);
+                    arrival = std::max(arrival, result.eta.at(arc.source) + cost(arc, costs));
             if (event.event == G::Event::FINISH) arrival = std::max(arrival, now + 1);
             result.eta[event] = arrival;
         }
         return result;
+    }
+    std::map<Key, long double> longestTails(const CommCosts& costs, const std::set<uint64_t>& dags) const {
+        std::map<Key, long double> tails;
+        for (auto it = _graph.eventOrder().rbegin(); it != _graph.eventOrder().rend(); ++it) {
+            if (!dags.count(it->dag_index)) continue;
+            auto& tail = tails[*it];
+            const auto outgoing = outputs.find(*it);
+            if (outgoing != outputs.end()) for (const auto& arc : outgoing->second)
+                tail = std::max(tail, cost(arc, &costs) + tails.at(arc.target));
+        }
+        return tails;
     }
     std::map<Key, std::vector<G::EventArc>> inputs, outputs;
     std::map<Flow, Key> finishes;
     std::map<uint64_t, std::vector<Key>> terminals;
     std::map<Key, long double> nominal_tail;
 private:
+    static long double cost(const G::EventArc& arc, const CommCosts* costs) {
+        if (costs && arc.source.node_index == arc.target.node_index &&
+            arc.source.event == G::Event::START && arc.target.event == G::Event::FINISH) {
+            const auto found = costs->find(arc.source);
+            if (found != costs->end()) return found->second;
+        }
+        return arc.cost_ns;
+    }
     const G& _graph;
 };
 
@@ -237,13 +259,28 @@ private:
 
 class GlobalSlackPriority final : public RoutingPriorityStrategy {
 public:
-    explicit GlobalSlackPriority(const G& graph) : _timing(graph) {}
+    explicit GlobalSlackPriority(const G& graph, std::shared_ptr<const OnlineFctPredictor> predictor = nullptr)
+        : _timing(graph), _predictor(std::move(predictor)) {}
     bool usesProgress() const override { return true; }
     Estimates evaluate(const GraExecutionProgress& progress, uint64_t now_ns,
         const std::map<MessageletKey, RoutingDemandPolicy::Ready>& pending) const override {
         Estimates result;
         if (pending.empty()) return result;
-        const auto prediction = _timing.predict(progress, now_ns, pending);
+        EventTimeEstimator::CommCosts costs;
+        std::map<Flow, OnlineFctPredictor::Prediction> fcts;
+        if (_predictor) {
+            std::set<uint64_t> dags;
+            for (const auto& item : pending) dags.insert(item.first.dag_id);
+            // Include blocked/downstream flows, not just local READY demands.
+            for (const auto& item : _timing.finishes) {
+                if (!dags.count(item.first.first)) continue;
+                const auto fct = _predictor->predict(item.first, now_ns);
+                fcts.emplace(item.first, fct);
+                costs.emplace(Key{item.second.dag_index, item.second.node_index, G::Event::START}, fct.fct_ns);
+            }
+        }
+        const auto prediction = _timing.predict(progress, now_ns, pending, _predictor ? &costs : nullptr);
+        const auto dynamic_tails = _predictor ? _timing.longestTails(costs, prediction.dags) : std::map<Key, long double>{};
         std::map<uint64_t, std::pair<long double, Key>> ends;
         for (auto dag : prediction.dags) {
             const auto& terminals = _timing.terminals.at(dag);
@@ -256,21 +293,30 @@ public:
             const auto& key = item.first;
             const auto finish = _timing.finishes.at({key.dag_id, key.flow_id});
             Estimate estimate;
-            estimate.strategy = "global_slack";
+            estimate.strategy = _predictor ? "global_slack_online" : "global_slack";
             estimate.scope = "global";
             estimate.frontier_events = prediction.frontier_counts.at(key.dag_id);
             estimate.finish_at_frontier = prediction.frontier.count(finish) != 0;
+            if (_predictor) {
+                const auto& fct = fcts.at({key.dag_id, key.flow_id});
+                estimate.collective_id = fct.collective_id;
+                estimate.prediction_time_ns = now_ns;
+                estimate.predicted_fct_ns = fct.fct_ns;
+                estimate.fct_sample_count = fct.sample_count;
+                estimate.nominal_fallback = fct.nominal_fallback;
+                estimate.dynamic_tail_ns = dynamic_tails.at(finish);
+            }
             if (progress.eventTime(finish)) {
                 estimate.scope = "completed";
                 result.emplace(key, estimate);
                 continue;
             }
             const auto finish_time = prediction.eta.at(finish);
-            const auto tail = _timing.nominal_tail.at(finish);
+            const auto tail = _predictor ? dynamic_tails.at(finish) : _timing.nominal_tail.at(finish);
             const auto end_time = ends.at(key.dag_id).first;
             const auto slack = end_time - (finish_time + tail);
             estimate.estimated_finish_time_ns = finish_time;
-            estimate.nominal_tail_ns = tail;
+            estimate.nominal_tail_ns = _timing.nominal_tail.at(finish);
             estimate.estimated_workload_end_ns = end_time;
             estimate.global_end_node_index = ends.at(key.dag_id).second.node_index;
             estimate.global_slack_ns = slack;
@@ -286,11 +332,15 @@ public:
     }
 private:
     EventTimeEstimator _timing;
+    std::shared_ptr<const OnlineFctPredictor> _predictor;
 };
 }
 
-std::unique_ptr<RoutingPriorityStrategy> makeRoutingPriorityStrategy(const std::string& strategy, const G& graph) {
+std::unique_ptr<RoutingPriorityStrategy> makeRoutingPriorityStrategy(const std::string& strategy, const G& graph,
+    std::shared_ptr<const OnlineFctPredictor> predictor) {
     if (strategy == "global_slack") return std::make_unique<GlobalSlackPriority>(graph);
+    if (strategy == "global_slack_online") return std::make_unique<GlobalSlackPriority>(graph,
+        predictor ? std::move(predictor) : std::make_shared<OnlineFctPredictor>(graph));
     if (strategy == "join_slack") return std::make_unique<JoinSlackPriority>(graph);
     if (strategy == "dag_downstream") return std::make_unique<DownstreamPriority>(graph);
     throw std::invalid_argument("Unsupported routing priority '" + strategy + "'");

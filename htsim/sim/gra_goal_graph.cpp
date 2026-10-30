@@ -65,7 +65,7 @@ GraGoalGraph buildGraGoalGraph(const Parser& parser, uint64_t dag_index,
             if (!logical.emplace(task, GraStaticGraph::TaskBinding{index, GraStaticGraph::Event::START}).second ||
                 !logical.emplace(recv, GraStaticGraph::TaskBinding{index, GraStaticGraph::Event::RECEIVE_START}).second)
                 throw std::invalid_argument("GRA communication endpoint belongs to multiple flows");
-            result.dag.nodes.push_back({GraStaticGraph::Type::COMM, entry.flow_id, node.Size, {}});
+            result.dag.nodes.push_back({GraStaticGraph::Type::COMM, entry.flow_id, node.Size, {}, entry.collective_id});
             result.identities.sends.emplace(task, std::move(entry));
         }
     }

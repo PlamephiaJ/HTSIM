@@ -189,21 +189,23 @@ void GroupRoutingAgent::routeDecided(Messagelet m) { removeDemand(m, "routed"); 
 void GroupRoutingAgent::tracePreferences(const char* reason, std::optional<Messagelet> trigger,
     const std::map<Messagelet, std::optional<Corridor>>& preferences) {
     ++_demand_snapshot_id;
-    auto* metric = htsim::DataCollector::get_instance().RegisterCsvMetric("gra_pending_preferences",
-        {"time_ps", "group", "version", "snapshot_id", "refresh_reason", "trigger_dag_id", "trigger_flow_id",
+    const std::vector<std::string> columns{
+         "time_ps", "group", "version", "snapshot_id", "refresh_reason", "trigger_dag_id", "trigger_flow_id",
          "trigger_messagelet_index", "pending_count", "dag_id", "flow_id", "messagelet_index", "src_host",
          "dst_host", "payload_bytes", "priority", "preferred_egress_switch", "preferred_remote_switch",
          "claim_status", "claim_dag_id", "claim_flow_id", "claim_messagelet_index", "claim_priority",
          "claim_payload_bytes", "priority_strategy", "priority_scope", "priority_join_id", "priority_branch_id",
          "estimated_remaining_ns", "peer_remaining_ns", "slack_ns", "relative_slack", "frontier_events", "finish_at_frontier",
-         "estimated_finish_time_ns", "nominal_tail_ns", "estimated_workload_end_ns", "global_slack_ns", "global_end_node_index"});
+         "estimated_finish_time_ns", "nominal_tail_ns", "estimated_workload_end_ns", "global_slack_ns", "global_end_node_index",
+         "collective_id", "prediction_time_ns", "predicted_fct_ns", "fct_sample_count", "nominal_fallback", "dynamic_tail_ns"};
+    auto* metric = htsim::DataCollector::get_instance().RegisterCsvMetric("gra_pending_preferences", columns);
     const std::vector<std::string> prefix{std::to_string(EventList::getTheEventList().now()),
         std::to_string(_group), std::to_string(_version), std::to_string(_demand_snapshot_id), reason,
         trigger ? std::to_string(trigger->dag_id) : "", trigger ? std::to_string(trigger->flow_id) : "",
         trigger ? std::to_string(trigger->messagelet_idx) : "", std::to_string(_demand_policy->pending().size())};
     if (_demand_policy->pending().empty()) {
         auto row = prefix;
-        row.resize(39);
+        row.resize(columns.size());
         row[18] = "empty";
         metric->LogData(row);
     }
@@ -242,10 +244,15 @@ void GroupRoutingAgent::tracePreferences(const char* reason, std::optional<Messa
                 std::to_string(value.frontier_events), value.finish_at_frontier ? "true" : "false",
                 number(value.estimated_finish_time_ns), number(value.nominal_tail_ns),
                 number(value.estimated_workload_end_ns), number(value.global_slack_ns),
-                value.global_end_node_index ? std::to_string(*value.global_end_node_index) : ""};
+                value.global_end_node_index ? std::to_string(*value.global_end_node_index) : "",
+                value.collective_id ? std::to_string(*value.collective_id) : "",
+                value.prediction_time_ns ? std::to_string(*value.prediction_time_ns) : "",
+                number(value.predicted_fct_ns), value.fct_sample_count ? std::to_string(*value.fct_sample_count) : "",
+                value.nominal_fallback ? (*value.nominal_fallback ? "true" : "false") : "",
+                number(value.dynamic_tail_ns)};
             row.insert(row.end(), diagnostic.begin(), diagnostic.end());
         } else {
-            row.resize(39);
+            row.resize(columns.size());
             row[24] = "dag_downstream"; // legacy C++ adapter without a strategy
             row[25] = "static";
         }

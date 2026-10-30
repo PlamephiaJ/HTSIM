@@ -523,7 +523,7 @@ Build and validate:
 
 ```bash
 cmake -S htsim/sim -B htsim/sim/build -DENABLE_NETWORK_DECISION_TESTS=ON
-cmake --build htsim/sim/build --target htsim_uec_df network_decision_test soft_claim_test routing_priority_test gra_static_graph_test gra_execution_progress_test -j 4
+cmake --build htsim/sim/build --target htsim_uec_df network_decision_test soft_claim_test routing_priority_test online_fct_predictor_test gra_static_graph_test gra_execution_progress_test -j 4
 ctest --test-dir htsim/sim/build --output-on-failure
 python3 -m unittest discover -s tests -p test_entry_switch_routing.py -v
 python3 -m unittest discover -s tests -p test_gra_start_dependencies.py -v
@@ -616,6 +616,62 @@ comparison between independent DAGs dimensionless. Equal scores have equal
 ordinal priority, with no raw-D tie break. Confirmed-complete communications
 retain rank zero and do not compete. The final-completion scope remains the
 whole configured DAG; no finer collective boundaries are available in this graph.
+
+#### Collective-conditioned online FCT (`priority: "global_slack_online"`)
+
+Select `global_slack_online` to replace COMM transfer durations with an online
+prediction while retaining Global Slack's ranking and the existing routing
+mechanisms. A complete configuration is
+`sim/datacenter/messagelet_configs/soft_claim_online.json`. Run with
+`-routing ENTRY_SWITCH -messagelet_config /path/to/soft_claim_online.json`.
+The adjacent `workload.meta.json` must supply `collective_id` for **every** flow;
+missing identities cause an explicit startup error. Flow identities and collective
+IDs pass from metadata through `FlowRoutingConfig` and `GraGoalGraph` into the
+static graph; collective membership is never inferred from ranks or Flow IDs.
+
+`OnlineFctPredictor` maintains at most eight completed network FCT samples per
+`(dag_id, collective_id)` and predicts their arithmetic mean. An empty window
+falls back to that COMM's original `ceil(bytes * 8 * 1e9 / bandwidth_bps)` cost.
+This V0 averages durations directly and is intended for workloads with equal
+communication sizes within each collective; it does not normalize by bytes.
+
+UEC's two Flow completion branches call `reportFlowCompletion()`, which keeps
+the existing `logFlowCompletionMetric()` and separately passes `_flow_start_time`
+and the current completion time to
+`MessageletRuntime::reportNetworkFlowCompletion()`. The runtime maps the UEC
+source to its registered DAG Flow ID, records the observation once, and refreshes
+all GRA claims. A single runtime-owned predictor is shared read-only by priority
+evaluations. Its per-flow completion set prevents duplicate samples; it never
+learns from messagelet completion or GOAL's matched SEND/RECV FINISH. FCT is
+converted from the ps duration to fractional ns. Observation visibility uses the
+estimator's integer-ns clock and begins only after the completion callback runs.
+There is no modeled dissemination delay, matching existing host progress sharing.
+
+Each online evaluation takes one COMM cost snapshot for the entire participating
+DAG, including blocked, remote and non-READY communications. Both forward ETAs
+and full backward longest tails use that snapshot. Only COMM's SEND START to
+FINISH edge changes; its RECV START to FINISH edge remains zero. COMP and
+dependency edges retain their original costs. Confirmed event timestamps,
+elapsed-time handling and the one-ns residual for overdue unconfirmed FINISH
+remain unchanged. Thus completion still waits for both predicted network
+transfer and RECV readiness. Tail propagation crosses every downstream Join.
+The original `global_slack`, `join_slack` and `dag_downstream` strategies do not
+read or train the predictor.
+
+With `logging.trace_decisions: true`, `gra_pending_preferences.csv` adds
+`collective_id`, `prediction_time_ns`, `predicted_fct_ns`, `fct_sample_count`,
+`nominal_fallback` and `dynamic_tail_ns`. Existing ETA, workload end, slack and
+priority columns remain available. `nominal_tail_ns` always denotes the original
+static tail; the online slack equation uses `dynamic_tail_ns` instead.
+`refresh_reason: fct_completion` identifies refreshes caused by new samples.
+
+`online_fct_predictor_test` checks cold-start equivalence, the eight-sample
+window, duplicate/future rejection, collective/DAG isolation, RECV gating and
+dynamic tails across nested Joins. Run the integration checks with
+`python3 -m unittest discover -s tests -p test_online_fct_predictor.py -v`
+from the repository root. They run the existing 60-flow collective workload,
+reconstruct predictions from UEC FCT logs, check fallback and dynamic tails,
+and verify that delayed GOAL RECV readiness does not enter network FCT history.
 
 #### Nearest-Join slack (`priority: "join_slack"`)
 

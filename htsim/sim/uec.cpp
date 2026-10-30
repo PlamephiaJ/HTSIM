@@ -873,6 +873,14 @@ void UecSrc::logFlowCompletionMetric() {
     });
 }
 
+void UecSrc::reportFlowCompletion() {
+    logFlowCompletionMetric();
+    // Online observations come from transport completion, independently of
+    // metric export and GOAL's later matched SEND/RECV FINISH notification.
+    if (_messagelet_runtime)
+        _messagelet_runtime->reportNetworkFlowCompletion(*this, _flow_start_time, eventlist().now());
+}
+
 bool UecSrc::checkFinished(UecDataPacket::seq_t cum_ack) {
 
     if (_done_sending) {
@@ -901,7 +909,7 @@ bool UecSrc::checkFinished(UecDataPacket::seq_t cum_ack) {
                         << " nack_dec -" << _nscc_overall_stats.dec_nack_bytes 
                         << endl;
                 }
-                logFlowCompletionMetric();
+                reportFlowCompletion();
                 cancelRTO();
                 _done_sending = true;
 
@@ -939,7 +947,7 @@ bool UecSrc::checkFinished(UecDataPacket::seq_t cum_ack) {
                         << " nack_dec -" << _nscc_overall_stats.dec_nack_bytes 
                         << endl;
                 }
-                logFlowCompletionMetric();
+                reportFlowCompletion();
                 _speculating = false;
                 if (_end_trigger) {
                     _end_trigger->activate();

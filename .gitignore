@@ -15,6 +15,7 @@ idmap.txt
 *.png
 !example_validate.json
 !htsim/sim/datacenter/messagelet_configs/soft_claim.json
+!htsim/sim/datacenter/messagelet_configs/soft_claim_online.json
 build/
 *.bin
 *:Zone.Identifier
