@@ -630,8 +630,12 @@ IDs pass from metadata through `FlowRoutingConfig` and `GraGoalGraph` into the
 static graph; collective membership is never inferred from ranks or Flow IDs.
 
 `OnlineFctPredictor` maintains at most eight completed network FCT samples per
-`(dag_id, collective_id)` and predicts their arithmetic mean. An empty window
-falls back to that COMM's original `ceil(bytes * 8 * 1e9 / bandwidth_bps)` cost.
+`(dag_id, collective_id)` and predicts their arithmetic mean for network flows
+whose completion has not yet been observed. An empty window falls back to that
+COMM's original `ceil(bytes * 8 * 1e9 / bandwidth_bps)` cost. Once a flow's network
+completion is visible, its own actual FCT takes precedence, even while GOAL FINISH
+is waiting for RECV readiness. Per-flow actual FCTs are retained independently of
+collective window eviction and never used before their observation is visible.
 This V0 averages durations directly and is intended for workloads with equal
 communication sizes within each collective; it does not normalize by bytes.
 
@@ -641,7 +645,7 @@ and the current completion time to
 `MessageletRuntime::reportNetworkFlowCompletion()`. The runtime maps the UEC
 source to its registered DAG Flow ID, records the observation once, and refreshes
 all GRA claims. A single runtime-owned predictor is shared read-only by priority
-evaluations. Its per-flow completion set prevents duplicate samples; it never
+evaluations. Its per-flow completion map prevents duplicate samples; it never
 learns from messagelet completion or GOAL's matched SEND/RECV FINISH. FCT is
 converted from the ps duration to fractional ns. Observation visibility uses the
 estimator's integer-ns clock and begins only after the completion callback runs.
@@ -660,7 +664,10 @@ read or train the predictor.
 
 With `logging.trace_decisions: true`, `gra_pending_preferences.csv` adds
 `collective_id`, `prediction_time_ns`, `predicted_fct_ns`, `fct_sample_count`,
-`nominal_fallback` and `dynamic_tail_ns`. Existing ETA, workload end, slack and
+`nominal_fallback` and `dynamic_tail_ns`. `predicted_fct_ns` contains the actual
+FCT when the flow's own completion is visible; `fct_sample_count` still counts
+the visible collective window, and `nominal_fallback` is false in that case.
+Existing ETA, workload end, slack and
 priority columns remain available. `nominal_tail_ns` always denotes the original
 static tail; the online slack equation uses `dynamic_tail_ns` instead.
 `refresh_reason: fct_completion` identifies refreshes caused by new samples.

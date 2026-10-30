@@ -68,6 +68,72 @@ void checkWindowIsolationAndVisibility() {
     assert(independent.predict({0, 10}, 200).nominal_fallback); // no simulation state leak
 }
 
+void checkOwnFctVisibilityAndRetention() {
+    G::Dag dag{0, {}};
+    for (uint64_t id = 0; id < 11; ++id) dag.nodes.push_back({Type::COMM, id, 10, {}, 0});
+    auto graph = G::build({dag}, bps);
+    OnlineFctPredictor predictor(*graph);
+    assert(predictor.observeCompletion({0, 0}, 0, 16000, 16000));
+    assert(predictor.observeCompletion({0, 1}, 12000, 20000, 20000));
+    // Before its own completion is visible, only the earlier peer is known.
+    assert(predictor.predict({0, 1}, 19).fct_ns == 16);
+    assert(predictor.predict({0, 1}, 19).sample_count == 1);
+    const auto actual = predictor.predict({0, 1}, 20);
+    assert(actual.fct_ns == 8 && actual.sample_count == 2 && !actual.nominal_fallback);
+    assert(predictor.predict({0, 10}, 20).fct_ns == 12); // unfinished peer still uses mean
+    assert(!predictor.observeCompletion({0, 1}, 0, 30000, 30000));
+    assert(predictor.predict({0, 1}, 30).fct_ns == 8); // duplicate cannot overwrite actual
+    assert(predictor.predict({0, 10}, 30).fct_ns == 12); // or add another sample
+    for (uint64_t id = 2; id < 10; ++id) {
+        const uint64_t end_ps = (100 + id) * 1000;
+        assert(predictor.observeCompletion({0, id}, 80000, end_ps, end_ps));
+    }
+    // Both early observations have left the eight-sample collective window.
+    const auto retained = predictor.predict({0, 1}, 110);
+    assert(retained.fct_ns == 8 && retained.sample_count == 8 && !retained.nominal_fallback);
+    assert(predictor.predict({0, 0}, 110).fct_ns == 16);
+    assert(predictor.predict({0, 10}, 110).fct_ns == 25.5L);
+    assert(!predictor.observeCompletion({0, 1}, 0, 110000, 110000));
+    assert(predictor.predict({0, 10}, 110).fct_ns == 25.5L);
+}
+
+void checkKnownNetworkFctUpdatesGatedFinish() {
+    G::Dag dag{0, {{Type::COMM, 10, 10, {3}, 0}, {Type::COMP, 0, 30, {}},
+        {Type::COMM, 20, 10, {}, 0}, {Type::COMP, 0, 5, {}},
+        {Type::COMP, 0, 100, {}}, {Type::COMM, 30, 10, {}, 0}},
+        {{1, 0, Event::FINISH, Event::RECEIVE_START}}};
+    bind(dag);
+    const auto graph = G::build({dag}, bps);
+    GraExecutionProgress progress(graph);
+    progress.receive({0, 0, 0, GraTaskEvent::START, 1, 20});
+    progress.receive({0, 1, 0, GraTaskEvent::START, 1, 0});
+    progress.receive({0, 2, 0, GraTaskEvent::START, 1, 0});
+    progress.receive({0, 102, 0, GraTaskEvent::START, 1, 0});
+    progress.receive({0, 2, 0, GraTaskEvent::FINISH, 2, 16});
+    progress.receive({0, 4, 0, GraTaskEvent::START, 1, 0});
+    auto predictor = std::make_shared<OnlineFctPredictor>(*graph);
+    auto strategy = makeRoutingPriorityStrategy("global_slack_online", *graph, predictor);
+    assert(predictor->observeCompletion({0, 20}, 0, 16000, 16000));
+    const auto demands = pending({{0, 10, 0}, {0, 30, 0}});
+    const auto before = strategy->evaluate(progress, 28, demands);
+    assert(before.at({0, 10, 0}).estimated_finish_time_ns == 36);
+    assert(before.at({0, 10, 0}).global_slack_ns == 59);
+    assert(predictor->observeCompletion({0, 10}, 20000, 28000, 28000));
+    const auto confirmed = progress.confirmedEvents();
+    const auto after = strategy->evaluate(progress, 28, demands);
+    const auto& own = after.at({0, 10, 0});
+    assert(own.predicted_fct_ns == 8 && own.fct_sample_count == 2);
+    assert(own.estimated_finish_time_ns == 30); // max(20 + actual 8, RECV readiness 30)
+    assert(own.dynamic_tail_ns == 5 && own.estimated_workload_end_ns == 100);
+    assert(own.global_slack_ns == 65);
+    assert(after.at({0, 30, 0}).predicted_fct_ns == 12); // collective mean remains available
+    assert(after.at({0, 30, 0}).estimated_finish_time_ns == 40);
+    assert(!progress.eventTime({0, 0, Event::FINISH}));
+    assert(progress.confirmedEvents() == confirmed);
+    const auto overdue = strategy->evaluate(progress, 40, demands).at({0, 10, 0});
+    assert(overdue.predicted_fct_ns == 8 && overdue.estimated_finish_time_ns == 41);
+}
+
 void checkColdStartAndDynamicTail() {
     // A -> intermediate Join -> C -> D -> final Join; B -> final Join. C/D are never READY
     // in this test. A initially has 40 ns slack; training C/D makes A limiting.
@@ -160,15 +226,15 @@ void checkReceiveGateAndStartDependencies() {
     assert(predictor->observeCompletion({0, 10}, 0, 30000, 30000));
     assert(!progress.eventTime({0, 0, Event::FINISH}));
     const auto gated = strategy->evaluate(progress, 30, demands).at({0, 10, 0});
-    assert(gated.predicted_fct_ns == 25 && gated.estimated_finish_time_ns == 100);
+    assert(gated.predicted_fct_ns == 30 && gated.estimated_finish_time_ns == 100);
     assert(gated.fct_sample_count == 2); // RECV wait is not a third sample
     progress.receive({0, 100, 0, GraTaskEvent::START, 1, 200});
     const auto waiting = strategy->evaluate(progress, 200, demands).at({0, 10, 0});
     assert(waiting.estimated_finish_time_ns == 201); // no artificial FINISH
-    assert(waiting.fct_sample_count == 2 && waiting.predicted_fct_ns == 25);
+    assert(waiting.fct_sample_count == 2 && waiting.predicted_fct_ns == 30);
     progress.receive({0, 0, 0, GraTaskEvent::FINISH, 2, 220});
     assert(strategy->evaluate(progress, 220, demands).at({0, 10, 0}).scope == "completed");
-    assert(predictor->predict({0, 10}, 220).fct_ns == 25); // GOAL FINISH does not train
+    assert(predictor->predict({0, 10}, 220).fct_ns == 30); // GOAL FINISH does not train
 }
 
 void checkMissingMetadata() {
@@ -180,6 +246,8 @@ void checkMissingMetadata() {
 
 int main() {
     checkWindowIsolationAndVisibility();
+    checkOwnFctVisibilityAndRetention();
+    checkKnownNetworkFctUpdatesGatedFinish();
     checkColdStartAndDynamicTail();
     checkReceiveGateAndStartDependencies();
     checkMissingMetadata();

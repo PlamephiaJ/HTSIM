@@ -21,11 +21,12 @@ bool OnlineFctPredictor::observeCompletion(Flow flow, uint64_t start_ps, uint64_
     const auto& info = _flows.at(flow);
     if (end_ps < start_ps || end_ps > now_ps)
         throw std::invalid_argument("Online FCT observation must be a completed network flow visible now");
-    if (!_completed.insert(flow).second) return false;
-    auto& samples = _history[{flow.first, info.collective_id}];
     // Convert the duration, not separately rounded start/end timestamps.
     // Visibility uses the estimator's integer-ns clock; sub-ns FCT is retained.
-    samples.push_back({now_ps / 1000, static_cast<long double>(end_ps - start_ps) / 1000.0L});
+    const Sample sample{now_ps / 1000, static_cast<long double>(end_ps - start_ps) / 1000.0L};
+    if (!_completed.emplace(flow, sample).second) return false;
+    auto& samples = _history[{flow.first, info.collective_id}];
+    samples.push_back(sample);
     if (samples.size() > window_size) samples.pop_front();
     return true;
 }
@@ -40,5 +41,8 @@ OnlineFctPredictor::Prediction OnlineFctPredictor::predict(Flow flow, uint64_t n
         sum += sample.fct_ns;
         ++count;
     }
+    const auto completed = _completed.find(flow);
+    if (completed != _completed.end() && completed->second.visible_ns <= now_ns)
+        return {info.collective_id, completed->second.fct_ns, count, false};
     return {info.collective_id, count ? sum / count : static_cast<long double>(info.nominal_ns), count, count == 0};
 }

@@ -74,10 +74,12 @@ class OnlineFctPredictorTests(unittest.TestCase):
         history = defaultdict(list)
         for row in network:  # CSV preserves completion callback order, including time ties.
             src, dst, transport = row["srcNode_dstNode_flowId"].split("_")
-            flow = flows[transport_to_dag[transport]]
+            flow_id = transport_to_dag[transport]
+            flow = flows[flow_id]
             self.assertEqual(int(src), (flow["src"] // 2) * 8 + flow["src"] % 2)
             self.assertEqual(int(dst), (flow["dst"] // 2) * 8 + flow["dst"] % 2)
-            history[flow["collective_id"]].append((round(float(row["endTimeNs"]) * 1000), float(row["fctNs"])))
+            history[flow["collective_id"]].append(
+                (round(float(row["endTimeNs"]) * 1000), float(row["fctNs"]), flow_id))
 
         rows = [row for row in read_csv(run, "gra_pending_preferences") if row["flow_id"]]
         self.assertTrue(rows)
@@ -95,8 +97,8 @@ class OnlineFctPredictorTests(unittest.TestCase):
             now_ps = int(row["time_ps"])
             self.assertEqual(int(row["prediction_time_ns"]), now_ps // 1000)
             samples = history[flow["collective_id"]]
-            earlier = sum(end < now_ps for end, _ in samples)
-            visible = sum(end <= now_ps for end, _ in samples)
+            earlier = sum(end < now_ps for end, _, _ in samples)
+            visible = sum(end <= now_ps for end, _, _ in samples)
             count = int(row["fct_sample_count"])
             predicted = float(row["predicted_fct_ns"])
             # Several callbacks may share a timestamp; the log row must match
@@ -106,8 +108,13 @@ class OnlineFctPredictorTests(unittest.TestCase):
                 window = samples[max(0, prefix - 8):prefix]
                 if len(window) != count:
                     continue
-                candidates.append(sum(fct for _, fct in window) / len(window) if window
-                                  else math.ceil(flow["bytes"] * 8 / speed))
+                own_fct = next((fct for _, fct, completed_id in samples[:prefix]
+                                if completed_id == row["flow_id"]), None)
+                if own_fct is not None:
+                    candidates.append(own_fct)
+                else:
+                    candidates.append(sum(fct for _, fct, _ in window) / len(window) if window
+                                      else math.ceil(flow["bytes"] * 8 / speed))
             self.assertTrue(any(abs(predicted - candidate) < 1e-6 for candidate in candidates), row)
             self.assertEqual(row["nominal_fallback"], "true" if count == 0 else "false")
             if row["priority_scope"] != "completed":
