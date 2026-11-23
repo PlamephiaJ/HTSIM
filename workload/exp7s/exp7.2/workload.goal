@@ -1,0 +1,5505 @@
+num_ranks 12
+
+rank 0 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: calc 0 cpu 0
+l3: send 65536b to 1 tag 0 cpu 0 nic 0
+l4: recv 65536b from 3 tag 0 cpu 0 nic 0
+l5: send 65536b to 1 tag 100000 cpu 0 nic 0
+l6: recv 65536b from 3 tag 100000 cpu 0 nic 0
+l7: send 65536b to 1 tag 200000 cpu 0 nic 0
+l8: recv 65536b from 3 tag 200000 cpu 0 nic 0
+l9: send 65536b to 1 tag 300000 cpu 0 nic 0
+l10: recv 65536b from 3 tag 300000 cpu 0 nic 0
+l11: send 65536b to 1 tag 400000 cpu 0 nic 0
+l12: recv 65536b from 3 tag 400000 cpu 0 nic 0
+l13: send 65536b to 1 tag 500000 cpu 0 nic 0
+l14: recv 65536b from 3 tag 500000 cpu 0 nic 0
+l15: calc 0 cpu 0
+l16: calc 0 cpu 0
+l17: calc 0 cpu 0
+l18: calc 0 cpu 0
+l19: calc 0 cpu 0
+l20: calc 0 cpu 0
+l21: calc 0 cpu 0
+l22: calc 0 cpu 0
+l23: calc 0 cpu 0
+l24: send 65536b to 1 tag 3 cpu 0 nic 0
+l25: recv 65536b from 3 tag 3 cpu 0 nic 0
+l26: send 65536b to 1 tag 100003 cpu 0 nic 0
+l27: recv 65536b from 3 tag 100003 cpu 0 nic 0
+l28: send 65536b to 1 tag 200003 cpu 0 nic 0
+l29: recv 65536b from 3 tag 200003 cpu 0 nic 0
+l30: send 65536b to 1 tag 300003 cpu 0 nic 0
+l31: recv 65536b from 3 tag 300003 cpu 0 nic 0
+l32: send 65536b to 1 tag 400003 cpu 0 nic 0
+l33: recv 65536b from 3 tag 400003 cpu 0 nic 0
+l34: send 65536b to 1 tag 500003 cpu 0 nic 0
+l35: recv 65536b from 3 tag 500003 cpu 0 nic 0
+l36: calc 0 cpu 0
+l37: calc 0 cpu 0
+l38: calc 0 cpu 0
+l39: calc 0 cpu 0
+l40: calc 0 cpu 0
+l41: calc 0 cpu 0
+l42: calc 0 cpu 0
+l43: calc 0 cpu 0
+l44: calc 0 cpu 0
+l45: send 65536b to 1 tag 6 cpu 0 nic 0
+l46: recv 65536b from 3 tag 6 cpu 0 nic 0
+l47: send 65536b to 1 tag 100006 cpu 0 nic 0
+l48: recv 65536b from 3 tag 100006 cpu 0 nic 0
+l49: send 65536b to 1 tag 200006 cpu 0 nic 0
+l50: recv 65536b from 3 tag 200006 cpu 0 nic 0
+l51: send 65536b to 1 tag 300006 cpu 0 nic 0
+l52: recv 65536b from 3 tag 300006 cpu 0 nic 0
+l53: send 65536b to 1 tag 400006 cpu 0 nic 0
+l54: recv 65536b from 3 tag 400006 cpu 0 nic 0
+l55: send 65536b to 1 tag 500006 cpu 0 nic 0
+l56: recv 65536b from 3 tag 500006 cpu 0 nic 0
+l57: calc 0 cpu 0
+l58: calc 0 cpu 0
+l59: calc 0 cpu 0
+l60: calc 0 cpu 0
+l61: calc 0 cpu 0
+l62: calc 0 cpu 0
+l63: calc 0 cpu 0
+l64: calc 0 cpu 0
+l65: calc 0 cpu 0
+l66: send 65536b to 1 tag 9 cpu 0 nic 0
+l67: recv 65536b from 3 tag 9 cpu 0 nic 0
+l68: send 65536b to 1 tag 100009 cpu 0 nic 0
+l69: recv 65536b from 3 tag 100009 cpu 0 nic 0
+l70: send 65536b to 1 tag 200009 cpu 0 nic 0
+l71: recv 65536b from 3 tag 200009 cpu 0 nic 0
+l72: send 65536b to 1 tag 300009 cpu 0 nic 0
+l73: recv 65536b from 3 tag 300009 cpu 0 nic 0
+l74: send 65536b to 1 tag 400009 cpu 0 nic 0
+l75: recv 65536b from 3 tag 400009 cpu 0 nic 0
+l76: send 65536b to 1 tag 500009 cpu 0 nic 0
+l77: recv 65536b from 3 tag 500009 cpu 0 nic 0
+l78: calc 0 cpu 0
+l79: calc 0 cpu 0
+l80: calc 0 cpu 0
+l81: calc 0 cpu 0
+l82: calc 0 cpu 0
+l83: calc 0 cpu 0
+l84: calc 0 cpu 0
+l85: calc 0 cpu 0
+l86: calc 0 cpu 0
+l87: send 65536b to 1 tag 12 cpu 0 nic 0
+l88: recv 65536b from 3 tag 12 cpu 0 nic 0
+l89: send 65536b to 1 tag 100012 cpu 0 nic 0
+l90: recv 65536b from 3 tag 100012 cpu 0 nic 0
+l91: send 65536b to 1 tag 200012 cpu 0 nic 0
+l92: recv 65536b from 3 tag 200012 cpu 0 nic 0
+l93: send 65536b to 1 tag 300012 cpu 0 nic 0
+l94: recv 65536b from 3 tag 300012 cpu 0 nic 0
+l95: send 65536b to 1 tag 400012 cpu 0 nic 0
+l96: recv 65536b from 3 tag 400012 cpu 0 nic 0
+l97: send 65536b to 1 tag 500012 cpu 0 nic 0
+l98: recv 65536b from 3 tag 500012 cpu 0 nic 0
+l99: calc 0 cpu 0
+l100: calc 0 cpu 0
+l101: calc 0 cpu 0
+l102: calc 0 cpu 0
+l103: calc 0 cpu 0
+l104: calc 0 cpu 0
+l105: calc 0 cpu 0
+l106: calc 0 cpu 0
+l107: calc 0 cpu 0
+l108: send 65536b to 1 tag 15 cpu 0 nic 0
+l109: recv 65536b from 3 tag 15 cpu 0 nic 0
+l110: send 65536b to 1 tag 100015 cpu 0 nic 0
+l111: recv 65536b from 3 tag 100015 cpu 0 nic 0
+l112: send 65536b to 1 tag 200015 cpu 0 nic 0
+l113: recv 65536b from 3 tag 200015 cpu 0 nic 0
+l114: send 65536b to 1 tag 300015 cpu 0 nic 0
+l115: recv 65536b from 3 tag 300015 cpu 0 nic 0
+l116: send 65536b to 1 tag 400015 cpu 0 nic 0
+l117: recv 65536b from 3 tag 400015 cpu 0 nic 0
+l118: send 65536b to 1 tag 500015 cpu 0 nic 0
+l119: recv 65536b from 3 tag 500015 cpu 0 nic 0
+l120: calc 0 cpu 0
+l121: calc 0 cpu 0
+l122: calc 0 cpu 0
+l123: calc 0 cpu 0
+l124: calc 0 cpu 0
+l125: calc 0 cpu 0
+l126: calc 0 cpu 0
+l127: calc 0 cpu 0
+l128: calc 0 cpu 0
+l129: send 65536b to 1 tag 18 cpu 0 nic 0
+l130: recv 65536b from 3 tag 18 cpu 0 nic 0
+l131: send 65536b to 1 tag 100018 cpu 0 nic 0
+l132: recv 65536b from 3 tag 100018 cpu 0 nic 0
+l133: send 65536b to 1 tag 200018 cpu 0 nic 0
+l134: recv 65536b from 3 tag 200018 cpu 0 nic 0
+l135: send 65536b to 1 tag 300018 cpu 0 nic 0
+l136: recv 65536b from 3 tag 300018 cpu 0 nic 0
+l137: send 65536b to 1 tag 400018 cpu 0 nic 0
+l138: recv 65536b from 3 tag 400018 cpu 0 nic 0
+l139: send 65536b to 1 tag 500018 cpu 0 nic 0
+l140: recv 65536b from 3 tag 500018 cpu 0 nic 0
+l141: calc 0 cpu 0
+l142: calc 0 cpu 0
+l143: calc 0 cpu 0
+l144: calc 0 cpu 0
+l145: calc 0 cpu 0
+l146: calc 0 cpu 0
+l147: calc 0 cpu 0
+l148: calc 0 cpu 0
+l149: calc 0 cpu 0
+l150: send 65536b to 1 tag 21 cpu 0 nic 0
+l151: recv 65536b from 3 tag 21 cpu 0 nic 0
+l152: send 65536b to 1 tag 100021 cpu 0 nic 0
+l153: recv 65536b from 3 tag 100021 cpu 0 nic 0
+l154: send 65536b to 1 tag 200021 cpu 0 nic 0
+l155: recv 65536b from 3 tag 200021 cpu 0 nic 0
+l156: send 65536b to 1 tag 300021 cpu 0 nic 0
+l157: recv 65536b from 3 tag 300021 cpu 0 nic 0
+l158: send 65536b to 1 tag 400021 cpu 0 nic 0
+l159: recv 65536b from 3 tag 400021 cpu 0 nic 0
+l160: send 65536b to 1 tag 500021 cpu 0 nic 0
+l161: recv 65536b from 3 tag 500021 cpu 0 nic 0
+l162: calc 0 cpu 0
+l163: calc 0 cpu 0
+l164: calc 0 cpu 0
+l165: calc 0 cpu 0
+l166: calc 0 cpu 0
+l167: calc 0 cpu 0
+l168: calc 0 cpu 0
+l169: calc 0 cpu 0
+l170: calc 0 cpu 0
+l171: send 65536b to 1 tag 24 cpu 0 nic 0
+l172: recv 65536b from 3 tag 24 cpu 0 nic 0
+l173: send 65536b to 1 tag 100024 cpu 0 nic 0
+l174: recv 65536b from 3 tag 100024 cpu 0 nic 0
+l175: send 65536b to 1 tag 200024 cpu 0 nic 0
+l176: recv 65536b from 3 tag 200024 cpu 0 nic 0
+l177: send 65536b to 1 tag 300024 cpu 0 nic 0
+l178: recv 65536b from 3 tag 300024 cpu 0 nic 0
+l179: send 65536b to 1 tag 400024 cpu 0 nic 0
+l180: recv 65536b from 3 tag 400024 cpu 0 nic 0
+l181: send 65536b to 1 tag 500024 cpu 0 nic 0
+l182: recv 65536b from 3 tag 500024 cpu 0 nic 0
+l183: calc 0 cpu 0
+l184: calc 0 cpu 0
+l185: calc 0 cpu 0
+l186: calc 0 cpu 0
+l187: calc 0 cpu 0
+l188: calc 0 cpu 0
+l189: calc 0 cpu 0
+l190: calc 0 cpu 0
+l191: calc 0 cpu 0
+l192: send 65536b to 1 tag 27 cpu 0 nic 0
+l193: recv 65536b from 3 tag 27 cpu 0 nic 0
+l194: send 65536b to 1 tag 100027 cpu 0 nic 0
+l195: recv 65536b from 3 tag 100027 cpu 0 nic 0
+l196: send 65536b to 1 tag 200027 cpu 0 nic 0
+l197: recv 65536b from 3 tag 200027 cpu 0 nic 0
+l198: send 65536b to 1 tag 300027 cpu 0 nic 0
+l199: recv 65536b from 3 tag 300027 cpu 0 nic 0
+l200: send 65536b to 1 tag 400027 cpu 0 nic 0
+l201: recv 65536b from 3 tag 400027 cpu 0 nic 0
+l202: send 65536b to 1 tag 500027 cpu 0 nic 0
+l203: recv 65536b from 3 tag 500027 cpu 0 nic 0
+l204: calc 0 cpu 0
+l205: calc 0 cpu 0
+l206: calc 0 cpu 0
+l207: calc 0 cpu 0
+l208: calc 0 cpu 0
+l209: calc 0 cpu 0
+l1 requires l0
+l2 requires l3
+l2 requires l4
+l2 requires l5
+l2 requires l6
+l2 requires l7
+l2 requires l8
+l2 requires l9
+l2 requires l10
+l2 requires l11
+l2 requires l12
+l2 requires l13
+l2 requires l14
+l2 requires l15
+l2 requires l16
+l2 requires l17
+l2 requires l18
+l2 requires l19
+l3 requires l1
+l4 requires l1
+l5 requires l15
+l6 requires l1
+l7 requires l16
+l8 requires l1
+l9 requires l17
+l10 requires l1
+l11 requires l18
+l12 requires l1
+l13 requires l19
+l14 requires l1
+l15 requires l4
+l16 requires l6
+l17 requires l8
+l18 requires l10
+l19 requires l12
+l20 requires l2
+l21 requires l20
+l22 requires l21
+l23 requires l24
+l23 requires l25
+l23 requires l26
+l23 requires l27
+l23 requires l28
+l23 requires l29
+l23 requires l30
+l23 requires l31
+l23 requires l32
+l23 requires l33
+l23 requires l34
+l23 requires l35
+l23 requires l36
+l23 requires l37
+l23 requires l38
+l23 requires l39
+l23 requires l40
+l24 requires l22
+l25 requires l22
+l26 requires l36
+l27 requires l22
+l28 requires l37
+l29 requires l22
+l30 requires l38
+l31 requires l22
+l32 requires l39
+l33 requires l22
+l34 requires l40
+l35 requires l22
+l36 requires l25
+l37 requires l27
+l38 requires l29
+l39 requires l31
+l40 requires l33
+l41 requires l23
+l42 requires l41
+l43 requires l42
+l44 requires l45
+l44 requires l46
+l44 requires l47
+l44 requires l48
+l44 requires l49
+l44 requires l50
+l44 requires l51
+l44 requires l52
+l44 requires l53
+l44 requires l54
+l44 requires l55
+l44 requires l56
+l44 requires l57
+l44 requires l58
+l44 requires l59
+l44 requires l60
+l44 requires l61
+l45 requires l43
+l46 requires l43
+l47 requires l57
+l48 requires l43
+l49 requires l58
+l50 requires l43
+l51 requires l59
+l52 requires l43
+l53 requires l60
+l54 requires l43
+l55 requires l61
+l56 requires l43
+l57 requires l46
+l58 requires l48
+l59 requires l50
+l60 requires l52
+l61 requires l54
+l62 requires l44
+l63 requires l62
+l64 requires l63
+l65 requires l66
+l65 requires l67
+l65 requires l68
+l65 requires l69
+l65 requires l70
+l65 requires l71
+l65 requires l72
+l65 requires l73
+l65 requires l74
+l65 requires l75
+l65 requires l76
+l65 requires l77
+l65 requires l78
+l65 requires l79
+l65 requires l80
+l65 requires l81
+l65 requires l82
+l66 requires l64
+l67 requires l64
+l68 requires l78
+l69 requires l64
+l70 requires l79
+l71 requires l64
+l72 requires l80
+l73 requires l64
+l74 requires l81
+l75 requires l64
+l76 requires l82
+l77 requires l64
+l78 requires l67
+l79 requires l69
+l80 requires l71
+l81 requires l73
+l82 requires l75
+l83 requires l65
+l84 requires l83
+l85 requires l84
+l86 requires l87
+l86 requires l88
+l86 requires l89
+l86 requires l90
+l86 requires l91
+l86 requires l92
+l86 requires l93
+l86 requires l94
+l86 requires l95
+l86 requires l96
+l86 requires l97
+l86 requires l98
+l86 requires l99
+l86 requires l100
+l86 requires l101
+l86 requires l102
+l86 requires l103
+l87 requires l85
+l88 requires l85
+l89 requires l99
+l90 requires l85
+l91 requires l100
+l92 requires l85
+l93 requires l101
+l94 requires l85
+l95 requires l102
+l96 requires l85
+l97 requires l103
+l98 requires l85
+l99 requires l88
+l100 requires l90
+l101 requires l92
+l102 requires l94
+l103 requires l96
+l104 requires l86
+l105 requires l104
+l106 requires l105
+l107 requires l108
+l107 requires l109
+l107 requires l110
+l107 requires l111
+l107 requires l112
+l107 requires l113
+l107 requires l114
+l107 requires l115
+l107 requires l116
+l107 requires l117
+l107 requires l118
+l107 requires l119
+l107 requires l120
+l107 requires l121
+l107 requires l122
+l107 requires l123
+l107 requires l124
+l108 requires l106
+l109 requires l106
+l110 requires l120
+l111 requires l106
+l112 requires l121
+l113 requires l106
+l114 requires l122
+l115 requires l106
+l116 requires l123
+l117 requires l106
+l118 requires l124
+l119 requires l106
+l120 requires l109
+l121 requires l111
+l122 requires l113
+l123 requires l115
+l124 requires l117
+l125 requires l107
+l126 requires l125
+l127 requires l126
+l128 requires l129
+l128 requires l130
+l128 requires l131
+l128 requires l132
+l128 requires l133
+l128 requires l134
+l128 requires l135
+l128 requires l136
+l128 requires l137
+l128 requires l138
+l128 requires l139
+l128 requires l140
+l128 requires l141
+l128 requires l142
+l128 requires l143
+l128 requires l144
+l128 requires l145
+l129 requires l127
+l130 requires l127
+l131 requires l141
+l132 requires l127
+l133 requires l142
+l134 requires l127
+l135 requires l143
+l136 requires l127
+l137 requires l144
+l138 requires l127
+l139 requires l145
+l140 requires l127
+l141 requires l130
+l142 requires l132
+l143 requires l134
+l144 requires l136
+l145 requires l138
+l146 requires l128
+l147 requires l146
+l148 requires l147
+l149 requires l150
+l149 requires l151
+l149 requires l152
+l149 requires l153
+l149 requires l154
+l149 requires l155
+l149 requires l156
+l149 requires l157
+l149 requires l158
+l149 requires l159
+l149 requires l160
+l149 requires l161
+l149 requires l162
+l149 requires l163
+l149 requires l164
+l149 requires l165
+l149 requires l166
+l150 requires l148
+l151 requires l148
+l152 requires l162
+l153 requires l148
+l154 requires l163
+l155 requires l148
+l156 requires l164
+l157 requires l148
+l158 requires l165
+l159 requires l148
+l160 requires l166
+l161 requires l148
+l162 requires l151
+l163 requires l153
+l164 requires l155
+l165 requires l157
+l166 requires l159
+l167 requires l149
+l168 requires l167
+l169 requires l168
+l170 requires l171
+l170 requires l172
+l170 requires l173
+l170 requires l174
+l170 requires l175
+l170 requires l176
+l170 requires l177
+l170 requires l178
+l170 requires l179
+l170 requires l180
+l170 requires l181
+l170 requires l182
+l170 requires l183
+l170 requires l184
+l170 requires l185
+l170 requires l186
+l170 requires l187
+l171 requires l169
+l172 requires l169
+l173 requires l183
+l174 requires l169
+l175 requires l184
+l176 requires l169
+l177 requires l185
+l178 requires l169
+l179 requires l186
+l180 requires l169
+l181 requires l187
+l182 requires l169
+l183 requires l172
+l184 requires l174
+l185 requires l176
+l186 requires l178
+l187 requires l180
+l188 requires l170
+l189 requires l188
+l190 requires l189
+l191 requires l192
+l191 requires l193
+l191 requires l194
+l191 requires l195
+l191 requires l196
+l191 requires l197
+l191 requires l198
+l191 requires l199
+l191 requires l200
+l191 requires l201
+l191 requires l202
+l191 requires l203
+l191 requires l204
+l191 requires l205
+l191 requires l206
+l191 requires l207
+l191 requires l208
+l192 requires l190
+l193 requires l190
+l194 requires l204
+l195 requires l190
+l196 requires l205
+l197 requires l190
+l198 requires l206
+l199 requires l190
+l200 requires l207
+l201 requires l190
+l202 requires l208
+l203 requires l190
+l204 requires l193
+l205 requires l195
+l206 requires l197
+l207 requires l199
+l208 requires l201
+l209 requires l191
+}
+
+rank 1 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: calc 0 cpu 0
+l3: recv 65536b from 0 tag 0 cpu 0 nic 0
+l4: send 65536b to 2 tag 0 cpu 0 nic 0
+l5: recv 65536b from 0 tag 100000 cpu 0 nic 0
+l6: send 65536b to 2 tag 100000 cpu 0 nic 0
+l7: recv 65536b from 0 tag 200000 cpu 0 nic 0
+l8: send 65536b to 2 tag 200000 cpu 0 nic 0
+l9: recv 65536b from 0 tag 300000 cpu 0 nic 0
+l10: send 65536b to 2 tag 300000 cpu 0 nic 0
+l11: recv 65536b from 0 tag 400000 cpu 0 nic 0
+l12: send 65536b to 2 tag 400000 cpu 0 nic 0
+l13: recv 65536b from 0 tag 500000 cpu 0 nic 0
+l14: send 65536b to 2 tag 500000 cpu 0 nic 0
+l15: calc 0 cpu 0
+l16: calc 0 cpu 0
+l17: calc 0 cpu 0
+l18: calc 0 cpu 0
+l19: calc 0 cpu 0
+l20: calc 0 cpu 0
+l21: calc 0 cpu 0
+l22: calc 0 cpu 0
+l23: calc 0 cpu 0
+l24: recv 65536b from 0 tag 3 cpu 0 nic 0
+l25: send 65536b to 2 tag 3 cpu 0 nic 0
+l26: recv 65536b from 0 tag 100003 cpu 0 nic 0
+l27: send 65536b to 2 tag 100003 cpu 0 nic 0
+l28: recv 65536b from 0 tag 200003 cpu 0 nic 0
+l29: send 65536b to 2 tag 200003 cpu 0 nic 0
+l30: recv 65536b from 0 tag 300003 cpu 0 nic 0
+l31: send 65536b to 2 tag 300003 cpu 0 nic 0
+l32: recv 65536b from 0 tag 400003 cpu 0 nic 0
+l33: send 65536b to 2 tag 400003 cpu 0 nic 0
+l34: recv 65536b from 0 tag 500003 cpu 0 nic 0
+l35: send 65536b to 2 tag 500003 cpu 0 nic 0
+l36: calc 0 cpu 0
+l37: calc 0 cpu 0
+l38: calc 0 cpu 0
+l39: calc 0 cpu 0
+l40: calc 0 cpu 0
+l41: calc 0 cpu 0
+l42: calc 0 cpu 0
+l43: calc 0 cpu 0
+l44: calc 0 cpu 0
+l45: recv 65536b from 0 tag 6 cpu 0 nic 0
+l46: send 65536b to 2 tag 6 cpu 0 nic 0
+l47: recv 65536b from 0 tag 100006 cpu 0 nic 0
+l48: send 65536b to 2 tag 100006 cpu 0 nic 0
+l49: recv 65536b from 0 tag 200006 cpu 0 nic 0
+l50: send 65536b to 2 tag 200006 cpu 0 nic 0
+l51: recv 65536b from 0 tag 300006 cpu 0 nic 0
+l52: send 65536b to 2 tag 300006 cpu 0 nic 0
+l53: recv 65536b from 0 tag 400006 cpu 0 nic 0
+l54: send 65536b to 2 tag 400006 cpu 0 nic 0
+l55: recv 65536b from 0 tag 500006 cpu 0 nic 0
+l56: send 65536b to 2 tag 500006 cpu 0 nic 0
+l57: calc 0 cpu 0
+l58: calc 0 cpu 0
+l59: calc 0 cpu 0
+l60: calc 0 cpu 0
+l61: calc 0 cpu 0
+l62: calc 0 cpu 0
+l63: calc 0 cpu 0
+l64: calc 0 cpu 0
+l65: calc 0 cpu 0
+l66: recv 65536b from 0 tag 9 cpu 0 nic 0
+l67: send 65536b to 2 tag 9 cpu 0 nic 0
+l68: recv 65536b from 0 tag 100009 cpu 0 nic 0
+l69: send 65536b to 2 tag 100009 cpu 0 nic 0
+l70: recv 65536b from 0 tag 200009 cpu 0 nic 0
+l71: send 65536b to 2 tag 200009 cpu 0 nic 0
+l72: recv 65536b from 0 tag 300009 cpu 0 nic 0
+l73: send 65536b to 2 tag 300009 cpu 0 nic 0
+l74: recv 65536b from 0 tag 400009 cpu 0 nic 0
+l75: send 65536b to 2 tag 400009 cpu 0 nic 0
+l76: recv 65536b from 0 tag 500009 cpu 0 nic 0
+l77: send 65536b to 2 tag 500009 cpu 0 nic 0
+l78: calc 0 cpu 0
+l79: calc 0 cpu 0
+l80: calc 0 cpu 0
+l81: calc 0 cpu 0
+l82: calc 0 cpu 0
+l83: calc 0 cpu 0
+l84: calc 0 cpu 0
+l85: calc 0 cpu 0
+l86: calc 0 cpu 0
+l87: recv 65536b from 0 tag 12 cpu 0 nic 0
+l88: send 65536b to 2 tag 12 cpu 0 nic 0
+l89: recv 65536b from 0 tag 100012 cpu 0 nic 0
+l90: send 65536b to 2 tag 100012 cpu 0 nic 0
+l91: recv 65536b from 0 tag 200012 cpu 0 nic 0
+l92: send 65536b to 2 tag 200012 cpu 0 nic 0
+l93: recv 65536b from 0 tag 300012 cpu 0 nic 0
+l94: send 65536b to 2 tag 300012 cpu 0 nic 0
+l95: recv 65536b from 0 tag 400012 cpu 0 nic 0
+l96: send 65536b to 2 tag 400012 cpu 0 nic 0
+l97: recv 65536b from 0 tag 500012 cpu 0 nic 0
+l98: send 65536b to 2 tag 500012 cpu 0 nic 0
+l99: calc 0 cpu 0
+l100: calc 0 cpu 0
+l101: calc 0 cpu 0
+l102: calc 0 cpu 0
+l103: calc 0 cpu 0
+l104: calc 0 cpu 0
+l105: calc 0 cpu 0
+l106: calc 0 cpu 0
+l107: calc 0 cpu 0
+l108: recv 65536b from 0 tag 15 cpu 0 nic 0
+l109: send 65536b to 2 tag 15 cpu 0 nic 0
+l110: recv 65536b from 0 tag 100015 cpu 0 nic 0
+l111: send 65536b to 2 tag 100015 cpu 0 nic 0
+l112: recv 65536b from 0 tag 200015 cpu 0 nic 0
+l113: send 65536b to 2 tag 200015 cpu 0 nic 0
+l114: recv 65536b from 0 tag 300015 cpu 0 nic 0
+l115: send 65536b to 2 tag 300015 cpu 0 nic 0
+l116: recv 65536b from 0 tag 400015 cpu 0 nic 0
+l117: send 65536b to 2 tag 400015 cpu 0 nic 0
+l118: recv 65536b from 0 tag 500015 cpu 0 nic 0
+l119: send 65536b to 2 tag 500015 cpu 0 nic 0
+l120: calc 0 cpu 0
+l121: calc 0 cpu 0
+l122: calc 0 cpu 0
+l123: calc 0 cpu 0
+l124: calc 0 cpu 0
+l125: calc 0 cpu 0
+l126: calc 0 cpu 0
+l127: calc 0 cpu 0
+l128: calc 0 cpu 0
+l129: recv 65536b from 0 tag 18 cpu 0 nic 0
+l130: send 65536b to 2 tag 18 cpu 0 nic 0
+l131: recv 65536b from 0 tag 100018 cpu 0 nic 0
+l132: send 65536b to 2 tag 100018 cpu 0 nic 0
+l133: recv 65536b from 0 tag 200018 cpu 0 nic 0
+l134: send 65536b to 2 tag 200018 cpu 0 nic 0
+l135: recv 65536b from 0 tag 300018 cpu 0 nic 0
+l136: send 65536b to 2 tag 300018 cpu 0 nic 0
+l137: recv 65536b from 0 tag 400018 cpu 0 nic 0
+l138: send 65536b to 2 tag 400018 cpu 0 nic 0
+l139: recv 65536b from 0 tag 500018 cpu 0 nic 0
+l140: send 65536b to 2 tag 500018 cpu 0 nic 0
+l141: calc 0 cpu 0
+l142: calc 0 cpu 0
+l143: calc 0 cpu 0
+l144: calc 0 cpu 0
+l145: calc 0 cpu 0
+l146: calc 0 cpu 0
+l147: calc 0 cpu 0
+l148: calc 0 cpu 0
+l149: calc 0 cpu 0
+l150: recv 65536b from 0 tag 21 cpu 0 nic 0
+l151: send 65536b to 2 tag 21 cpu 0 nic 0
+l152: recv 65536b from 0 tag 100021 cpu 0 nic 0
+l153: send 65536b to 2 tag 100021 cpu 0 nic 0
+l154: recv 65536b from 0 tag 200021 cpu 0 nic 0
+l155: send 65536b to 2 tag 200021 cpu 0 nic 0
+l156: recv 65536b from 0 tag 300021 cpu 0 nic 0
+l157: send 65536b to 2 tag 300021 cpu 0 nic 0
+l158: recv 65536b from 0 tag 400021 cpu 0 nic 0
+l159: send 65536b to 2 tag 400021 cpu 0 nic 0
+l160: recv 65536b from 0 tag 500021 cpu 0 nic 0
+l161: send 65536b to 2 tag 500021 cpu 0 nic 0
+l162: calc 0 cpu 0
+l163: calc 0 cpu 0
+l164: calc 0 cpu 0
+l165: calc 0 cpu 0
+l166: calc 0 cpu 0
+l167: calc 0 cpu 0
+l168: calc 0 cpu 0
+l169: calc 0 cpu 0
+l170: calc 0 cpu 0
+l171: recv 65536b from 0 tag 24 cpu 0 nic 0
+l172: send 65536b to 2 tag 24 cpu 0 nic 0
+l173: recv 65536b from 0 tag 100024 cpu 0 nic 0
+l174: send 65536b to 2 tag 100024 cpu 0 nic 0
+l175: recv 65536b from 0 tag 200024 cpu 0 nic 0
+l176: send 65536b to 2 tag 200024 cpu 0 nic 0
+l177: recv 65536b from 0 tag 300024 cpu 0 nic 0
+l178: send 65536b to 2 tag 300024 cpu 0 nic 0
+l179: recv 65536b from 0 tag 400024 cpu 0 nic 0
+l180: send 65536b to 2 tag 400024 cpu 0 nic 0
+l181: recv 65536b from 0 tag 500024 cpu 0 nic 0
+l182: send 65536b to 2 tag 500024 cpu 0 nic 0
+l183: calc 0 cpu 0
+l184: calc 0 cpu 0
+l185: calc 0 cpu 0
+l186: calc 0 cpu 0
+l187: calc 0 cpu 0
+l188: calc 0 cpu 0
+l189: calc 0 cpu 0
+l190: calc 0 cpu 0
+l191: calc 0 cpu 0
+l192: recv 65536b from 0 tag 27 cpu 0 nic 0
+l193: send 65536b to 2 tag 27 cpu 0 nic 0
+l194: recv 65536b from 0 tag 100027 cpu 0 nic 0
+l195: send 65536b to 2 tag 100027 cpu 0 nic 0
+l196: recv 65536b from 0 tag 200027 cpu 0 nic 0
+l197: send 65536b to 2 tag 200027 cpu 0 nic 0
+l198: recv 65536b from 0 tag 300027 cpu 0 nic 0
+l199: send 65536b to 2 tag 300027 cpu 0 nic 0
+l200: recv 65536b from 0 tag 400027 cpu 0 nic 0
+l201: send 65536b to 2 tag 400027 cpu 0 nic 0
+l202: recv 65536b from 0 tag 500027 cpu 0 nic 0
+l203: send 65536b to 2 tag 500027 cpu 0 nic 0
+l204: calc 0 cpu 0
+l205: calc 0 cpu 0
+l206: calc 0 cpu 0
+l207: calc 0 cpu 0
+l208: calc 0 cpu 0
+l209: calc 0 cpu 0
+l1 requires l0
+l2 requires l3
+l2 requires l4
+l2 requires l5
+l2 requires l6
+l2 requires l7
+l2 requires l8
+l2 requires l9
+l2 requires l10
+l2 requires l11
+l2 requires l12
+l2 requires l13
+l2 requires l14
+l2 requires l15
+l2 requires l16
+l2 requires l17
+l2 requires l18
+l2 requires l19
+l3 requires l1
+l4 requires l1
+l5 requires l1
+l6 requires l15
+l7 requires l1
+l8 requires l16
+l9 requires l1
+l10 requires l17
+l11 requires l1
+l12 requires l18
+l13 requires l1
+l14 requires l19
+l15 requires l3
+l16 requires l5
+l17 requires l7
+l18 requires l9
+l19 requires l11
+l20 requires l2
+l21 requires l20
+l22 requires l21
+l23 requires l24
+l23 requires l25
+l23 requires l26
+l23 requires l27
+l23 requires l28
+l23 requires l29
+l23 requires l30
+l23 requires l31
+l23 requires l32
+l23 requires l33
+l23 requires l34
+l23 requires l35
+l23 requires l36
+l23 requires l37
+l23 requires l38
+l23 requires l39
+l23 requires l40
+l24 requires l22
+l25 requires l22
+l26 requires l22
+l27 requires l36
+l28 requires l22
+l29 requires l37
+l30 requires l22
+l31 requires l38
+l32 requires l22
+l33 requires l39
+l34 requires l22
+l35 requires l40
+l36 requires l24
+l37 requires l26
+l38 requires l28
+l39 requires l30
+l40 requires l32
+l41 requires l23
+l42 requires l41
+l43 requires l42
+l44 requires l45
+l44 requires l46
+l44 requires l47
+l44 requires l48
+l44 requires l49
+l44 requires l50
+l44 requires l51
+l44 requires l52
+l44 requires l53
+l44 requires l54
+l44 requires l55
+l44 requires l56
+l44 requires l57
+l44 requires l58
+l44 requires l59
+l44 requires l60
+l44 requires l61
+l45 requires l43
+l46 requires l43
+l47 requires l43
+l48 requires l57
+l49 requires l43
+l50 requires l58
+l51 requires l43
+l52 requires l59
+l53 requires l43
+l54 requires l60
+l55 requires l43
+l56 requires l61
+l57 requires l45
+l58 requires l47
+l59 requires l49
+l60 requires l51
+l61 requires l53
+l62 requires l44
+l63 requires l62
+l64 requires l63
+l65 requires l66
+l65 requires l67
+l65 requires l68
+l65 requires l69
+l65 requires l70
+l65 requires l71
+l65 requires l72
+l65 requires l73
+l65 requires l74
+l65 requires l75
+l65 requires l76
+l65 requires l77
+l65 requires l78
+l65 requires l79
+l65 requires l80
+l65 requires l81
+l65 requires l82
+l66 requires l64
+l67 requires l64
+l68 requires l64
+l69 requires l78
+l70 requires l64
+l71 requires l79
+l72 requires l64
+l73 requires l80
+l74 requires l64
+l75 requires l81
+l76 requires l64
+l77 requires l82
+l78 requires l66
+l79 requires l68
+l80 requires l70
+l81 requires l72
+l82 requires l74
+l83 requires l65
+l84 requires l83
+l85 requires l84
+l86 requires l87
+l86 requires l88
+l86 requires l89
+l86 requires l90
+l86 requires l91
+l86 requires l92
+l86 requires l93
+l86 requires l94
+l86 requires l95
+l86 requires l96
+l86 requires l97
+l86 requires l98
+l86 requires l99
+l86 requires l100
+l86 requires l101
+l86 requires l102
+l86 requires l103
+l87 requires l85
+l88 requires l85
+l89 requires l85
+l90 requires l99
+l91 requires l85
+l92 requires l100
+l93 requires l85
+l94 requires l101
+l95 requires l85
+l96 requires l102
+l97 requires l85
+l98 requires l103
+l99 requires l87
+l100 requires l89
+l101 requires l91
+l102 requires l93
+l103 requires l95
+l104 requires l86
+l105 requires l104
+l106 requires l105
+l107 requires l108
+l107 requires l109
+l107 requires l110
+l107 requires l111
+l107 requires l112
+l107 requires l113
+l107 requires l114
+l107 requires l115
+l107 requires l116
+l107 requires l117
+l107 requires l118
+l107 requires l119
+l107 requires l120
+l107 requires l121
+l107 requires l122
+l107 requires l123
+l107 requires l124
+l108 requires l106
+l109 requires l106
+l110 requires l106
+l111 requires l120
+l112 requires l106
+l113 requires l121
+l114 requires l106
+l115 requires l122
+l116 requires l106
+l117 requires l123
+l118 requires l106
+l119 requires l124
+l120 requires l108
+l121 requires l110
+l122 requires l112
+l123 requires l114
+l124 requires l116
+l125 requires l107
+l126 requires l125
+l127 requires l126
+l128 requires l129
+l128 requires l130
+l128 requires l131
+l128 requires l132
+l128 requires l133
+l128 requires l134
+l128 requires l135
+l128 requires l136
+l128 requires l137
+l128 requires l138
+l128 requires l139
+l128 requires l140
+l128 requires l141
+l128 requires l142
+l128 requires l143
+l128 requires l144
+l128 requires l145
+l129 requires l127
+l130 requires l127
+l131 requires l127
+l132 requires l141
+l133 requires l127
+l134 requires l142
+l135 requires l127
+l136 requires l143
+l137 requires l127
+l138 requires l144
+l139 requires l127
+l140 requires l145
+l141 requires l129
+l142 requires l131
+l143 requires l133
+l144 requires l135
+l145 requires l137
+l146 requires l128
+l147 requires l146
+l148 requires l147
+l149 requires l150
+l149 requires l151
+l149 requires l152
+l149 requires l153
+l149 requires l154
+l149 requires l155
+l149 requires l156
+l149 requires l157
+l149 requires l158
+l149 requires l159
+l149 requires l160
+l149 requires l161
+l149 requires l162
+l149 requires l163
+l149 requires l164
+l149 requires l165
+l149 requires l166
+l150 requires l148
+l151 requires l148
+l152 requires l148
+l153 requires l162
+l154 requires l148
+l155 requires l163
+l156 requires l148
+l157 requires l164
+l158 requires l148
+l159 requires l165
+l160 requires l148
+l161 requires l166
+l162 requires l150
+l163 requires l152
+l164 requires l154
+l165 requires l156
+l166 requires l158
+l167 requires l149
+l168 requires l167
+l169 requires l168
+l170 requires l171
+l170 requires l172
+l170 requires l173
+l170 requires l174
+l170 requires l175
+l170 requires l176
+l170 requires l177
+l170 requires l178
+l170 requires l179
+l170 requires l180
+l170 requires l181
+l170 requires l182
+l170 requires l183
+l170 requires l184
+l170 requires l185
+l170 requires l186
+l170 requires l187
+l171 requires l169
+l172 requires l169
+l173 requires l169
+l174 requires l183
+l175 requires l169
+l176 requires l184
+l177 requires l169
+l178 requires l185
+l179 requires l169
+l180 requires l186
+l181 requires l169
+l182 requires l187
+l183 requires l171
+l184 requires l173
+l185 requires l175
+l186 requires l177
+l187 requires l179
+l188 requires l170
+l189 requires l188
+l190 requires l189
+l191 requires l192
+l191 requires l193
+l191 requires l194
+l191 requires l195
+l191 requires l196
+l191 requires l197
+l191 requires l198
+l191 requires l199
+l191 requires l200
+l191 requires l201
+l191 requires l202
+l191 requires l203
+l191 requires l204
+l191 requires l205
+l191 requires l206
+l191 requires l207
+l191 requires l208
+l192 requires l190
+l193 requires l190
+l194 requires l190
+l195 requires l204
+l196 requires l190
+l197 requires l205
+l198 requires l190
+l199 requires l206
+l200 requires l190
+l201 requires l207
+l202 requires l190
+l203 requires l208
+l204 requires l192
+l205 requires l194
+l206 requires l196
+l207 requires l198
+l208 requires l200
+l209 requires l191
+}
+
+rank 2 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: calc 0 cpu 0
+l3: recv 65536b from 1 tag 0 cpu 0 nic 0
+l4: send 65536b to 3 tag 0 cpu 0 nic 0
+l5: recv 65536b from 1 tag 100000 cpu 0 nic 0
+l6: send 65536b to 3 tag 100000 cpu 0 nic 0
+l7: recv 65536b from 1 tag 200000 cpu 0 nic 0
+l8: send 65536b to 3 tag 200000 cpu 0 nic 0
+l9: recv 65536b from 1 tag 300000 cpu 0 nic 0
+l10: send 65536b to 3 tag 300000 cpu 0 nic 0
+l11: recv 65536b from 1 tag 400000 cpu 0 nic 0
+l12: send 65536b to 3 tag 400000 cpu 0 nic 0
+l13: recv 65536b from 1 tag 500000 cpu 0 nic 0
+l14: send 65536b to 3 tag 500000 cpu 0 nic 0
+l15: calc 0 cpu 0
+l16: calc 0 cpu 0
+l17: calc 0 cpu 0
+l18: calc 0 cpu 0
+l19: calc 0 cpu 0
+l20: calc 0 cpu 0
+l21: calc 0 cpu 0
+l22: calc 0 cpu 0
+l23: calc 0 cpu 0
+l24: recv 65536b from 1 tag 3 cpu 0 nic 0
+l25: send 65536b to 3 tag 3 cpu 0 nic 0
+l26: recv 65536b from 1 tag 100003 cpu 0 nic 0
+l27: send 65536b to 3 tag 100003 cpu 0 nic 0
+l28: recv 65536b from 1 tag 200003 cpu 0 nic 0
+l29: send 65536b to 3 tag 200003 cpu 0 nic 0
+l30: recv 65536b from 1 tag 300003 cpu 0 nic 0
+l31: send 65536b to 3 tag 300003 cpu 0 nic 0
+l32: recv 65536b from 1 tag 400003 cpu 0 nic 0
+l33: send 65536b to 3 tag 400003 cpu 0 nic 0
+l34: recv 65536b from 1 tag 500003 cpu 0 nic 0
+l35: send 65536b to 3 tag 500003 cpu 0 nic 0
+l36: calc 0 cpu 0
+l37: calc 0 cpu 0
+l38: calc 0 cpu 0
+l39: calc 0 cpu 0
+l40: calc 0 cpu 0
+l41: calc 0 cpu 0
+l42: calc 0 cpu 0
+l43: calc 0 cpu 0
+l44: calc 0 cpu 0
+l45: recv 65536b from 1 tag 6 cpu 0 nic 0
+l46: send 65536b to 3 tag 6 cpu 0 nic 0
+l47: recv 65536b from 1 tag 100006 cpu 0 nic 0
+l48: send 65536b to 3 tag 100006 cpu 0 nic 0
+l49: recv 65536b from 1 tag 200006 cpu 0 nic 0
+l50: send 65536b to 3 tag 200006 cpu 0 nic 0
+l51: recv 65536b from 1 tag 300006 cpu 0 nic 0
+l52: send 65536b to 3 tag 300006 cpu 0 nic 0
+l53: recv 65536b from 1 tag 400006 cpu 0 nic 0
+l54: send 65536b to 3 tag 400006 cpu 0 nic 0
+l55: recv 65536b from 1 tag 500006 cpu 0 nic 0
+l56: send 65536b to 3 tag 500006 cpu 0 nic 0
+l57: calc 0 cpu 0
+l58: calc 0 cpu 0
+l59: calc 0 cpu 0
+l60: calc 0 cpu 0
+l61: calc 0 cpu 0
+l62: calc 0 cpu 0
+l63: calc 0 cpu 0
+l64: calc 0 cpu 0
+l65: calc 0 cpu 0
+l66: recv 65536b from 1 tag 9 cpu 0 nic 0
+l67: send 65536b to 3 tag 9 cpu 0 nic 0
+l68: recv 65536b from 1 tag 100009 cpu 0 nic 0
+l69: send 65536b to 3 tag 100009 cpu 0 nic 0
+l70: recv 65536b from 1 tag 200009 cpu 0 nic 0
+l71: send 65536b to 3 tag 200009 cpu 0 nic 0
+l72: recv 65536b from 1 tag 300009 cpu 0 nic 0
+l73: send 65536b to 3 tag 300009 cpu 0 nic 0
+l74: recv 65536b from 1 tag 400009 cpu 0 nic 0
+l75: send 65536b to 3 tag 400009 cpu 0 nic 0
+l76: recv 65536b from 1 tag 500009 cpu 0 nic 0
+l77: send 65536b to 3 tag 500009 cpu 0 nic 0
+l78: calc 0 cpu 0
+l79: calc 0 cpu 0
+l80: calc 0 cpu 0
+l81: calc 0 cpu 0
+l82: calc 0 cpu 0
+l83: calc 0 cpu 0
+l84: calc 0 cpu 0
+l85: calc 0 cpu 0
+l86: calc 0 cpu 0
+l87: recv 65536b from 1 tag 12 cpu 0 nic 0
+l88: send 65536b to 3 tag 12 cpu 0 nic 0
+l89: recv 65536b from 1 tag 100012 cpu 0 nic 0
+l90: send 65536b to 3 tag 100012 cpu 0 nic 0
+l91: recv 65536b from 1 tag 200012 cpu 0 nic 0
+l92: send 65536b to 3 tag 200012 cpu 0 nic 0
+l93: recv 65536b from 1 tag 300012 cpu 0 nic 0
+l94: send 65536b to 3 tag 300012 cpu 0 nic 0
+l95: recv 65536b from 1 tag 400012 cpu 0 nic 0
+l96: send 65536b to 3 tag 400012 cpu 0 nic 0
+l97: recv 65536b from 1 tag 500012 cpu 0 nic 0
+l98: send 65536b to 3 tag 500012 cpu 0 nic 0
+l99: calc 0 cpu 0
+l100: calc 0 cpu 0
+l101: calc 0 cpu 0
+l102: calc 0 cpu 0
+l103: calc 0 cpu 0
+l104: calc 0 cpu 0
+l105: calc 0 cpu 0
+l106: calc 0 cpu 0
+l107: calc 0 cpu 0
+l108: recv 65536b from 1 tag 15 cpu 0 nic 0
+l109: send 65536b to 3 tag 15 cpu 0 nic 0
+l110: recv 65536b from 1 tag 100015 cpu 0 nic 0
+l111: send 65536b to 3 tag 100015 cpu 0 nic 0
+l112: recv 65536b from 1 tag 200015 cpu 0 nic 0
+l113: send 65536b to 3 tag 200015 cpu 0 nic 0
+l114: recv 65536b from 1 tag 300015 cpu 0 nic 0
+l115: send 65536b to 3 tag 300015 cpu 0 nic 0
+l116: recv 65536b from 1 tag 400015 cpu 0 nic 0
+l117: send 65536b to 3 tag 400015 cpu 0 nic 0
+l118: recv 65536b from 1 tag 500015 cpu 0 nic 0
+l119: send 65536b to 3 tag 500015 cpu 0 nic 0
+l120: calc 0 cpu 0
+l121: calc 0 cpu 0
+l122: calc 0 cpu 0
+l123: calc 0 cpu 0
+l124: calc 0 cpu 0
+l125: calc 0 cpu 0
+l126: calc 0 cpu 0
+l127: calc 0 cpu 0
+l128: calc 0 cpu 0
+l129: recv 65536b from 1 tag 18 cpu 0 nic 0
+l130: send 65536b to 3 tag 18 cpu 0 nic 0
+l131: recv 65536b from 1 tag 100018 cpu 0 nic 0
+l132: send 65536b to 3 tag 100018 cpu 0 nic 0
+l133: recv 65536b from 1 tag 200018 cpu 0 nic 0
+l134: send 65536b to 3 tag 200018 cpu 0 nic 0
+l135: recv 65536b from 1 tag 300018 cpu 0 nic 0
+l136: send 65536b to 3 tag 300018 cpu 0 nic 0
+l137: recv 65536b from 1 tag 400018 cpu 0 nic 0
+l138: send 65536b to 3 tag 400018 cpu 0 nic 0
+l139: recv 65536b from 1 tag 500018 cpu 0 nic 0
+l140: send 65536b to 3 tag 500018 cpu 0 nic 0
+l141: calc 0 cpu 0
+l142: calc 0 cpu 0
+l143: calc 0 cpu 0
+l144: calc 0 cpu 0
+l145: calc 0 cpu 0
+l146: calc 0 cpu 0
+l147: calc 0 cpu 0
+l148: calc 0 cpu 0
+l149: calc 0 cpu 0
+l150: recv 65536b from 1 tag 21 cpu 0 nic 0
+l151: send 65536b to 3 tag 21 cpu 0 nic 0
+l152: recv 65536b from 1 tag 100021 cpu 0 nic 0
+l153: send 65536b to 3 tag 100021 cpu 0 nic 0
+l154: recv 65536b from 1 tag 200021 cpu 0 nic 0
+l155: send 65536b to 3 tag 200021 cpu 0 nic 0
+l156: recv 65536b from 1 tag 300021 cpu 0 nic 0
+l157: send 65536b to 3 tag 300021 cpu 0 nic 0
+l158: recv 65536b from 1 tag 400021 cpu 0 nic 0
+l159: send 65536b to 3 tag 400021 cpu 0 nic 0
+l160: recv 65536b from 1 tag 500021 cpu 0 nic 0
+l161: send 65536b to 3 tag 500021 cpu 0 nic 0
+l162: calc 0 cpu 0
+l163: calc 0 cpu 0
+l164: calc 0 cpu 0
+l165: calc 0 cpu 0
+l166: calc 0 cpu 0
+l167: calc 0 cpu 0
+l168: calc 0 cpu 0
+l169: calc 0 cpu 0
+l170: calc 0 cpu 0
+l171: recv 65536b from 1 tag 24 cpu 0 nic 0
+l172: send 65536b to 3 tag 24 cpu 0 nic 0
+l173: recv 65536b from 1 tag 100024 cpu 0 nic 0
+l174: send 65536b to 3 tag 100024 cpu 0 nic 0
+l175: recv 65536b from 1 tag 200024 cpu 0 nic 0
+l176: send 65536b to 3 tag 200024 cpu 0 nic 0
+l177: recv 65536b from 1 tag 300024 cpu 0 nic 0
+l178: send 65536b to 3 tag 300024 cpu 0 nic 0
+l179: recv 65536b from 1 tag 400024 cpu 0 nic 0
+l180: send 65536b to 3 tag 400024 cpu 0 nic 0
+l181: recv 65536b from 1 tag 500024 cpu 0 nic 0
+l182: send 65536b to 3 tag 500024 cpu 0 nic 0
+l183: calc 0 cpu 0
+l184: calc 0 cpu 0
+l185: calc 0 cpu 0
+l186: calc 0 cpu 0
+l187: calc 0 cpu 0
+l188: calc 0 cpu 0
+l189: calc 0 cpu 0
+l190: calc 0 cpu 0
+l191: calc 0 cpu 0
+l192: recv 65536b from 1 tag 27 cpu 0 nic 0
+l193: send 65536b to 3 tag 27 cpu 0 nic 0
+l194: recv 65536b from 1 tag 100027 cpu 0 nic 0
+l195: send 65536b to 3 tag 100027 cpu 0 nic 0
+l196: recv 65536b from 1 tag 200027 cpu 0 nic 0
+l197: send 65536b to 3 tag 200027 cpu 0 nic 0
+l198: recv 65536b from 1 tag 300027 cpu 0 nic 0
+l199: send 65536b to 3 tag 300027 cpu 0 nic 0
+l200: recv 65536b from 1 tag 400027 cpu 0 nic 0
+l201: send 65536b to 3 tag 400027 cpu 0 nic 0
+l202: recv 65536b from 1 tag 500027 cpu 0 nic 0
+l203: send 65536b to 3 tag 500027 cpu 0 nic 0
+l204: calc 0 cpu 0
+l205: calc 0 cpu 0
+l206: calc 0 cpu 0
+l207: calc 0 cpu 0
+l208: calc 0 cpu 0
+l209: calc 0 cpu 0
+l1 requires l0
+l2 requires l3
+l2 requires l4
+l2 requires l5
+l2 requires l6
+l2 requires l7
+l2 requires l8
+l2 requires l9
+l2 requires l10
+l2 requires l11
+l2 requires l12
+l2 requires l13
+l2 requires l14
+l2 requires l15
+l2 requires l16
+l2 requires l17
+l2 requires l18
+l2 requires l19
+l3 requires l1
+l4 requires l1
+l5 requires l1
+l6 requires l15
+l7 requires l1
+l8 requires l16
+l9 requires l1
+l10 requires l17
+l11 requires l1
+l12 requires l18
+l13 requires l1
+l14 requires l19
+l15 requires l3
+l16 requires l5
+l17 requires l7
+l18 requires l9
+l19 requires l11
+l20 requires l2
+l21 requires l20
+l22 requires l21
+l23 requires l24
+l23 requires l25
+l23 requires l26
+l23 requires l27
+l23 requires l28
+l23 requires l29
+l23 requires l30
+l23 requires l31
+l23 requires l32
+l23 requires l33
+l23 requires l34
+l23 requires l35
+l23 requires l36
+l23 requires l37
+l23 requires l38
+l23 requires l39
+l23 requires l40
+l24 requires l22
+l25 requires l22
+l26 requires l22
+l27 requires l36
+l28 requires l22
+l29 requires l37
+l30 requires l22
+l31 requires l38
+l32 requires l22
+l33 requires l39
+l34 requires l22
+l35 requires l40
+l36 requires l24
+l37 requires l26
+l38 requires l28
+l39 requires l30
+l40 requires l32
+l41 requires l23
+l42 requires l41
+l43 requires l42
+l44 requires l45
+l44 requires l46
+l44 requires l47
+l44 requires l48
+l44 requires l49
+l44 requires l50
+l44 requires l51
+l44 requires l52
+l44 requires l53
+l44 requires l54
+l44 requires l55
+l44 requires l56
+l44 requires l57
+l44 requires l58
+l44 requires l59
+l44 requires l60
+l44 requires l61
+l45 requires l43
+l46 requires l43
+l47 requires l43
+l48 requires l57
+l49 requires l43
+l50 requires l58
+l51 requires l43
+l52 requires l59
+l53 requires l43
+l54 requires l60
+l55 requires l43
+l56 requires l61
+l57 requires l45
+l58 requires l47
+l59 requires l49
+l60 requires l51
+l61 requires l53
+l62 requires l44
+l63 requires l62
+l64 requires l63
+l65 requires l66
+l65 requires l67
+l65 requires l68
+l65 requires l69
+l65 requires l70
+l65 requires l71
+l65 requires l72
+l65 requires l73
+l65 requires l74
+l65 requires l75
+l65 requires l76
+l65 requires l77
+l65 requires l78
+l65 requires l79
+l65 requires l80
+l65 requires l81
+l65 requires l82
+l66 requires l64
+l67 requires l64
+l68 requires l64
+l69 requires l78
+l70 requires l64
+l71 requires l79
+l72 requires l64
+l73 requires l80
+l74 requires l64
+l75 requires l81
+l76 requires l64
+l77 requires l82
+l78 requires l66
+l79 requires l68
+l80 requires l70
+l81 requires l72
+l82 requires l74
+l83 requires l65
+l84 requires l83
+l85 requires l84
+l86 requires l87
+l86 requires l88
+l86 requires l89
+l86 requires l90
+l86 requires l91
+l86 requires l92
+l86 requires l93
+l86 requires l94
+l86 requires l95
+l86 requires l96
+l86 requires l97
+l86 requires l98
+l86 requires l99
+l86 requires l100
+l86 requires l101
+l86 requires l102
+l86 requires l103
+l87 requires l85
+l88 requires l85
+l89 requires l85
+l90 requires l99
+l91 requires l85
+l92 requires l100
+l93 requires l85
+l94 requires l101
+l95 requires l85
+l96 requires l102
+l97 requires l85
+l98 requires l103
+l99 requires l87
+l100 requires l89
+l101 requires l91
+l102 requires l93
+l103 requires l95
+l104 requires l86
+l105 requires l104
+l106 requires l105
+l107 requires l108
+l107 requires l109
+l107 requires l110
+l107 requires l111
+l107 requires l112
+l107 requires l113
+l107 requires l114
+l107 requires l115
+l107 requires l116
+l107 requires l117
+l107 requires l118
+l107 requires l119
+l107 requires l120
+l107 requires l121
+l107 requires l122
+l107 requires l123
+l107 requires l124
+l108 requires l106
+l109 requires l106
+l110 requires l106
+l111 requires l120
+l112 requires l106
+l113 requires l121
+l114 requires l106
+l115 requires l122
+l116 requires l106
+l117 requires l123
+l118 requires l106
+l119 requires l124
+l120 requires l108
+l121 requires l110
+l122 requires l112
+l123 requires l114
+l124 requires l116
+l125 requires l107
+l126 requires l125
+l127 requires l126
+l128 requires l129
+l128 requires l130
+l128 requires l131
+l128 requires l132
+l128 requires l133
+l128 requires l134
+l128 requires l135
+l128 requires l136
+l128 requires l137
+l128 requires l138
+l128 requires l139
+l128 requires l140
+l128 requires l141
+l128 requires l142
+l128 requires l143
+l128 requires l144
+l128 requires l145
+l129 requires l127
+l130 requires l127
+l131 requires l127
+l132 requires l141
+l133 requires l127
+l134 requires l142
+l135 requires l127
+l136 requires l143
+l137 requires l127
+l138 requires l144
+l139 requires l127
+l140 requires l145
+l141 requires l129
+l142 requires l131
+l143 requires l133
+l144 requires l135
+l145 requires l137
+l146 requires l128
+l147 requires l146
+l148 requires l147
+l149 requires l150
+l149 requires l151
+l149 requires l152
+l149 requires l153
+l149 requires l154
+l149 requires l155
+l149 requires l156
+l149 requires l157
+l149 requires l158
+l149 requires l159
+l149 requires l160
+l149 requires l161
+l149 requires l162
+l149 requires l163
+l149 requires l164
+l149 requires l165
+l149 requires l166
+l150 requires l148
+l151 requires l148
+l152 requires l148
+l153 requires l162
+l154 requires l148
+l155 requires l163
+l156 requires l148
+l157 requires l164
+l158 requires l148
+l159 requires l165
+l160 requires l148
+l161 requires l166
+l162 requires l150
+l163 requires l152
+l164 requires l154
+l165 requires l156
+l166 requires l158
+l167 requires l149
+l168 requires l167
+l169 requires l168
+l170 requires l171
+l170 requires l172
+l170 requires l173
+l170 requires l174
+l170 requires l175
+l170 requires l176
+l170 requires l177
+l170 requires l178
+l170 requires l179
+l170 requires l180
+l170 requires l181
+l170 requires l182
+l170 requires l183
+l170 requires l184
+l170 requires l185
+l170 requires l186
+l170 requires l187
+l171 requires l169
+l172 requires l169
+l173 requires l169
+l174 requires l183
+l175 requires l169
+l176 requires l184
+l177 requires l169
+l178 requires l185
+l179 requires l169
+l180 requires l186
+l181 requires l169
+l182 requires l187
+l183 requires l171
+l184 requires l173
+l185 requires l175
+l186 requires l177
+l187 requires l179
+l188 requires l170
+l189 requires l188
+l190 requires l189
+l191 requires l192
+l191 requires l193
+l191 requires l194
+l191 requires l195
+l191 requires l196
+l191 requires l197
+l191 requires l198
+l191 requires l199
+l191 requires l200
+l191 requires l201
+l191 requires l202
+l191 requires l203
+l191 requires l204
+l191 requires l205
+l191 requires l206
+l191 requires l207
+l191 requires l208
+l192 requires l190
+l193 requires l190
+l194 requires l190
+l195 requires l204
+l196 requires l190
+l197 requires l205
+l198 requires l190
+l199 requires l206
+l200 requires l190
+l201 requires l207
+l202 requires l190
+l203 requires l208
+l204 requires l192
+l205 requires l194
+l206 requires l196
+l207 requires l198
+l208 requires l200
+l209 requires l191
+}
+
+rank 3 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: calc 0 cpu 0
+l3: recv 65536b from 2 tag 0 cpu 0 nic 0
+l4: send 65536b to 0 tag 0 cpu 0 nic 0
+l5: recv 65536b from 2 tag 100000 cpu 0 nic 0
+l6: send 65536b to 0 tag 100000 cpu 0 nic 0
+l7: recv 65536b from 2 tag 200000 cpu 0 nic 0
+l8: send 65536b to 0 tag 200000 cpu 0 nic 0
+l9: recv 65536b from 2 tag 300000 cpu 0 nic 0
+l10: send 65536b to 0 tag 300000 cpu 0 nic 0
+l11: recv 65536b from 2 tag 400000 cpu 0 nic 0
+l12: send 65536b to 0 tag 400000 cpu 0 nic 0
+l13: recv 65536b from 2 tag 500000 cpu 0 nic 0
+l14: send 65536b to 0 tag 500000 cpu 0 nic 0
+l15: calc 0 cpu 0
+l16: calc 0 cpu 0
+l17: calc 0 cpu 0
+l18: calc 0 cpu 0
+l19: calc 0 cpu 0
+l20: calc 0 cpu 0
+l21: calc 0 cpu 0
+l22: calc 0 cpu 0
+l23: calc 0 cpu 0
+l24: recv 65536b from 2 tag 3 cpu 0 nic 0
+l25: send 65536b to 0 tag 3 cpu 0 nic 0
+l26: recv 65536b from 2 tag 100003 cpu 0 nic 0
+l27: send 65536b to 0 tag 100003 cpu 0 nic 0
+l28: recv 65536b from 2 tag 200003 cpu 0 nic 0
+l29: send 65536b to 0 tag 200003 cpu 0 nic 0
+l30: recv 65536b from 2 tag 300003 cpu 0 nic 0
+l31: send 65536b to 0 tag 300003 cpu 0 nic 0
+l32: recv 65536b from 2 tag 400003 cpu 0 nic 0
+l33: send 65536b to 0 tag 400003 cpu 0 nic 0
+l34: recv 65536b from 2 tag 500003 cpu 0 nic 0
+l35: send 65536b to 0 tag 500003 cpu 0 nic 0
+l36: calc 0 cpu 0
+l37: calc 0 cpu 0
+l38: calc 0 cpu 0
+l39: calc 0 cpu 0
+l40: calc 0 cpu 0
+l41: calc 0 cpu 0
+l42: calc 0 cpu 0
+l43: calc 0 cpu 0
+l44: calc 0 cpu 0
+l45: recv 65536b from 2 tag 6 cpu 0 nic 0
+l46: send 65536b to 0 tag 6 cpu 0 nic 0
+l47: recv 65536b from 2 tag 100006 cpu 0 nic 0
+l48: send 65536b to 0 tag 100006 cpu 0 nic 0
+l49: recv 65536b from 2 tag 200006 cpu 0 nic 0
+l50: send 65536b to 0 tag 200006 cpu 0 nic 0
+l51: recv 65536b from 2 tag 300006 cpu 0 nic 0
+l52: send 65536b to 0 tag 300006 cpu 0 nic 0
+l53: recv 65536b from 2 tag 400006 cpu 0 nic 0
+l54: send 65536b to 0 tag 400006 cpu 0 nic 0
+l55: recv 65536b from 2 tag 500006 cpu 0 nic 0
+l56: send 65536b to 0 tag 500006 cpu 0 nic 0
+l57: calc 0 cpu 0
+l58: calc 0 cpu 0
+l59: calc 0 cpu 0
+l60: calc 0 cpu 0
+l61: calc 0 cpu 0
+l62: calc 0 cpu 0
+l63: calc 0 cpu 0
+l64: calc 0 cpu 0
+l65: calc 0 cpu 0
+l66: recv 65536b from 2 tag 9 cpu 0 nic 0
+l67: send 65536b to 0 tag 9 cpu 0 nic 0
+l68: recv 65536b from 2 tag 100009 cpu 0 nic 0
+l69: send 65536b to 0 tag 100009 cpu 0 nic 0
+l70: recv 65536b from 2 tag 200009 cpu 0 nic 0
+l71: send 65536b to 0 tag 200009 cpu 0 nic 0
+l72: recv 65536b from 2 tag 300009 cpu 0 nic 0
+l73: send 65536b to 0 tag 300009 cpu 0 nic 0
+l74: recv 65536b from 2 tag 400009 cpu 0 nic 0
+l75: send 65536b to 0 tag 400009 cpu 0 nic 0
+l76: recv 65536b from 2 tag 500009 cpu 0 nic 0
+l77: send 65536b to 0 tag 500009 cpu 0 nic 0
+l78: calc 0 cpu 0
+l79: calc 0 cpu 0
+l80: calc 0 cpu 0
+l81: calc 0 cpu 0
+l82: calc 0 cpu 0
+l83: calc 0 cpu 0
+l84: calc 0 cpu 0
+l85: calc 0 cpu 0
+l86: calc 0 cpu 0
+l87: recv 65536b from 2 tag 12 cpu 0 nic 0
+l88: send 65536b to 0 tag 12 cpu 0 nic 0
+l89: recv 65536b from 2 tag 100012 cpu 0 nic 0
+l90: send 65536b to 0 tag 100012 cpu 0 nic 0
+l91: recv 65536b from 2 tag 200012 cpu 0 nic 0
+l92: send 65536b to 0 tag 200012 cpu 0 nic 0
+l93: recv 65536b from 2 tag 300012 cpu 0 nic 0
+l94: send 65536b to 0 tag 300012 cpu 0 nic 0
+l95: recv 65536b from 2 tag 400012 cpu 0 nic 0
+l96: send 65536b to 0 tag 400012 cpu 0 nic 0
+l97: recv 65536b from 2 tag 500012 cpu 0 nic 0
+l98: send 65536b to 0 tag 500012 cpu 0 nic 0
+l99: calc 0 cpu 0
+l100: calc 0 cpu 0
+l101: calc 0 cpu 0
+l102: calc 0 cpu 0
+l103: calc 0 cpu 0
+l104: calc 0 cpu 0
+l105: calc 0 cpu 0
+l106: calc 0 cpu 0
+l107: calc 0 cpu 0
+l108: recv 65536b from 2 tag 15 cpu 0 nic 0
+l109: send 65536b to 0 tag 15 cpu 0 nic 0
+l110: recv 65536b from 2 tag 100015 cpu 0 nic 0
+l111: send 65536b to 0 tag 100015 cpu 0 nic 0
+l112: recv 65536b from 2 tag 200015 cpu 0 nic 0
+l113: send 65536b to 0 tag 200015 cpu 0 nic 0
+l114: recv 65536b from 2 tag 300015 cpu 0 nic 0
+l115: send 65536b to 0 tag 300015 cpu 0 nic 0
+l116: recv 65536b from 2 tag 400015 cpu 0 nic 0
+l117: send 65536b to 0 tag 400015 cpu 0 nic 0
+l118: recv 65536b from 2 tag 500015 cpu 0 nic 0
+l119: send 65536b to 0 tag 500015 cpu 0 nic 0
+l120: calc 0 cpu 0
+l121: calc 0 cpu 0
+l122: calc 0 cpu 0
+l123: calc 0 cpu 0
+l124: calc 0 cpu 0
+l125: calc 0 cpu 0
+l126: calc 0 cpu 0
+l127: calc 0 cpu 0
+l128: calc 0 cpu 0
+l129: recv 65536b from 2 tag 18 cpu 0 nic 0
+l130: send 65536b to 0 tag 18 cpu 0 nic 0
+l131: recv 65536b from 2 tag 100018 cpu 0 nic 0
+l132: send 65536b to 0 tag 100018 cpu 0 nic 0
+l133: recv 65536b from 2 tag 200018 cpu 0 nic 0
+l134: send 65536b to 0 tag 200018 cpu 0 nic 0
+l135: recv 65536b from 2 tag 300018 cpu 0 nic 0
+l136: send 65536b to 0 tag 300018 cpu 0 nic 0
+l137: recv 65536b from 2 tag 400018 cpu 0 nic 0
+l138: send 65536b to 0 tag 400018 cpu 0 nic 0
+l139: recv 65536b from 2 tag 500018 cpu 0 nic 0
+l140: send 65536b to 0 tag 500018 cpu 0 nic 0
+l141: calc 0 cpu 0
+l142: calc 0 cpu 0
+l143: calc 0 cpu 0
+l144: calc 0 cpu 0
+l145: calc 0 cpu 0
+l146: calc 0 cpu 0
+l147: calc 0 cpu 0
+l148: calc 0 cpu 0
+l149: calc 0 cpu 0
+l150: recv 65536b from 2 tag 21 cpu 0 nic 0
+l151: send 65536b to 0 tag 21 cpu 0 nic 0
+l152: recv 65536b from 2 tag 100021 cpu 0 nic 0
+l153: send 65536b to 0 tag 100021 cpu 0 nic 0
+l154: recv 65536b from 2 tag 200021 cpu 0 nic 0
+l155: send 65536b to 0 tag 200021 cpu 0 nic 0
+l156: recv 65536b from 2 tag 300021 cpu 0 nic 0
+l157: send 65536b to 0 tag 300021 cpu 0 nic 0
+l158: recv 65536b from 2 tag 400021 cpu 0 nic 0
+l159: send 65536b to 0 tag 400021 cpu 0 nic 0
+l160: recv 65536b from 2 tag 500021 cpu 0 nic 0
+l161: send 65536b to 0 tag 500021 cpu 0 nic 0
+l162: calc 0 cpu 0
+l163: calc 0 cpu 0
+l164: calc 0 cpu 0
+l165: calc 0 cpu 0
+l166: calc 0 cpu 0
+l167: calc 0 cpu 0
+l168: calc 0 cpu 0
+l169: calc 0 cpu 0
+l170: calc 0 cpu 0
+l171: recv 65536b from 2 tag 24 cpu 0 nic 0
+l172: send 65536b to 0 tag 24 cpu 0 nic 0
+l173: recv 65536b from 2 tag 100024 cpu 0 nic 0
+l174: send 65536b to 0 tag 100024 cpu 0 nic 0
+l175: recv 65536b from 2 tag 200024 cpu 0 nic 0
+l176: send 65536b to 0 tag 200024 cpu 0 nic 0
+l177: recv 65536b from 2 tag 300024 cpu 0 nic 0
+l178: send 65536b to 0 tag 300024 cpu 0 nic 0
+l179: recv 65536b from 2 tag 400024 cpu 0 nic 0
+l180: send 65536b to 0 tag 400024 cpu 0 nic 0
+l181: recv 65536b from 2 tag 500024 cpu 0 nic 0
+l182: send 65536b to 0 tag 500024 cpu 0 nic 0
+l183: calc 0 cpu 0
+l184: calc 0 cpu 0
+l185: calc 0 cpu 0
+l186: calc 0 cpu 0
+l187: calc 0 cpu 0
+l188: calc 0 cpu 0
+l189: calc 0 cpu 0
+l190: calc 0 cpu 0
+l191: calc 0 cpu 0
+l192: recv 65536b from 2 tag 27 cpu 0 nic 0
+l193: send 65536b to 0 tag 27 cpu 0 nic 0
+l194: recv 65536b from 2 tag 100027 cpu 0 nic 0
+l195: send 65536b to 0 tag 100027 cpu 0 nic 0
+l196: recv 65536b from 2 tag 200027 cpu 0 nic 0
+l197: send 65536b to 0 tag 200027 cpu 0 nic 0
+l198: recv 65536b from 2 tag 300027 cpu 0 nic 0
+l199: send 65536b to 0 tag 300027 cpu 0 nic 0
+l200: recv 65536b from 2 tag 400027 cpu 0 nic 0
+l201: send 65536b to 0 tag 400027 cpu 0 nic 0
+l202: recv 65536b from 2 tag 500027 cpu 0 nic 0
+l203: send 65536b to 0 tag 500027 cpu 0 nic 0
+l204: calc 0 cpu 0
+l205: calc 0 cpu 0
+l206: calc 0 cpu 0
+l207: calc 0 cpu 0
+l208: calc 0 cpu 0
+l209: calc 0 cpu 0
+l1 requires l0
+l2 requires l3
+l2 requires l4
+l2 requires l5
+l2 requires l6
+l2 requires l7
+l2 requires l8
+l2 requires l9
+l2 requires l10
+l2 requires l11
+l2 requires l12
+l2 requires l13
+l2 requires l14
+l2 requires l15
+l2 requires l16
+l2 requires l17
+l2 requires l18
+l2 requires l19
+l3 requires l1
+l4 requires l1
+l5 requires l1
+l6 requires l15
+l7 requires l1
+l8 requires l16
+l9 requires l1
+l10 requires l17
+l11 requires l1
+l12 requires l18
+l13 requires l1
+l14 requires l19
+l15 requires l3
+l16 requires l5
+l17 requires l7
+l18 requires l9
+l19 requires l11
+l20 requires l2
+l21 requires l20
+l22 requires l21
+l23 requires l24
+l23 requires l25
+l23 requires l26
+l23 requires l27
+l23 requires l28
+l23 requires l29
+l23 requires l30
+l23 requires l31
+l23 requires l32
+l23 requires l33
+l23 requires l34
+l23 requires l35
+l23 requires l36
+l23 requires l37
+l23 requires l38
+l23 requires l39
+l23 requires l40
+l24 requires l22
+l25 requires l22
+l26 requires l22
+l27 requires l36
+l28 requires l22
+l29 requires l37
+l30 requires l22
+l31 requires l38
+l32 requires l22
+l33 requires l39
+l34 requires l22
+l35 requires l40
+l36 requires l24
+l37 requires l26
+l38 requires l28
+l39 requires l30
+l40 requires l32
+l41 requires l23
+l42 requires l41
+l43 requires l42
+l44 requires l45
+l44 requires l46
+l44 requires l47
+l44 requires l48
+l44 requires l49
+l44 requires l50
+l44 requires l51
+l44 requires l52
+l44 requires l53
+l44 requires l54
+l44 requires l55
+l44 requires l56
+l44 requires l57
+l44 requires l58
+l44 requires l59
+l44 requires l60
+l44 requires l61
+l45 requires l43
+l46 requires l43
+l47 requires l43
+l48 requires l57
+l49 requires l43
+l50 requires l58
+l51 requires l43
+l52 requires l59
+l53 requires l43
+l54 requires l60
+l55 requires l43
+l56 requires l61
+l57 requires l45
+l58 requires l47
+l59 requires l49
+l60 requires l51
+l61 requires l53
+l62 requires l44
+l63 requires l62
+l64 requires l63
+l65 requires l66
+l65 requires l67
+l65 requires l68
+l65 requires l69
+l65 requires l70
+l65 requires l71
+l65 requires l72
+l65 requires l73
+l65 requires l74
+l65 requires l75
+l65 requires l76
+l65 requires l77
+l65 requires l78
+l65 requires l79
+l65 requires l80
+l65 requires l81
+l65 requires l82
+l66 requires l64
+l67 requires l64
+l68 requires l64
+l69 requires l78
+l70 requires l64
+l71 requires l79
+l72 requires l64
+l73 requires l80
+l74 requires l64
+l75 requires l81
+l76 requires l64
+l77 requires l82
+l78 requires l66
+l79 requires l68
+l80 requires l70
+l81 requires l72
+l82 requires l74
+l83 requires l65
+l84 requires l83
+l85 requires l84
+l86 requires l87
+l86 requires l88
+l86 requires l89
+l86 requires l90
+l86 requires l91
+l86 requires l92
+l86 requires l93
+l86 requires l94
+l86 requires l95
+l86 requires l96
+l86 requires l97
+l86 requires l98
+l86 requires l99
+l86 requires l100
+l86 requires l101
+l86 requires l102
+l86 requires l103
+l87 requires l85
+l88 requires l85
+l89 requires l85
+l90 requires l99
+l91 requires l85
+l92 requires l100
+l93 requires l85
+l94 requires l101
+l95 requires l85
+l96 requires l102
+l97 requires l85
+l98 requires l103
+l99 requires l87
+l100 requires l89
+l101 requires l91
+l102 requires l93
+l103 requires l95
+l104 requires l86
+l105 requires l104
+l106 requires l105
+l107 requires l108
+l107 requires l109
+l107 requires l110
+l107 requires l111
+l107 requires l112
+l107 requires l113
+l107 requires l114
+l107 requires l115
+l107 requires l116
+l107 requires l117
+l107 requires l118
+l107 requires l119
+l107 requires l120
+l107 requires l121
+l107 requires l122
+l107 requires l123
+l107 requires l124
+l108 requires l106
+l109 requires l106
+l110 requires l106
+l111 requires l120
+l112 requires l106
+l113 requires l121
+l114 requires l106
+l115 requires l122
+l116 requires l106
+l117 requires l123
+l118 requires l106
+l119 requires l124
+l120 requires l108
+l121 requires l110
+l122 requires l112
+l123 requires l114
+l124 requires l116
+l125 requires l107
+l126 requires l125
+l127 requires l126
+l128 requires l129
+l128 requires l130
+l128 requires l131
+l128 requires l132
+l128 requires l133
+l128 requires l134
+l128 requires l135
+l128 requires l136
+l128 requires l137
+l128 requires l138
+l128 requires l139
+l128 requires l140
+l128 requires l141
+l128 requires l142
+l128 requires l143
+l128 requires l144
+l128 requires l145
+l129 requires l127
+l130 requires l127
+l131 requires l127
+l132 requires l141
+l133 requires l127
+l134 requires l142
+l135 requires l127
+l136 requires l143
+l137 requires l127
+l138 requires l144
+l139 requires l127
+l140 requires l145
+l141 requires l129
+l142 requires l131
+l143 requires l133
+l144 requires l135
+l145 requires l137
+l146 requires l128
+l147 requires l146
+l148 requires l147
+l149 requires l150
+l149 requires l151
+l149 requires l152
+l149 requires l153
+l149 requires l154
+l149 requires l155
+l149 requires l156
+l149 requires l157
+l149 requires l158
+l149 requires l159
+l149 requires l160
+l149 requires l161
+l149 requires l162
+l149 requires l163
+l149 requires l164
+l149 requires l165
+l149 requires l166
+l150 requires l148
+l151 requires l148
+l152 requires l148
+l153 requires l162
+l154 requires l148
+l155 requires l163
+l156 requires l148
+l157 requires l164
+l158 requires l148
+l159 requires l165
+l160 requires l148
+l161 requires l166
+l162 requires l150
+l163 requires l152
+l164 requires l154
+l165 requires l156
+l166 requires l158
+l167 requires l149
+l168 requires l167
+l169 requires l168
+l170 requires l171
+l170 requires l172
+l170 requires l173
+l170 requires l174
+l170 requires l175
+l170 requires l176
+l170 requires l177
+l170 requires l178
+l170 requires l179
+l170 requires l180
+l170 requires l181
+l170 requires l182
+l170 requires l183
+l170 requires l184
+l170 requires l185
+l170 requires l186
+l170 requires l187
+l171 requires l169
+l172 requires l169
+l173 requires l169
+l174 requires l183
+l175 requires l169
+l176 requires l184
+l177 requires l169
+l178 requires l185
+l179 requires l169
+l180 requires l186
+l181 requires l169
+l182 requires l187
+l183 requires l171
+l184 requires l173
+l185 requires l175
+l186 requires l177
+l187 requires l179
+l188 requires l170
+l189 requires l188
+l190 requires l189
+l191 requires l192
+l191 requires l193
+l191 requires l194
+l191 requires l195
+l191 requires l196
+l191 requires l197
+l191 requires l198
+l191 requires l199
+l191 requires l200
+l191 requires l201
+l191 requires l202
+l191 requires l203
+l191 requires l204
+l191 requires l205
+l191 requires l206
+l191 requires l207
+l191 requires l208
+l192 requires l190
+l193 requires l190
+l194 requires l190
+l195 requires l204
+l196 requires l190
+l197 requires l205
+l198 requires l190
+l199 requires l206
+l200 requires l190
+l201 requires l207
+l202 requires l190
+l203 requires l208
+l204 requires l192
+l205 requires l194
+l206 requires l196
+l207 requires l198
+l208 requires l200
+l209 requires l191
+}
+
+rank 4 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: calc 0 cpu 0
+l3: recv 65536b from 5 tag 1 cpu 0 nic 0
+l4: send 65536b to 5 tag 1 cpu 0 nic 0
+l5: recv 65536b from 6 tag 1 cpu 0 nic 0
+l6: send 65536b to 6 tag 1 cpu 0 nic 0
+l7: calc 0 cpu 0
+l8: calc 0 cpu 0
+l9: recv 65536b from 5 tag 100001 cpu 0 nic 0
+l10: send 65536b to 5 tag 100001 cpu 0 nic 0
+l11: recv 65536b from 6 tag 100001 cpu 0 nic 0
+l12: send 65536b to 6 tag 100001 cpu 0 nic 0
+l13: calc 0 cpu 0
+l14: calc 0 cpu 0
+l15: recv 65536b from 5 tag 200001 cpu 0 nic 0
+l16: send 65536b to 5 tag 200001 cpu 0 nic 0
+l17: recv 65536b from 6 tag 200001 cpu 0 nic 0
+l18: send 65536b to 6 tag 200001 cpu 0 nic 0
+l19: calc 0 cpu 0
+l20: calc 0 cpu 0
+l21: recv 65536b from 5 tag 300001 cpu 0 nic 0
+l22: send 65536b to 5 tag 300001 cpu 0 nic 0
+l23: recv 65536b from 6 tag 300001 cpu 0 nic 0
+l24: send 65536b to 6 tag 300001 cpu 0 nic 0
+l25: calc 0 cpu 0
+l26: calc 0 cpu 0
+l27: calc 0 cpu 0
+l28: calc 0 cpu 0
+l29: calc 0 cpu 0
+l30: calc 0 cpu 0
+l31: recv 65536b from 5 tag 4 cpu 0 nic 0
+l32: send 65536b to 5 tag 4 cpu 0 nic 0
+l33: recv 65536b from 6 tag 4 cpu 0 nic 0
+l34: send 65536b to 6 tag 4 cpu 0 nic 0
+l35: calc 0 cpu 0
+l36: calc 0 cpu 0
+l37: recv 65536b from 5 tag 100004 cpu 0 nic 0
+l38: send 65536b to 5 tag 100004 cpu 0 nic 0
+l39: recv 65536b from 6 tag 100004 cpu 0 nic 0
+l40: send 65536b to 6 tag 100004 cpu 0 nic 0
+l41: calc 0 cpu 0
+l42: calc 0 cpu 0
+l43: recv 65536b from 5 tag 200004 cpu 0 nic 0
+l44: send 65536b to 5 tag 200004 cpu 0 nic 0
+l45: recv 65536b from 6 tag 200004 cpu 0 nic 0
+l46: send 65536b to 6 tag 200004 cpu 0 nic 0
+l47: calc 0 cpu 0
+l48: calc 0 cpu 0
+l49: recv 65536b from 5 tag 300004 cpu 0 nic 0
+l50: send 65536b to 5 tag 300004 cpu 0 nic 0
+l51: recv 65536b from 6 tag 300004 cpu 0 nic 0
+l52: send 65536b to 6 tag 300004 cpu 0 nic 0
+l53: calc 0 cpu 0
+l54: calc 0 cpu 0
+l55: calc 0 cpu 0
+l56: calc 0 cpu 0
+l57: calc 0 cpu 0
+l58: calc 0 cpu 0
+l59: recv 65536b from 5 tag 7 cpu 0 nic 0
+l60: send 65536b to 5 tag 7 cpu 0 nic 0
+l61: recv 65536b from 6 tag 7 cpu 0 nic 0
+l62: send 65536b to 6 tag 7 cpu 0 nic 0
+l63: calc 0 cpu 0
+l64: calc 0 cpu 0
+l65: recv 65536b from 5 tag 100007 cpu 0 nic 0
+l66: send 65536b to 5 tag 100007 cpu 0 nic 0
+l67: recv 65536b from 6 tag 100007 cpu 0 nic 0
+l68: send 65536b to 6 tag 100007 cpu 0 nic 0
+l69: calc 0 cpu 0
+l70: calc 0 cpu 0
+l71: recv 65536b from 5 tag 200007 cpu 0 nic 0
+l72: send 65536b to 5 tag 200007 cpu 0 nic 0
+l73: recv 65536b from 6 tag 200007 cpu 0 nic 0
+l74: send 65536b to 6 tag 200007 cpu 0 nic 0
+l75: calc 0 cpu 0
+l76: calc 0 cpu 0
+l77: recv 65536b from 5 tag 300007 cpu 0 nic 0
+l78: send 65536b to 5 tag 300007 cpu 0 nic 0
+l79: recv 65536b from 6 tag 300007 cpu 0 nic 0
+l80: send 65536b to 6 tag 300007 cpu 0 nic 0
+l81: calc 0 cpu 0
+l82: calc 0 cpu 0
+l83: calc 0 cpu 0
+l84: calc 0 cpu 0
+l85: calc 0 cpu 0
+l86: calc 0 cpu 0
+l87: recv 65536b from 5 tag 10 cpu 0 nic 0
+l88: send 65536b to 5 tag 10 cpu 0 nic 0
+l89: recv 65536b from 6 tag 10 cpu 0 nic 0
+l90: send 65536b to 6 tag 10 cpu 0 nic 0
+l91: calc 0 cpu 0
+l92: calc 0 cpu 0
+l93: recv 65536b from 5 tag 100010 cpu 0 nic 0
+l94: send 65536b to 5 tag 100010 cpu 0 nic 0
+l95: recv 65536b from 6 tag 100010 cpu 0 nic 0
+l96: send 65536b to 6 tag 100010 cpu 0 nic 0
+l97: calc 0 cpu 0
+l98: calc 0 cpu 0
+l99: recv 65536b from 5 tag 200010 cpu 0 nic 0
+l100: send 65536b to 5 tag 200010 cpu 0 nic 0
+l101: recv 65536b from 6 tag 200010 cpu 0 nic 0
+l102: send 65536b to 6 tag 200010 cpu 0 nic 0
+l103: calc 0 cpu 0
+l104: calc 0 cpu 0
+l105: recv 65536b from 5 tag 300010 cpu 0 nic 0
+l106: send 65536b to 5 tag 300010 cpu 0 nic 0
+l107: recv 65536b from 6 tag 300010 cpu 0 nic 0
+l108: send 65536b to 6 tag 300010 cpu 0 nic 0
+l109: calc 0 cpu 0
+l110: calc 0 cpu 0
+l111: calc 0 cpu 0
+l112: calc 0 cpu 0
+l113: calc 0 cpu 0
+l114: calc 0 cpu 0
+l115: recv 65536b from 5 tag 13 cpu 0 nic 0
+l116: send 65536b to 5 tag 13 cpu 0 nic 0
+l117: recv 65536b from 6 tag 13 cpu 0 nic 0
+l118: send 65536b to 6 tag 13 cpu 0 nic 0
+l119: calc 0 cpu 0
+l120: calc 0 cpu 0
+l121: recv 65536b from 5 tag 100013 cpu 0 nic 0
+l122: send 65536b to 5 tag 100013 cpu 0 nic 0
+l123: recv 65536b from 6 tag 100013 cpu 0 nic 0
+l124: send 65536b to 6 tag 100013 cpu 0 nic 0
+l125: calc 0 cpu 0
+l126: calc 0 cpu 0
+l127: recv 65536b from 5 tag 200013 cpu 0 nic 0
+l128: send 65536b to 5 tag 200013 cpu 0 nic 0
+l129: recv 65536b from 6 tag 200013 cpu 0 nic 0
+l130: send 65536b to 6 tag 200013 cpu 0 nic 0
+l131: calc 0 cpu 0
+l132: calc 0 cpu 0
+l133: recv 65536b from 5 tag 300013 cpu 0 nic 0
+l134: send 65536b to 5 tag 300013 cpu 0 nic 0
+l135: recv 65536b from 6 tag 300013 cpu 0 nic 0
+l136: send 65536b to 6 tag 300013 cpu 0 nic 0
+l137: calc 0 cpu 0
+l138: calc 0 cpu 0
+l139: calc 0 cpu 0
+l140: calc 0 cpu 0
+l141: calc 0 cpu 0
+l142: calc 0 cpu 0
+l143: recv 65536b from 5 tag 16 cpu 0 nic 0
+l144: send 65536b to 5 tag 16 cpu 0 nic 0
+l145: recv 65536b from 6 tag 16 cpu 0 nic 0
+l146: send 65536b to 6 tag 16 cpu 0 nic 0
+l147: calc 0 cpu 0
+l148: calc 0 cpu 0
+l149: recv 65536b from 5 tag 100016 cpu 0 nic 0
+l150: send 65536b to 5 tag 100016 cpu 0 nic 0
+l151: recv 65536b from 6 tag 100016 cpu 0 nic 0
+l152: send 65536b to 6 tag 100016 cpu 0 nic 0
+l153: calc 0 cpu 0
+l154: calc 0 cpu 0
+l155: recv 65536b from 5 tag 200016 cpu 0 nic 0
+l156: send 65536b to 5 tag 200016 cpu 0 nic 0
+l157: recv 65536b from 6 tag 200016 cpu 0 nic 0
+l158: send 65536b to 6 tag 200016 cpu 0 nic 0
+l159: calc 0 cpu 0
+l160: calc 0 cpu 0
+l161: recv 65536b from 5 tag 300016 cpu 0 nic 0
+l162: send 65536b to 5 tag 300016 cpu 0 nic 0
+l163: recv 65536b from 6 tag 300016 cpu 0 nic 0
+l164: send 65536b to 6 tag 300016 cpu 0 nic 0
+l165: calc 0 cpu 0
+l166: calc 0 cpu 0
+l167: calc 0 cpu 0
+l168: calc 0 cpu 0
+l169: calc 0 cpu 0
+l170: calc 0 cpu 0
+l171: recv 65536b from 5 tag 19 cpu 0 nic 0
+l172: send 65536b to 5 tag 19 cpu 0 nic 0
+l173: recv 65536b from 6 tag 19 cpu 0 nic 0
+l174: send 65536b to 6 tag 19 cpu 0 nic 0
+l175: calc 0 cpu 0
+l176: calc 0 cpu 0
+l177: recv 65536b from 5 tag 100019 cpu 0 nic 0
+l178: send 65536b to 5 tag 100019 cpu 0 nic 0
+l179: recv 65536b from 6 tag 100019 cpu 0 nic 0
+l180: send 65536b to 6 tag 100019 cpu 0 nic 0
+l181: calc 0 cpu 0
+l182: calc 0 cpu 0
+l183: recv 65536b from 5 tag 200019 cpu 0 nic 0
+l184: send 65536b to 5 tag 200019 cpu 0 nic 0
+l185: recv 65536b from 6 tag 200019 cpu 0 nic 0
+l186: send 65536b to 6 tag 200019 cpu 0 nic 0
+l187: calc 0 cpu 0
+l188: calc 0 cpu 0
+l189: recv 65536b from 5 tag 300019 cpu 0 nic 0
+l190: send 65536b to 5 tag 300019 cpu 0 nic 0
+l191: recv 65536b from 6 tag 300019 cpu 0 nic 0
+l192: send 65536b to 6 tag 300019 cpu 0 nic 0
+l193: calc 0 cpu 0
+l194: calc 0 cpu 0
+l195: calc 0 cpu 0
+l196: calc 0 cpu 0
+l197: calc 0 cpu 0
+l198: calc 0 cpu 0
+l199: recv 65536b from 5 tag 22 cpu 0 nic 0
+l200: send 65536b to 5 tag 22 cpu 0 nic 0
+l201: recv 65536b from 6 tag 22 cpu 0 nic 0
+l202: send 65536b to 6 tag 22 cpu 0 nic 0
+l203: calc 0 cpu 0
+l204: calc 0 cpu 0
+l205: recv 65536b from 5 tag 100022 cpu 0 nic 0
+l206: send 65536b to 5 tag 100022 cpu 0 nic 0
+l207: recv 65536b from 6 tag 100022 cpu 0 nic 0
+l208: send 65536b to 6 tag 100022 cpu 0 nic 0
+l209: calc 0 cpu 0
+l210: calc 0 cpu 0
+l211: recv 65536b from 5 tag 200022 cpu 0 nic 0
+l212: send 65536b to 5 tag 200022 cpu 0 nic 0
+l213: recv 65536b from 6 tag 200022 cpu 0 nic 0
+l214: send 65536b to 6 tag 200022 cpu 0 nic 0
+l215: calc 0 cpu 0
+l216: calc 0 cpu 0
+l217: recv 65536b from 5 tag 300022 cpu 0 nic 0
+l218: send 65536b to 5 tag 300022 cpu 0 nic 0
+l219: recv 65536b from 6 tag 300022 cpu 0 nic 0
+l220: send 65536b to 6 tag 300022 cpu 0 nic 0
+l221: calc 0 cpu 0
+l222: calc 0 cpu 0
+l223: calc 0 cpu 0
+l224: calc 0 cpu 0
+l225: calc 0 cpu 0
+l226: calc 0 cpu 0
+l227: recv 65536b from 5 tag 25 cpu 0 nic 0
+l228: send 65536b to 5 tag 25 cpu 0 nic 0
+l229: recv 65536b from 6 tag 25 cpu 0 nic 0
+l230: send 65536b to 6 tag 25 cpu 0 nic 0
+l231: calc 0 cpu 0
+l232: calc 0 cpu 0
+l233: recv 65536b from 5 tag 100025 cpu 0 nic 0
+l234: send 65536b to 5 tag 100025 cpu 0 nic 0
+l235: recv 65536b from 6 tag 100025 cpu 0 nic 0
+l236: send 65536b to 6 tag 100025 cpu 0 nic 0
+l237: calc 0 cpu 0
+l238: calc 0 cpu 0
+l239: recv 65536b from 5 tag 200025 cpu 0 nic 0
+l240: send 65536b to 5 tag 200025 cpu 0 nic 0
+l241: recv 65536b from 6 tag 200025 cpu 0 nic 0
+l242: send 65536b to 6 tag 200025 cpu 0 nic 0
+l243: calc 0 cpu 0
+l244: calc 0 cpu 0
+l245: recv 65536b from 5 tag 300025 cpu 0 nic 0
+l246: send 65536b to 5 tag 300025 cpu 0 nic 0
+l247: recv 65536b from 6 tag 300025 cpu 0 nic 0
+l248: send 65536b to 6 tag 300025 cpu 0 nic 0
+l249: calc 0 cpu 0
+l250: calc 0 cpu 0
+l251: calc 0 cpu 0
+l252: calc 0 cpu 0
+l253: calc 0 cpu 0
+l254: calc 0 cpu 0
+l255: recv 65536b from 5 tag 28 cpu 0 nic 0
+l256: send 65536b to 5 tag 28 cpu 0 nic 0
+l257: recv 65536b from 6 tag 28 cpu 0 nic 0
+l258: send 65536b to 6 tag 28 cpu 0 nic 0
+l259: calc 0 cpu 0
+l260: calc 0 cpu 0
+l261: recv 65536b from 5 tag 100028 cpu 0 nic 0
+l262: send 65536b to 5 tag 100028 cpu 0 nic 0
+l263: recv 65536b from 6 tag 100028 cpu 0 nic 0
+l264: send 65536b to 6 tag 100028 cpu 0 nic 0
+l265: calc 0 cpu 0
+l266: calc 0 cpu 0
+l267: recv 65536b from 5 tag 200028 cpu 0 nic 0
+l268: send 65536b to 5 tag 200028 cpu 0 nic 0
+l269: recv 65536b from 6 tag 200028 cpu 0 nic 0
+l270: send 65536b to 6 tag 200028 cpu 0 nic 0
+l271: calc 0 cpu 0
+l272: calc 0 cpu 0
+l273: recv 65536b from 5 tag 300028 cpu 0 nic 0
+l274: send 65536b to 5 tag 300028 cpu 0 nic 0
+l275: recv 65536b from 6 tag 300028 cpu 0 nic 0
+l276: send 65536b to 6 tag 300028 cpu 0 nic 0
+l277: calc 0 cpu 0
+l278: calc 0 cpu 0
+l279: calc 0 cpu 0
+l1 requires l0
+l2 requires l3
+l2 requires l4
+l2 requires l5
+l2 requires l6
+l2 requires l7
+l2 requires l8
+l2 requires l9
+l2 requires l10
+l2 requires l11
+l2 requires l12
+l2 requires l13
+l2 requires l14
+l2 requires l15
+l2 requires l16
+l2 requires l17
+l2 requires l18
+l2 requires l19
+l2 requires l20
+l2 requires l21
+l2 requires l22
+l2 requires l23
+l2 requires l24
+l2 requires l25
+l2 requires l26
+l3 requires l1
+l4 requires l7
+l4 requires l8
+l5 requires l1
+l6 requires l7
+l6 requires l8
+l7 requires l3
+l8 requires l5
+l9 requires l1
+l10 requires l13
+l10 requires l14
+l11 requires l1
+l12 requires l13
+l12 requires l14
+l13 requires l9
+l14 requires l11
+l15 requires l1
+l16 requires l19
+l16 requires l20
+l17 requires l1
+l18 requires l19
+l18 requires l20
+l19 requires l15
+l20 requires l17
+l21 requires l1
+l22 requires l25
+l22 requires l26
+l23 requires l1
+l24 requires l25
+l24 requires l26
+l25 requires l21
+l26 requires l23
+l27 requires l2
+l28 requires l27
+l29 requires l28
+l30 requires l31
+l30 requires l32
+l30 requires l33
+l30 requires l34
+l30 requires l35
+l30 requires l36
+l30 requires l37
+l30 requires l38
+l30 requires l39
+l30 requires l40
+l30 requires l41
+l30 requires l42
+l30 requires l43
+l30 requires l44
+l30 requires l45
+l30 requires l46
+l30 requires l47
+l30 requires l48
+l30 requires l49
+l30 requires l50
+l30 requires l51
+l30 requires l52
+l30 requires l53
+l30 requires l54
+l31 requires l29
+l32 requires l35
+l32 requires l36
+l33 requires l29
+l34 requires l35
+l34 requires l36
+l35 requires l31
+l36 requires l33
+l37 requires l29
+l38 requires l41
+l38 requires l42
+l39 requires l29
+l40 requires l41
+l40 requires l42
+l41 requires l37
+l42 requires l39
+l43 requires l29
+l44 requires l47
+l44 requires l48
+l45 requires l29
+l46 requires l47
+l46 requires l48
+l47 requires l43
+l48 requires l45
+l49 requires l29
+l50 requires l53
+l50 requires l54
+l51 requires l29
+l52 requires l53
+l52 requires l54
+l53 requires l49
+l54 requires l51
+l55 requires l30
+l56 requires l55
+l57 requires l56
+l58 requires l59
+l58 requires l60
+l58 requires l61
+l58 requires l62
+l58 requires l63
+l58 requires l64
+l58 requires l65
+l58 requires l66
+l58 requires l67
+l58 requires l68
+l58 requires l69
+l58 requires l70
+l58 requires l71
+l58 requires l72
+l58 requires l73
+l58 requires l74
+l58 requires l75
+l58 requires l76
+l58 requires l77
+l58 requires l78
+l58 requires l79
+l58 requires l80
+l58 requires l81
+l58 requires l82
+l59 requires l57
+l60 requires l63
+l60 requires l64
+l61 requires l57
+l62 requires l63
+l62 requires l64
+l63 requires l59
+l64 requires l61
+l65 requires l57
+l66 requires l69
+l66 requires l70
+l67 requires l57
+l68 requires l69
+l68 requires l70
+l69 requires l65
+l70 requires l67
+l71 requires l57
+l72 requires l75
+l72 requires l76
+l73 requires l57
+l74 requires l75
+l74 requires l76
+l75 requires l71
+l76 requires l73
+l77 requires l57
+l78 requires l81
+l78 requires l82
+l79 requires l57
+l80 requires l81
+l80 requires l82
+l81 requires l77
+l82 requires l79
+l83 requires l58
+l84 requires l83
+l85 requires l84
+l86 requires l87
+l86 requires l88
+l86 requires l89
+l86 requires l90
+l86 requires l91
+l86 requires l92
+l86 requires l93
+l86 requires l94
+l86 requires l95
+l86 requires l96
+l86 requires l97
+l86 requires l98
+l86 requires l99
+l86 requires l100
+l86 requires l101
+l86 requires l102
+l86 requires l103
+l86 requires l104
+l86 requires l105
+l86 requires l106
+l86 requires l107
+l86 requires l108
+l86 requires l109
+l86 requires l110
+l87 requires l85
+l88 requires l91
+l88 requires l92
+l89 requires l85
+l90 requires l91
+l90 requires l92
+l91 requires l87
+l92 requires l89
+l93 requires l85
+l94 requires l97
+l94 requires l98
+l95 requires l85
+l96 requires l97
+l96 requires l98
+l97 requires l93
+l98 requires l95
+l99 requires l85
+l100 requires l103
+l100 requires l104
+l101 requires l85
+l102 requires l103
+l102 requires l104
+l103 requires l99
+l104 requires l101
+l105 requires l85
+l106 requires l109
+l106 requires l110
+l107 requires l85
+l108 requires l109
+l108 requires l110
+l109 requires l105
+l110 requires l107
+l111 requires l86
+l112 requires l111
+l113 requires l112
+l114 requires l115
+l114 requires l116
+l114 requires l117
+l114 requires l118
+l114 requires l119
+l114 requires l120
+l114 requires l121
+l114 requires l122
+l114 requires l123
+l114 requires l124
+l114 requires l125
+l114 requires l126
+l114 requires l127
+l114 requires l128
+l114 requires l129
+l114 requires l130
+l114 requires l131
+l114 requires l132
+l114 requires l133
+l114 requires l134
+l114 requires l135
+l114 requires l136
+l114 requires l137
+l114 requires l138
+l115 requires l113
+l116 requires l119
+l116 requires l120
+l117 requires l113
+l118 requires l119
+l118 requires l120
+l119 requires l115
+l120 requires l117
+l121 requires l113
+l122 requires l125
+l122 requires l126
+l123 requires l113
+l124 requires l125
+l124 requires l126
+l125 requires l121
+l126 requires l123
+l127 requires l113
+l128 requires l131
+l128 requires l132
+l129 requires l113
+l130 requires l131
+l130 requires l132
+l131 requires l127
+l132 requires l129
+l133 requires l113
+l134 requires l137
+l134 requires l138
+l135 requires l113
+l136 requires l137
+l136 requires l138
+l137 requires l133
+l138 requires l135
+l139 requires l114
+l140 requires l139
+l141 requires l140
+l142 requires l143
+l142 requires l144
+l142 requires l145
+l142 requires l146
+l142 requires l147
+l142 requires l148
+l142 requires l149
+l142 requires l150
+l142 requires l151
+l142 requires l152
+l142 requires l153
+l142 requires l154
+l142 requires l155
+l142 requires l156
+l142 requires l157
+l142 requires l158
+l142 requires l159
+l142 requires l160
+l142 requires l161
+l142 requires l162
+l142 requires l163
+l142 requires l164
+l142 requires l165
+l142 requires l166
+l143 requires l141
+l144 requires l147
+l144 requires l148
+l145 requires l141
+l146 requires l147
+l146 requires l148
+l147 requires l143
+l148 requires l145
+l149 requires l141
+l150 requires l153
+l150 requires l154
+l151 requires l141
+l152 requires l153
+l152 requires l154
+l153 requires l149
+l154 requires l151
+l155 requires l141
+l156 requires l159
+l156 requires l160
+l157 requires l141
+l158 requires l159
+l158 requires l160
+l159 requires l155
+l160 requires l157
+l161 requires l141
+l162 requires l165
+l162 requires l166
+l163 requires l141
+l164 requires l165
+l164 requires l166
+l165 requires l161
+l166 requires l163
+l167 requires l142
+l168 requires l167
+l169 requires l168
+l170 requires l171
+l170 requires l172
+l170 requires l173
+l170 requires l174
+l170 requires l175
+l170 requires l176
+l170 requires l177
+l170 requires l178
+l170 requires l179
+l170 requires l180
+l170 requires l181
+l170 requires l182
+l170 requires l183
+l170 requires l184
+l170 requires l185
+l170 requires l186
+l170 requires l187
+l170 requires l188
+l170 requires l189
+l170 requires l190
+l170 requires l191
+l170 requires l192
+l170 requires l193
+l170 requires l194
+l171 requires l169
+l172 requires l175
+l172 requires l176
+l173 requires l169
+l174 requires l175
+l174 requires l176
+l175 requires l171
+l176 requires l173
+l177 requires l169
+l178 requires l181
+l178 requires l182
+l179 requires l169
+l180 requires l181
+l180 requires l182
+l181 requires l177
+l182 requires l179
+l183 requires l169
+l184 requires l187
+l184 requires l188
+l185 requires l169
+l186 requires l187
+l186 requires l188
+l187 requires l183
+l188 requires l185
+l189 requires l169
+l190 requires l193
+l190 requires l194
+l191 requires l169
+l192 requires l193
+l192 requires l194
+l193 requires l189
+l194 requires l191
+l195 requires l170
+l196 requires l195
+l197 requires l196
+l198 requires l199
+l198 requires l200
+l198 requires l201
+l198 requires l202
+l198 requires l203
+l198 requires l204
+l198 requires l205
+l198 requires l206
+l198 requires l207
+l198 requires l208
+l198 requires l209
+l198 requires l210
+l198 requires l211
+l198 requires l212
+l198 requires l213
+l198 requires l214
+l198 requires l215
+l198 requires l216
+l198 requires l217
+l198 requires l218
+l198 requires l219
+l198 requires l220
+l198 requires l221
+l198 requires l222
+l199 requires l197
+l200 requires l203
+l200 requires l204
+l201 requires l197
+l202 requires l203
+l202 requires l204
+l203 requires l199
+l204 requires l201
+l205 requires l197
+l206 requires l209
+l206 requires l210
+l207 requires l197
+l208 requires l209
+l208 requires l210
+l209 requires l205
+l210 requires l207
+l211 requires l197
+l212 requires l215
+l212 requires l216
+l213 requires l197
+l214 requires l215
+l214 requires l216
+l215 requires l211
+l216 requires l213
+l217 requires l197
+l218 requires l221
+l218 requires l222
+l219 requires l197
+l220 requires l221
+l220 requires l222
+l221 requires l217
+l222 requires l219
+l223 requires l198
+l224 requires l223
+l225 requires l224
+l226 requires l227
+l226 requires l228
+l226 requires l229
+l226 requires l230
+l226 requires l231
+l226 requires l232
+l226 requires l233
+l226 requires l234
+l226 requires l235
+l226 requires l236
+l226 requires l237
+l226 requires l238
+l226 requires l239
+l226 requires l240
+l226 requires l241
+l226 requires l242
+l226 requires l243
+l226 requires l244
+l226 requires l245
+l226 requires l246
+l226 requires l247
+l226 requires l248
+l226 requires l249
+l226 requires l250
+l227 requires l225
+l228 requires l231
+l228 requires l232
+l229 requires l225
+l230 requires l231
+l230 requires l232
+l231 requires l227
+l232 requires l229
+l233 requires l225
+l234 requires l237
+l234 requires l238
+l235 requires l225
+l236 requires l237
+l236 requires l238
+l237 requires l233
+l238 requires l235
+l239 requires l225
+l240 requires l243
+l240 requires l244
+l241 requires l225
+l242 requires l243
+l242 requires l244
+l243 requires l239
+l244 requires l241
+l245 requires l225
+l246 requires l249
+l246 requires l250
+l247 requires l225
+l248 requires l249
+l248 requires l250
+l249 requires l245
+l250 requires l247
+l251 requires l226
+l252 requires l251
+l253 requires l252
+l254 requires l255
+l254 requires l256
+l254 requires l257
+l254 requires l258
+l254 requires l259
+l254 requires l260
+l254 requires l261
+l254 requires l262
+l254 requires l263
+l254 requires l264
+l254 requires l265
+l254 requires l266
+l254 requires l267
+l254 requires l268
+l254 requires l269
+l254 requires l270
+l254 requires l271
+l254 requires l272
+l254 requires l273
+l254 requires l274
+l254 requires l275
+l254 requires l276
+l254 requires l277
+l254 requires l278
+l255 requires l253
+l256 requires l259
+l256 requires l260
+l257 requires l253
+l258 requires l259
+l258 requires l260
+l259 requires l255
+l260 requires l257
+l261 requires l253
+l262 requires l265
+l262 requires l266
+l263 requires l253
+l264 requires l265
+l264 requires l266
+l265 requires l261
+l266 requires l263
+l267 requires l253
+l268 requires l271
+l268 requires l272
+l269 requires l253
+l270 requires l271
+l270 requires l272
+l271 requires l267
+l272 requires l269
+l273 requires l253
+l274 requires l277
+l274 requires l278
+l275 requires l253
+l276 requires l277
+l276 requires l278
+l277 requires l273
+l278 requires l275
+l279 requires l254
+}
+
+rank 5 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: calc 0 cpu 0
+l3: send 65536b to 4 tag 1 cpu 0 nic 0
+l4: recv 65536b from 4 tag 1 cpu 0 nic 0
+l5: recv 65536b from 7 tag 1 cpu 0 nic 0
+l6: send 65536b to 7 tag 1 cpu 0 nic 0
+l7: calc 0 cpu 0
+l8: send 65536b to 4 tag 100001 cpu 0 nic 0
+l9: recv 65536b from 4 tag 100001 cpu 0 nic 0
+l10: recv 65536b from 7 tag 100001 cpu 0 nic 0
+l11: send 65536b to 7 tag 100001 cpu 0 nic 0
+l12: calc 0 cpu 0
+l13: send 65536b to 4 tag 200001 cpu 0 nic 0
+l14: recv 65536b from 4 tag 200001 cpu 0 nic 0
+l15: recv 65536b from 7 tag 200001 cpu 0 nic 0
+l16: send 65536b to 7 tag 200001 cpu 0 nic 0
+l17: calc 0 cpu 0
+l18: send 65536b to 4 tag 300001 cpu 0 nic 0
+l19: recv 65536b from 4 tag 300001 cpu 0 nic 0
+l20: recv 65536b from 7 tag 300001 cpu 0 nic 0
+l21: send 65536b to 7 tag 300001 cpu 0 nic 0
+l22: calc 0 cpu 0
+l23: calc 0 cpu 0
+l24: calc 0 cpu 0
+l25: calc 0 cpu 0
+l26: calc 0 cpu 0
+l27: send 65536b to 4 tag 4 cpu 0 nic 0
+l28: recv 65536b from 4 tag 4 cpu 0 nic 0
+l29: recv 65536b from 7 tag 4 cpu 0 nic 0
+l30: send 65536b to 7 tag 4 cpu 0 nic 0
+l31: calc 0 cpu 0
+l32: send 65536b to 4 tag 100004 cpu 0 nic 0
+l33: recv 65536b from 4 tag 100004 cpu 0 nic 0
+l34: recv 65536b from 7 tag 100004 cpu 0 nic 0
+l35: send 65536b to 7 tag 100004 cpu 0 nic 0
+l36: calc 0 cpu 0
+l37: send 65536b to 4 tag 200004 cpu 0 nic 0
+l38: recv 65536b from 4 tag 200004 cpu 0 nic 0
+l39: recv 65536b from 7 tag 200004 cpu 0 nic 0
+l40: send 65536b to 7 tag 200004 cpu 0 nic 0
+l41: calc 0 cpu 0
+l42: send 65536b to 4 tag 300004 cpu 0 nic 0
+l43: recv 65536b from 4 tag 300004 cpu 0 nic 0
+l44: recv 65536b from 7 tag 300004 cpu 0 nic 0
+l45: send 65536b to 7 tag 300004 cpu 0 nic 0
+l46: calc 0 cpu 0
+l47: calc 0 cpu 0
+l48: calc 0 cpu 0
+l49: calc 0 cpu 0
+l50: calc 0 cpu 0
+l51: send 65536b to 4 tag 7 cpu 0 nic 0
+l52: recv 65536b from 4 tag 7 cpu 0 nic 0
+l53: recv 65536b from 7 tag 7 cpu 0 nic 0
+l54: send 65536b to 7 tag 7 cpu 0 nic 0
+l55: calc 0 cpu 0
+l56: send 65536b to 4 tag 100007 cpu 0 nic 0
+l57: recv 65536b from 4 tag 100007 cpu 0 nic 0
+l58: recv 65536b from 7 tag 100007 cpu 0 nic 0
+l59: send 65536b to 7 tag 100007 cpu 0 nic 0
+l60: calc 0 cpu 0
+l61: send 65536b to 4 tag 200007 cpu 0 nic 0
+l62: recv 65536b from 4 tag 200007 cpu 0 nic 0
+l63: recv 65536b from 7 tag 200007 cpu 0 nic 0
+l64: send 65536b to 7 tag 200007 cpu 0 nic 0
+l65: calc 0 cpu 0
+l66: send 65536b to 4 tag 300007 cpu 0 nic 0
+l67: recv 65536b from 4 tag 300007 cpu 0 nic 0
+l68: recv 65536b from 7 tag 300007 cpu 0 nic 0
+l69: send 65536b to 7 tag 300007 cpu 0 nic 0
+l70: calc 0 cpu 0
+l71: calc 0 cpu 0
+l72: calc 0 cpu 0
+l73: calc 0 cpu 0
+l74: calc 0 cpu 0
+l75: send 65536b to 4 tag 10 cpu 0 nic 0
+l76: recv 65536b from 4 tag 10 cpu 0 nic 0
+l77: recv 65536b from 7 tag 10 cpu 0 nic 0
+l78: send 65536b to 7 tag 10 cpu 0 nic 0
+l79: calc 0 cpu 0
+l80: send 65536b to 4 tag 100010 cpu 0 nic 0
+l81: recv 65536b from 4 tag 100010 cpu 0 nic 0
+l82: recv 65536b from 7 tag 100010 cpu 0 nic 0
+l83: send 65536b to 7 tag 100010 cpu 0 nic 0
+l84: calc 0 cpu 0
+l85: send 65536b to 4 tag 200010 cpu 0 nic 0
+l86: recv 65536b from 4 tag 200010 cpu 0 nic 0
+l87: recv 65536b from 7 tag 200010 cpu 0 nic 0
+l88: send 65536b to 7 tag 200010 cpu 0 nic 0
+l89: calc 0 cpu 0
+l90: send 65536b to 4 tag 300010 cpu 0 nic 0
+l91: recv 65536b from 4 tag 300010 cpu 0 nic 0
+l92: recv 65536b from 7 tag 300010 cpu 0 nic 0
+l93: send 65536b to 7 tag 300010 cpu 0 nic 0
+l94: calc 0 cpu 0
+l95: calc 0 cpu 0
+l96: calc 0 cpu 0
+l97: calc 0 cpu 0
+l98: calc 0 cpu 0
+l99: send 65536b to 4 tag 13 cpu 0 nic 0
+l100: recv 65536b from 4 tag 13 cpu 0 nic 0
+l101: recv 65536b from 7 tag 13 cpu 0 nic 0
+l102: send 65536b to 7 tag 13 cpu 0 nic 0
+l103: calc 0 cpu 0
+l104: send 65536b to 4 tag 100013 cpu 0 nic 0
+l105: recv 65536b from 4 tag 100013 cpu 0 nic 0
+l106: recv 65536b from 7 tag 100013 cpu 0 nic 0
+l107: send 65536b to 7 tag 100013 cpu 0 nic 0
+l108: calc 0 cpu 0
+l109: send 65536b to 4 tag 200013 cpu 0 nic 0
+l110: recv 65536b from 4 tag 200013 cpu 0 nic 0
+l111: recv 65536b from 7 tag 200013 cpu 0 nic 0
+l112: send 65536b to 7 tag 200013 cpu 0 nic 0
+l113: calc 0 cpu 0
+l114: send 65536b to 4 tag 300013 cpu 0 nic 0
+l115: recv 65536b from 4 tag 300013 cpu 0 nic 0
+l116: recv 65536b from 7 tag 300013 cpu 0 nic 0
+l117: send 65536b to 7 tag 300013 cpu 0 nic 0
+l118: calc 0 cpu 0
+l119: calc 0 cpu 0
+l120: calc 0 cpu 0
+l121: calc 0 cpu 0
+l122: calc 0 cpu 0
+l123: send 65536b to 4 tag 16 cpu 0 nic 0
+l124: recv 65536b from 4 tag 16 cpu 0 nic 0
+l125: recv 65536b from 7 tag 16 cpu 0 nic 0
+l126: send 65536b to 7 tag 16 cpu 0 nic 0
+l127: calc 0 cpu 0
+l128: send 65536b to 4 tag 100016 cpu 0 nic 0
+l129: recv 65536b from 4 tag 100016 cpu 0 nic 0
+l130: recv 65536b from 7 tag 100016 cpu 0 nic 0
+l131: send 65536b to 7 tag 100016 cpu 0 nic 0
+l132: calc 0 cpu 0
+l133: send 65536b to 4 tag 200016 cpu 0 nic 0
+l134: recv 65536b from 4 tag 200016 cpu 0 nic 0
+l135: recv 65536b from 7 tag 200016 cpu 0 nic 0
+l136: send 65536b to 7 tag 200016 cpu 0 nic 0
+l137: calc 0 cpu 0
+l138: send 65536b to 4 tag 300016 cpu 0 nic 0
+l139: recv 65536b from 4 tag 300016 cpu 0 nic 0
+l140: recv 65536b from 7 tag 300016 cpu 0 nic 0
+l141: send 65536b to 7 tag 300016 cpu 0 nic 0
+l142: calc 0 cpu 0
+l143: calc 0 cpu 0
+l144: calc 0 cpu 0
+l145: calc 0 cpu 0
+l146: calc 0 cpu 0
+l147: send 65536b to 4 tag 19 cpu 0 nic 0
+l148: recv 65536b from 4 tag 19 cpu 0 nic 0
+l149: recv 65536b from 7 tag 19 cpu 0 nic 0
+l150: send 65536b to 7 tag 19 cpu 0 nic 0
+l151: calc 0 cpu 0
+l152: send 65536b to 4 tag 100019 cpu 0 nic 0
+l153: recv 65536b from 4 tag 100019 cpu 0 nic 0
+l154: recv 65536b from 7 tag 100019 cpu 0 nic 0
+l155: send 65536b to 7 tag 100019 cpu 0 nic 0
+l156: calc 0 cpu 0
+l157: send 65536b to 4 tag 200019 cpu 0 nic 0
+l158: recv 65536b from 4 tag 200019 cpu 0 nic 0
+l159: recv 65536b from 7 tag 200019 cpu 0 nic 0
+l160: send 65536b to 7 tag 200019 cpu 0 nic 0
+l161: calc 0 cpu 0
+l162: send 65536b to 4 tag 300019 cpu 0 nic 0
+l163: recv 65536b from 4 tag 300019 cpu 0 nic 0
+l164: recv 65536b from 7 tag 300019 cpu 0 nic 0
+l165: send 65536b to 7 tag 300019 cpu 0 nic 0
+l166: calc 0 cpu 0
+l167: calc 0 cpu 0
+l168: calc 0 cpu 0
+l169: calc 0 cpu 0
+l170: calc 0 cpu 0
+l171: send 65536b to 4 tag 22 cpu 0 nic 0
+l172: recv 65536b from 4 tag 22 cpu 0 nic 0
+l173: recv 65536b from 7 tag 22 cpu 0 nic 0
+l174: send 65536b to 7 tag 22 cpu 0 nic 0
+l175: calc 0 cpu 0
+l176: send 65536b to 4 tag 100022 cpu 0 nic 0
+l177: recv 65536b from 4 tag 100022 cpu 0 nic 0
+l178: recv 65536b from 7 tag 100022 cpu 0 nic 0
+l179: send 65536b to 7 tag 100022 cpu 0 nic 0
+l180: calc 0 cpu 0
+l181: send 65536b to 4 tag 200022 cpu 0 nic 0
+l182: recv 65536b from 4 tag 200022 cpu 0 nic 0
+l183: recv 65536b from 7 tag 200022 cpu 0 nic 0
+l184: send 65536b to 7 tag 200022 cpu 0 nic 0
+l185: calc 0 cpu 0
+l186: send 65536b to 4 tag 300022 cpu 0 nic 0
+l187: recv 65536b from 4 tag 300022 cpu 0 nic 0
+l188: recv 65536b from 7 tag 300022 cpu 0 nic 0
+l189: send 65536b to 7 tag 300022 cpu 0 nic 0
+l190: calc 0 cpu 0
+l191: calc 0 cpu 0
+l192: calc 0 cpu 0
+l193: calc 0 cpu 0
+l194: calc 0 cpu 0
+l195: send 65536b to 4 tag 25 cpu 0 nic 0
+l196: recv 65536b from 4 tag 25 cpu 0 nic 0
+l197: recv 65536b from 7 tag 25 cpu 0 nic 0
+l198: send 65536b to 7 tag 25 cpu 0 nic 0
+l199: calc 0 cpu 0
+l200: send 65536b to 4 tag 100025 cpu 0 nic 0
+l201: recv 65536b from 4 tag 100025 cpu 0 nic 0
+l202: recv 65536b from 7 tag 100025 cpu 0 nic 0
+l203: send 65536b to 7 tag 100025 cpu 0 nic 0
+l204: calc 0 cpu 0
+l205: send 65536b to 4 tag 200025 cpu 0 nic 0
+l206: recv 65536b from 4 tag 200025 cpu 0 nic 0
+l207: recv 65536b from 7 tag 200025 cpu 0 nic 0
+l208: send 65536b to 7 tag 200025 cpu 0 nic 0
+l209: calc 0 cpu 0
+l210: send 65536b to 4 tag 300025 cpu 0 nic 0
+l211: recv 65536b from 4 tag 300025 cpu 0 nic 0
+l212: recv 65536b from 7 tag 300025 cpu 0 nic 0
+l213: send 65536b to 7 tag 300025 cpu 0 nic 0
+l214: calc 0 cpu 0
+l215: calc 0 cpu 0
+l216: calc 0 cpu 0
+l217: calc 0 cpu 0
+l218: calc 0 cpu 0
+l219: send 65536b to 4 tag 28 cpu 0 nic 0
+l220: recv 65536b from 4 tag 28 cpu 0 nic 0
+l221: recv 65536b from 7 tag 28 cpu 0 nic 0
+l222: send 65536b to 7 tag 28 cpu 0 nic 0
+l223: calc 0 cpu 0
+l224: send 65536b to 4 tag 100028 cpu 0 nic 0
+l225: recv 65536b from 4 tag 100028 cpu 0 nic 0
+l226: recv 65536b from 7 tag 100028 cpu 0 nic 0
+l227: send 65536b to 7 tag 100028 cpu 0 nic 0
+l228: calc 0 cpu 0
+l229: send 65536b to 4 tag 200028 cpu 0 nic 0
+l230: recv 65536b from 4 tag 200028 cpu 0 nic 0
+l231: recv 65536b from 7 tag 200028 cpu 0 nic 0
+l232: send 65536b to 7 tag 200028 cpu 0 nic 0
+l233: calc 0 cpu 0
+l234: send 65536b to 4 tag 300028 cpu 0 nic 0
+l235: recv 65536b from 4 tag 300028 cpu 0 nic 0
+l236: recv 65536b from 7 tag 300028 cpu 0 nic 0
+l237: send 65536b to 7 tag 300028 cpu 0 nic 0
+l238: calc 0 cpu 0
+l239: calc 0 cpu 0
+l1 requires l0
+l2 requires l3
+l2 requires l4
+l2 requires l5
+l2 requires l6
+l2 requires l7
+l2 requires l8
+l2 requires l9
+l2 requires l10
+l2 requires l11
+l2 requires l12
+l2 requires l13
+l2 requires l14
+l2 requires l15
+l2 requires l16
+l2 requires l17
+l2 requires l18
+l2 requires l19
+l2 requires l20
+l2 requires l21
+l2 requires l22
+l3 requires l7
+l4 requires l3
+l5 requires l1
+l6 requires l4
+l7 requires l5
+l8 requires l12
+l9 requires l8
+l10 requires l1
+l11 requires l9
+l12 requires l10
+l13 requires l17
+l14 requires l13
+l15 requires l1
+l16 requires l14
+l17 requires l15
+l18 requires l22
+l19 requires l18
+l20 requires l1
+l21 requires l19
+l22 requires l20
+l23 requires l2
+l24 requires l23
+l25 requires l24
+l26 requires l27
+l26 requires l28
+l26 requires l29
+l26 requires l30
+l26 requires l31
+l26 requires l32
+l26 requires l33
+l26 requires l34
+l26 requires l35
+l26 requires l36
+l26 requires l37
+l26 requires l38
+l26 requires l39
+l26 requires l40
+l26 requires l41
+l26 requires l42
+l26 requires l43
+l26 requires l44
+l26 requires l45
+l26 requires l46
+l27 requires l31
+l28 requires l27
+l29 requires l25
+l30 requires l28
+l31 requires l29
+l32 requires l36
+l33 requires l32
+l34 requires l25
+l35 requires l33
+l36 requires l34
+l37 requires l41
+l38 requires l37
+l39 requires l25
+l40 requires l38
+l41 requires l39
+l42 requires l46
+l43 requires l42
+l44 requires l25
+l45 requires l43
+l46 requires l44
+l47 requires l26
+l48 requires l47
+l49 requires l48
+l50 requires l51
+l50 requires l52
+l50 requires l53
+l50 requires l54
+l50 requires l55
+l50 requires l56
+l50 requires l57
+l50 requires l58
+l50 requires l59
+l50 requires l60
+l50 requires l61
+l50 requires l62
+l50 requires l63
+l50 requires l64
+l50 requires l65
+l50 requires l66
+l50 requires l67
+l50 requires l68
+l50 requires l69
+l50 requires l70
+l51 requires l55
+l52 requires l51
+l53 requires l49
+l54 requires l52
+l55 requires l53
+l56 requires l60
+l57 requires l56
+l58 requires l49
+l59 requires l57
+l60 requires l58
+l61 requires l65
+l62 requires l61
+l63 requires l49
+l64 requires l62
+l65 requires l63
+l66 requires l70
+l67 requires l66
+l68 requires l49
+l69 requires l67
+l70 requires l68
+l71 requires l50
+l72 requires l71
+l73 requires l72
+l74 requires l75
+l74 requires l76
+l74 requires l77
+l74 requires l78
+l74 requires l79
+l74 requires l80
+l74 requires l81
+l74 requires l82
+l74 requires l83
+l74 requires l84
+l74 requires l85
+l74 requires l86
+l74 requires l87
+l74 requires l88
+l74 requires l89
+l74 requires l90
+l74 requires l91
+l74 requires l92
+l74 requires l93
+l74 requires l94
+l75 requires l79
+l76 requires l75
+l77 requires l73
+l78 requires l76
+l79 requires l77
+l80 requires l84
+l81 requires l80
+l82 requires l73
+l83 requires l81
+l84 requires l82
+l85 requires l89
+l86 requires l85
+l87 requires l73
+l88 requires l86
+l89 requires l87
+l90 requires l94
+l91 requires l90
+l92 requires l73
+l93 requires l91
+l94 requires l92
+l95 requires l74
+l96 requires l95
+l97 requires l96
+l98 requires l99
+l98 requires l100
+l98 requires l101
+l98 requires l102
+l98 requires l103
+l98 requires l104
+l98 requires l105
+l98 requires l106
+l98 requires l107
+l98 requires l108
+l98 requires l109
+l98 requires l110
+l98 requires l111
+l98 requires l112
+l98 requires l113
+l98 requires l114
+l98 requires l115
+l98 requires l116
+l98 requires l117
+l98 requires l118
+l99 requires l103
+l100 requires l99
+l101 requires l97
+l102 requires l100
+l103 requires l101
+l104 requires l108
+l105 requires l104
+l106 requires l97
+l107 requires l105
+l108 requires l106
+l109 requires l113
+l110 requires l109
+l111 requires l97
+l112 requires l110
+l113 requires l111
+l114 requires l118
+l115 requires l114
+l116 requires l97
+l117 requires l115
+l118 requires l116
+l119 requires l98
+l120 requires l119
+l121 requires l120
+l122 requires l123
+l122 requires l124
+l122 requires l125
+l122 requires l126
+l122 requires l127
+l122 requires l128
+l122 requires l129
+l122 requires l130
+l122 requires l131
+l122 requires l132
+l122 requires l133
+l122 requires l134
+l122 requires l135
+l122 requires l136
+l122 requires l137
+l122 requires l138
+l122 requires l139
+l122 requires l140
+l122 requires l141
+l122 requires l142
+l123 requires l127
+l124 requires l123
+l125 requires l121
+l126 requires l124
+l127 requires l125
+l128 requires l132
+l129 requires l128
+l130 requires l121
+l131 requires l129
+l132 requires l130
+l133 requires l137
+l134 requires l133
+l135 requires l121
+l136 requires l134
+l137 requires l135
+l138 requires l142
+l139 requires l138
+l140 requires l121
+l141 requires l139
+l142 requires l140
+l143 requires l122
+l144 requires l143
+l145 requires l144
+l146 requires l147
+l146 requires l148
+l146 requires l149
+l146 requires l150
+l146 requires l151
+l146 requires l152
+l146 requires l153
+l146 requires l154
+l146 requires l155
+l146 requires l156
+l146 requires l157
+l146 requires l158
+l146 requires l159
+l146 requires l160
+l146 requires l161
+l146 requires l162
+l146 requires l163
+l146 requires l164
+l146 requires l165
+l146 requires l166
+l147 requires l151
+l148 requires l147
+l149 requires l145
+l150 requires l148
+l151 requires l149
+l152 requires l156
+l153 requires l152
+l154 requires l145
+l155 requires l153
+l156 requires l154
+l157 requires l161
+l158 requires l157
+l159 requires l145
+l160 requires l158
+l161 requires l159
+l162 requires l166
+l163 requires l162
+l164 requires l145
+l165 requires l163
+l166 requires l164
+l167 requires l146
+l168 requires l167
+l169 requires l168
+l170 requires l171
+l170 requires l172
+l170 requires l173
+l170 requires l174
+l170 requires l175
+l170 requires l176
+l170 requires l177
+l170 requires l178
+l170 requires l179
+l170 requires l180
+l170 requires l181
+l170 requires l182
+l170 requires l183
+l170 requires l184
+l170 requires l185
+l170 requires l186
+l170 requires l187
+l170 requires l188
+l170 requires l189
+l170 requires l190
+l171 requires l175
+l172 requires l171
+l173 requires l169
+l174 requires l172
+l175 requires l173
+l176 requires l180
+l177 requires l176
+l178 requires l169
+l179 requires l177
+l180 requires l178
+l181 requires l185
+l182 requires l181
+l183 requires l169
+l184 requires l182
+l185 requires l183
+l186 requires l190
+l187 requires l186
+l188 requires l169
+l189 requires l187
+l190 requires l188
+l191 requires l170
+l192 requires l191
+l193 requires l192
+l194 requires l195
+l194 requires l196
+l194 requires l197
+l194 requires l198
+l194 requires l199
+l194 requires l200
+l194 requires l201
+l194 requires l202
+l194 requires l203
+l194 requires l204
+l194 requires l205
+l194 requires l206
+l194 requires l207
+l194 requires l208
+l194 requires l209
+l194 requires l210
+l194 requires l211
+l194 requires l212
+l194 requires l213
+l194 requires l214
+l195 requires l199
+l196 requires l195
+l197 requires l193
+l198 requires l196
+l199 requires l197
+l200 requires l204
+l201 requires l200
+l202 requires l193
+l203 requires l201
+l204 requires l202
+l205 requires l209
+l206 requires l205
+l207 requires l193
+l208 requires l206
+l209 requires l207
+l210 requires l214
+l211 requires l210
+l212 requires l193
+l213 requires l211
+l214 requires l212
+l215 requires l194
+l216 requires l215
+l217 requires l216
+l218 requires l219
+l218 requires l220
+l218 requires l221
+l218 requires l222
+l218 requires l223
+l218 requires l224
+l218 requires l225
+l218 requires l226
+l218 requires l227
+l218 requires l228
+l218 requires l229
+l218 requires l230
+l218 requires l231
+l218 requires l232
+l218 requires l233
+l218 requires l234
+l218 requires l235
+l218 requires l236
+l218 requires l237
+l218 requires l238
+l219 requires l223
+l220 requires l219
+l221 requires l217
+l222 requires l220
+l223 requires l221
+l224 requires l228
+l225 requires l224
+l226 requires l217
+l227 requires l225
+l228 requires l226
+l229 requires l233
+l230 requires l229
+l231 requires l217
+l232 requires l230
+l233 requires l231
+l234 requires l238
+l235 requires l234
+l236 requires l217
+l237 requires l235
+l238 requires l236
+l239 requires l218
+}
+
+rank 6 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: calc 0 cpu 0
+l3: send 65536b to 4 tag 1 cpu 0 nic 0
+l4: recv 65536b from 4 tag 1 cpu 0 nic 0
+l5: send 65536b to 4 tag 100001 cpu 0 nic 0
+l6: recv 65536b from 4 tag 100001 cpu 0 nic 0
+l7: send 65536b to 4 tag 200001 cpu 0 nic 0
+l8: recv 65536b from 4 tag 200001 cpu 0 nic 0
+l9: send 65536b to 4 tag 300001 cpu 0 nic 0
+l10: recv 65536b from 4 tag 300001 cpu 0 nic 0
+l11: calc 0 cpu 0
+l12: calc 0 cpu 0
+l13: calc 0 cpu 0
+l14: calc 0 cpu 0
+l15: send 65536b to 4 tag 4 cpu 0 nic 0
+l16: recv 65536b from 4 tag 4 cpu 0 nic 0
+l17: send 65536b to 4 tag 100004 cpu 0 nic 0
+l18: recv 65536b from 4 tag 100004 cpu 0 nic 0
+l19: send 65536b to 4 tag 200004 cpu 0 nic 0
+l20: recv 65536b from 4 tag 200004 cpu 0 nic 0
+l21: send 65536b to 4 tag 300004 cpu 0 nic 0
+l22: recv 65536b from 4 tag 300004 cpu 0 nic 0
+l23: calc 0 cpu 0
+l24: calc 0 cpu 0
+l25: calc 0 cpu 0
+l26: calc 0 cpu 0
+l27: send 65536b to 4 tag 7 cpu 0 nic 0
+l28: recv 65536b from 4 tag 7 cpu 0 nic 0
+l29: send 65536b to 4 tag 100007 cpu 0 nic 0
+l30: recv 65536b from 4 tag 100007 cpu 0 nic 0
+l31: send 65536b to 4 tag 200007 cpu 0 nic 0
+l32: recv 65536b from 4 tag 200007 cpu 0 nic 0
+l33: send 65536b to 4 tag 300007 cpu 0 nic 0
+l34: recv 65536b from 4 tag 300007 cpu 0 nic 0
+l35: calc 0 cpu 0
+l36: calc 0 cpu 0
+l37: calc 0 cpu 0
+l38: calc 0 cpu 0
+l39: send 65536b to 4 tag 10 cpu 0 nic 0
+l40: recv 65536b from 4 tag 10 cpu 0 nic 0
+l41: send 65536b to 4 tag 100010 cpu 0 nic 0
+l42: recv 65536b from 4 tag 100010 cpu 0 nic 0
+l43: send 65536b to 4 tag 200010 cpu 0 nic 0
+l44: recv 65536b from 4 tag 200010 cpu 0 nic 0
+l45: send 65536b to 4 tag 300010 cpu 0 nic 0
+l46: recv 65536b from 4 tag 300010 cpu 0 nic 0
+l47: calc 0 cpu 0
+l48: calc 0 cpu 0
+l49: calc 0 cpu 0
+l50: calc 0 cpu 0
+l51: send 65536b to 4 tag 13 cpu 0 nic 0
+l52: recv 65536b from 4 tag 13 cpu 0 nic 0
+l53: send 65536b to 4 tag 100013 cpu 0 nic 0
+l54: recv 65536b from 4 tag 100013 cpu 0 nic 0
+l55: send 65536b to 4 tag 200013 cpu 0 nic 0
+l56: recv 65536b from 4 tag 200013 cpu 0 nic 0
+l57: send 65536b to 4 tag 300013 cpu 0 nic 0
+l58: recv 65536b from 4 tag 300013 cpu 0 nic 0
+l59: calc 0 cpu 0
+l60: calc 0 cpu 0
+l61: calc 0 cpu 0
+l62: calc 0 cpu 0
+l63: send 65536b to 4 tag 16 cpu 0 nic 0
+l64: recv 65536b from 4 tag 16 cpu 0 nic 0
+l65: send 65536b to 4 tag 100016 cpu 0 nic 0
+l66: recv 65536b from 4 tag 100016 cpu 0 nic 0
+l67: send 65536b to 4 tag 200016 cpu 0 nic 0
+l68: recv 65536b from 4 tag 200016 cpu 0 nic 0
+l69: send 65536b to 4 tag 300016 cpu 0 nic 0
+l70: recv 65536b from 4 tag 300016 cpu 0 nic 0
+l71: calc 0 cpu 0
+l72: calc 0 cpu 0
+l73: calc 0 cpu 0
+l74: calc 0 cpu 0
+l75: send 65536b to 4 tag 19 cpu 0 nic 0
+l76: recv 65536b from 4 tag 19 cpu 0 nic 0
+l77: send 65536b to 4 tag 100019 cpu 0 nic 0
+l78: recv 65536b from 4 tag 100019 cpu 0 nic 0
+l79: send 65536b to 4 tag 200019 cpu 0 nic 0
+l80: recv 65536b from 4 tag 200019 cpu 0 nic 0
+l81: send 65536b to 4 tag 300019 cpu 0 nic 0
+l82: recv 65536b from 4 tag 300019 cpu 0 nic 0
+l83: calc 0 cpu 0
+l84: calc 0 cpu 0
+l85: calc 0 cpu 0
+l86: calc 0 cpu 0
+l87: send 65536b to 4 tag 22 cpu 0 nic 0
+l88: recv 65536b from 4 tag 22 cpu 0 nic 0
+l89: send 65536b to 4 tag 100022 cpu 0 nic 0
+l90: recv 65536b from 4 tag 100022 cpu 0 nic 0
+l91: send 65536b to 4 tag 200022 cpu 0 nic 0
+l92: recv 65536b from 4 tag 200022 cpu 0 nic 0
+l93: send 65536b to 4 tag 300022 cpu 0 nic 0
+l94: recv 65536b from 4 tag 300022 cpu 0 nic 0
+l95: calc 0 cpu 0
+l96: calc 0 cpu 0
+l97: calc 0 cpu 0
+l98: calc 0 cpu 0
+l99: send 65536b to 4 tag 25 cpu 0 nic 0
+l100: recv 65536b from 4 tag 25 cpu 0 nic 0
+l101: send 65536b to 4 tag 100025 cpu 0 nic 0
+l102: recv 65536b from 4 tag 100025 cpu 0 nic 0
+l103: send 65536b to 4 tag 200025 cpu 0 nic 0
+l104: recv 65536b from 4 tag 200025 cpu 0 nic 0
+l105: send 65536b to 4 tag 300025 cpu 0 nic 0
+l106: recv 65536b from 4 tag 300025 cpu 0 nic 0
+l107: calc 0 cpu 0
+l108: calc 0 cpu 0
+l109: calc 0 cpu 0
+l110: calc 0 cpu 0
+l111: send 65536b to 4 tag 28 cpu 0 nic 0
+l112: recv 65536b from 4 tag 28 cpu 0 nic 0
+l113: send 65536b to 4 tag 100028 cpu 0 nic 0
+l114: recv 65536b from 4 tag 100028 cpu 0 nic 0
+l115: send 65536b to 4 tag 200028 cpu 0 nic 0
+l116: recv 65536b from 4 tag 200028 cpu 0 nic 0
+l117: send 65536b to 4 tag 300028 cpu 0 nic 0
+l118: recv 65536b from 4 tag 300028 cpu 0 nic 0
+l119: calc 0 cpu 0
+l1 requires l0
+l2 requires l3
+l2 requires l4
+l2 requires l5
+l2 requires l6
+l2 requires l7
+l2 requires l8
+l2 requires l9
+l2 requires l10
+l3 requires l1
+l4 requires l3
+l5 requires l1
+l6 requires l5
+l7 requires l1
+l8 requires l7
+l9 requires l1
+l10 requires l9
+l11 requires l2
+l12 requires l11
+l13 requires l12
+l14 requires l15
+l14 requires l16
+l14 requires l17
+l14 requires l18
+l14 requires l19
+l14 requires l20
+l14 requires l21
+l14 requires l22
+l15 requires l13
+l16 requires l15
+l17 requires l13
+l18 requires l17
+l19 requires l13
+l20 requires l19
+l21 requires l13
+l22 requires l21
+l23 requires l14
+l24 requires l23
+l25 requires l24
+l26 requires l27
+l26 requires l28
+l26 requires l29
+l26 requires l30
+l26 requires l31
+l26 requires l32
+l26 requires l33
+l26 requires l34
+l27 requires l25
+l28 requires l27
+l29 requires l25
+l30 requires l29
+l31 requires l25
+l32 requires l31
+l33 requires l25
+l34 requires l33
+l35 requires l26
+l36 requires l35
+l37 requires l36
+l38 requires l39
+l38 requires l40
+l38 requires l41
+l38 requires l42
+l38 requires l43
+l38 requires l44
+l38 requires l45
+l38 requires l46
+l39 requires l37
+l40 requires l39
+l41 requires l37
+l42 requires l41
+l43 requires l37
+l44 requires l43
+l45 requires l37
+l46 requires l45
+l47 requires l38
+l48 requires l47
+l49 requires l48
+l50 requires l51
+l50 requires l52
+l50 requires l53
+l50 requires l54
+l50 requires l55
+l50 requires l56
+l50 requires l57
+l50 requires l58
+l51 requires l49
+l52 requires l51
+l53 requires l49
+l54 requires l53
+l55 requires l49
+l56 requires l55
+l57 requires l49
+l58 requires l57
+l59 requires l50
+l60 requires l59
+l61 requires l60
+l62 requires l63
+l62 requires l64
+l62 requires l65
+l62 requires l66
+l62 requires l67
+l62 requires l68
+l62 requires l69
+l62 requires l70
+l63 requires l61
+l64 requires l63
+l65 requires l61
+l66 requires l65
+l67 requires l61
+l68 requires l67
+l69 requires l61
+l70 requires l69
+l71 requires l62
+l72 requires l71
+l73 requires l72
+l74 requires l75
+l74 requires l76
+l74 requires l77
+l74 requires l78
+l74 requires l79
+l74 requires l80
+l74 requires l81
+l74 requires l82
+l75 requires l73
+l76 requires l75
+l77 requires l73
+l78 requires l77
+l79 requires l73
+l80 requires l79
+l81 requires l73
+l82 requires l81
+l83 requires l74
+l84 requires l83
+l85 requires l84
+l86 requires l87
+l86 requires l88
+l86 requires l89
+l86 requires l90
+l86 requires l91
+l86 requires l92
+l86 requires l93
+l86 requires l94
+l87 requires l85
+l88 requires l87
+l89 requires l85
+l90 requires l89
+l91 requires l85
+l92 requires l91
+l93 requires l85
+l94 requires l93
+l95 requires l86
+l96 requires l95
+l97 requires l96
+l98 requires l99
+l98 requires l100
+l98 requires l101
+l98 requires l102
+l98 requires l103
+l98 requires l104
+l98 requires l105
+l98 requires l106
+l99 requires l97
+l100 requires l99
+l101 requires l97
+l102 requires l101
+l103 requires l97
+l104 requires l103
+l105 requires l97
+l106 requires l105
+l107 requires l98
+l108 requires l107
+l109 requires l108
+l110 requires l111
+l110 requires l112
+l110 requires l113
+l110 requires l114
+l110 requires l115
+l110 requires l116
+l110 requires l117
+l110 requires l118
+l111 requires l109
+l112 requires l111
+l113 requires l109
+l114 requires l113
+l115 requires l109
+l116 requires l115
+l117 requires l109
+l118 requires l117
+l119 requires l110
+}
+
+rank 7 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: calc 0 cpu 0
+l3: send 65536b to 5 tag 1 cpu 0 nic 0
+l4: recv 65536b from 5 tag 1 cpu 0 nic 0
+l5: send 65536b to 5 tag 100001 cpu 0 nic 0
+l6: recv 65536b from 5 tag 100001 cpu 0 nic 0
+l7: send 65536b to 5 tag 200001 cpu 0 nic 0
+l8: recv 65536b from 5 tag 200001 cpu 0 nic 0
+l9: send 65536b to 5 tag 300001 cpu 0 nic 0
+l10: recv 65536b from 5 tag 300001 cpu 0 nic 0
+l11: calc 0 cpu 0
+l12: calc 0 cpu 0
+l13: calc 0 cpu 0
+l14: calc 0 cpu 0
+l15: send 65536b to 5 tag 4 cpu 0 nic 0
+l16: recv 65536b from 5 tag 4 cpu 0 nic 0
+l17: send 65536b to 5 tag 100004 cpu 0 nic 0
+l18: recv 65536b from 5 tag 100004 cpu 0 nic 0
+l19: send 65536b to 5 tag 200004 cpu 0 nic 0
+l20: recv 65536b from 5 tag 200004 cpu 0 nic 0
+l21: send 65536b to 5 tag 300004 cpu 0 nic 0
+l22: recv 65536b from 5 tag 300004 cpu 0 nic 0
+l23: calc 0 cpu 0
+l24: calc 0 cpu 0
+l25: calc 0 cpu 0
+l26: calc 0 cpu 0
+l27: send 65536b to 5 tag 7 cpu 0 nic 0
+l28: recv 65536b from 5 tag 7 cpu 0 nic 0
+l29: send 65536b to 5 tag 100007 cpu 0 nic 0
+l30: recv 65536b from 5 tag 100007 cpu 0 nic 0
+l31: send 65536b to 5 tag 200007 cpu 0 nic 0
+l32: recv 65536b from 5 tag 200007 cpu 0 nic 0
+l33: send 65536b to 5 tag 300007 cpu 0 nic 0
+l34: recv 65536b from 5 tag 300007 cpu 0 nic 0
+l35: calc 0 cpu 0
+l36: calc 0 cpu 0
+l37: calc 0 cpu 0
+l38: calc 0 cpu 0
+l39: send 65536b to 5 tag 10 cpu 0 nic 0
+l40: recv 65536b from 5 tag 10 cpu 0 nic 0
+l41: send 65536b to 5 tag 100010 cpu 0 nic 0
+l42: recv 65536b from 5 tag 100010 cpu 0 nic 0
+l43: send 65536b to 5 tag 200010 cpu 0 nic 0
+l44: recv 65536b from 5 tag 200010 cpu 0 nic 0
+l45: send 65536b to 5 tag 300010 cpu 0 nic 0
+l46: recv 65536b from 5 tag 300010 cpu 0 nic 0
+l47: calc 0 cpu 0
+l48: calc 0 cpu 0
+l49: calc 0 cpu 0
+l50: calc 0 cpu 0
+l51: send 65536b to 5 tag 13 cpu 0 nic 0
+l52: recv 65536b from 5 tag 13 cpu 0 nic 0
+l53: send 65536b to 5 tag 100013 cpu 0 nic 0
+l54: recv 65536b from 5 tag 100013 cpu 0 nic 0
+l55: send 65536b to 5 tag 200013 cpu 0 nic 0
+l56: recv 65536b from 5 tag 200013 cpu 0 nic 0
+l57: send 65536b to 5 tag 300013 cpu 0 nic 0
+l58: recv 65536b from 5 tag 300013 cpu 0 nic 0
+l59: calc 0 cpu 0
+l60: calc 0 cpu 0
+l61: calc 0 cpu 0
+l62: calc 0 cpu 0
+l63: send 65536b to 5 tag 16 cpu 0 nic 0
+l64: recv 65536b from 5 tag 16 cpu 0 nic 0
+l65: send 65536b to 5 tag 100016 cpu 0 nic 0
+l66: recv 65536b from 5 tag 100016 cpu 0 nic 0
+l67: send 65536b to 5 tag 200016 cpu 0 nic 0
+l68: recv 65536b from 5 tag 200016 cpu 0 nic 0
+l69: send 65536b to 5 tag 300016 cpu 0 nic 0
+l70: recv 65536b from 5 tag 300016 cpu 0 nic 0
+l71: calc 0 cpu 0
+l72: calc 0 cpu 0
+l73: calc 0 cpu 0
+l74: calc 0 cpu 0
+l75: send 65536b to 5 tag 19 cpu 0 nic 0
+l76: recv 65536b from 5 tag 19 cpu 0 nic 0
+l77: send 65536b to 5 tag 100019 cpu 0 nic 0
+l78: recv 65536b from 5 tag 100019 cpu 0 nic 0
+l79: send 65536b to 5 tag 200019 cpu 0 nic 0
+l80: recv 65536b from 5 tag 200019 cpu 0 nic 0
+l81: send 65536b to 5 tag 300019 cpu 0 nic 0
+l82: recv 65536b from 5 tag 300019 cpu 0 nic 0
+l83: calc 0 cpu 0
+l84: calc 0 cpu 0
+l85: calc 0 cpu 0
+l86: calc 0 cpu 0
+l87: send 65536b to 5 tag 22 cpu 0 nic 0
+l88: recv 65536b from 5 tag 22 cpu 0 nic 0
+l89: send 65536b to 5 tag 100022 cpu 0 nic 0
+l90: recv 65536b from 5 tag 100022 cpu 0 nic 0
+l91: send 65536b to 5 tag 200022 cpu 0 nic 0
+l92: recv 65536b from 5 tag 200022 cpu 0 nic 0
+l93: send 65536b to 5 tag 300022 cpu 0 nic 0
+l94: recv 65536b from 5 tag 300022 cpu 0 nic 0
+l95: calc 0 cpu 0
+l96: calc 0 cpu 0
+l97: calc 0 cpu 0
+l98: calc 0 cpu 0
+l99: send 65536b to 5 tag 25 cpu 0 nic 0
+l100: recv 65536b from 5 tag 25 cpu 0 nic 0
+l101: send 65536b to 5 tag 100025 cpu 0 nic 0
+l102: recv 65536b from 5 tag 100025 cpu 0 nic 0
+l103: send 65536b to 5 tag 200025 cpu 0 nic 0
+l104: recv 65536b from 5 tag 200025 cpu 0 nic 0
+l105: send 65536b to 5 tag 300025 cpu 0 nic 0
+l106: recv 65536b from 5 tag 300025 cpu 0 nic 0
+l107: calc 0 cpu 0
+l108: calc 0 cpu 0
+l109: calc 0 cpu 0
+l110: calc 0 cpu 0
+l111: send 65536b to 5 tag 28 cpu 0 nic 0
+l112: recv 65536b from 5 tag 28 cpu 0 nic 0
+l113: send 65536b to 5 tag 100028 cpu 0 nic 0
+l114: recv 65536b from 5 tag 100028 cpu 0 nic 0
+l115: send 65536b to 5 tag 200028 cpu 0 nic 0
+l116: recv 65536b from 5 tag 200028 cpu 0 nic 0
+l117: send 65536b to 5 tag 300028 cpu 0 nic 0
+l118: recv 65536b from 5 tag 300028 cpu 0 nic 0
+l119: calc 0 cpu 0
+l1 requires l0
+l2 requires l3
+l2 requires l4
+l2 requires l5
+l2 requires l6
+l2 requires l7
+l2 requires l8
+l2 requires l9
+l2 requires l10
+l3 requires l1
+l4 requires l3
+l5 requires l1
+l6 requires l5
+l7 requires l1
+l8 requires l7
+l9 requires l1
+l10 requires l9
+l11 requires l2
+l12 requires l11
+l13 requires l12
+l14 requires l15
+l14 requires l16
+l14 requires l17
+l14 requires l18
+l14 requires l19
+l14 requires l20
+l14 requires l21
+l14 requires l22
+l15 requires l13
+l16 requires l15
+l17 requires l13
+l18 requires l17
+l19 requires l13
+l20 requires l19
+l21 requires l13
+l22 requires l21
+l23 requires l14
+l24 requires l23
+l25 requires l24
+l26 requires l27
+l26 requires l28
+l26 requires l29
+l26 requires l30
+l26 requires l31
+l26 requires l32
+l26 requires l33
+l26 requires l34
+l27 requires l25
+l28 requires l27
+l29 requires l25
+l30 requires l29
+l31 requires l25
+l32 requires l31
+l33 requires l25
+l34 requires l33
+l35 requires l26
+l36 requires l35
+l37 requires l36
+l38 requires l39
+l38 requires l40
+l38 requires l41
+l38 requires l42
+l38 requires l43
+l38 requires l44
+l38 requires l45
+l38 requires l46
+l39 requires l37
+l40 requires l39
+l41 requires l37
+l42 requires l41
+l43 requires l37
+l44 requires l43
+l45 requires l37
+l46 requires l45
+l47 requires l38
+l48 requires l47
+l49 requires l48
+l50 requires l51
+l50 requires l52
+l50 requires l53
+l50 requires l54
+l50 requires l55
+l50 requires l56
+l50 requires l57
+l50 requires l58
+l51 requires l49
+l52 requires l51
+l53 requires l49
+l54 requires l53
+l55 requires l49
+l56 requires l55
+l57 requires l49
+l58 requires l57
+l59 requires l50
+l60 requires l59
+l61 requires l60
+l62 requires l63
+l62 requires l64
+l62 requires l65
+l62 requires l66
+l62 requires l67
+l62 requires l68
+l62 requires l69
+l62 requires l70
+l63 requires l61
+l64 requires l63
+l65 requires l61
+l66 requires l65
+l67 requires l61
+l68 requires l67
+l69 requires l61
+l70 requires l69
+l71 requires l62
+l72 requires l71
+l73 requires l72
+l74 requires l75
+l74 requires l76
+l74 requires l77
+l74 requires l78
+l74 requires l79
+l74 requires l80
+l74 requires l81
+l74 requires l82
+l75 requires l73
+l76 requires l75
+l77 requires l73
+l78 requires l77
+l79 requires l73
+l80 requires l79
+l81 requires l73
+l82 requires l81
+l83 requires l74
+l84 requires l83
+l85 requires l84
+l86 requires l87
+l86 requires l88
+l86 requires l89
+l86 requires l90
+l86 requires l91
+l86 requires l92
+l86 requires l93
+l86 requires l94
+l87 requires l85
+l88 requires l87
+l89 requires l85
+l90 requires l89
+l91 requires l85
+l92 requires l91
+l93 requires l85
+l94 requires l93
+l95 requires l86
+l96 requires l95
+l97 requires l96
+l98 requires l99
+l98 requires l100
+l98 requires l101
+l98 requires l102
+l98 requires l103
+l98 requires l104
+l98 requires l105
+l98 requires l106
+l99 requires l97
+l100 requires l99
+l101 requires l97
+l102 requires l101
+l103 requires l97
+l104 requires l103
+l105 requires l97
+l106 requires l105
+l107 requires l98
+l108 requires l107
+l109 requires l108
+l110 requires l111
+l110 requires l112
+l110 requires l113
+l110 requires l114
+l110 requires l115
+l110 requires l116
+l110 requires l117
+l110 requires l118
+l111 requires l109
+l112 requires l111
+l113 requires l109
+l114 requires l113
+l115 requires l109
+l116 requires l115
+l117 requires l109
+l118 requires l117
+l119 requires l110
+}
+
+rank 8 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: calc 0 cpu 0
+l3: send 65536b to 9 tag 2 cpu 0 nic 0
+l4: send 65536b to 10 tag 2 cpu 0 nic 0
+l5: send 65536b to 11 tag 2 cpu 0 nic 0
+l6: recv 65536b from 9 tag 2 cpu 0 nic 0
+l7: recv 65536b from 10 tag 2 cpu 0 nic 0
+l8: recv 65536b from 11 tag 2 cpu 0 nic 0
+l9: calc 0 cpu 0
+l10: calc 0 cpu 0
+l11: calc 0 cpu 0
+l12: calc 0 cpu 0
+l13: send 65536b to 9 tag 5 cpu 0 nic 0
+l14: send 65536b to 10 tag 5 cpu 0 nic 0
+l15: send 65536b to 11 tag 5 cpu 0 nic 0
+l16: recv 65536b from 9 tag 5 cpu 0 nic 0
+l17: recv 65536b from 10 tag 5 cpu 0 nic 0
+l18: recv 65536b from 11 tag 5 cpu 0 nic 0
+l19: calc 0 cpu 0
+l20: calc 0 cpu 0
+l21: calc 0 cpu 0
+l22: calc 0 cpu 0
+l23: send 65536b to 9 tag 8 cpu 0 nic 0
+l24: send 65536b to 10 tag 8 cpu 0 nic 0
+l25: send 65536b to 11 tag 8 cpu 0 nic 0
+l26: recv 65536b from 9 tag 8 cpu 0 nic 0
+l27: recv 65536b from 10 tag 8 cpu 0 nic 0
+l28: recv 65536b from 11 tag 8 cpu 0 nic 0
+l29: calc 0 cpu 0
+l30: calc 0 cpu 0
+l31: calc 0 cpu 0
+l32: calc 0 cpu 0
+l33: send 65536b to 9 tag 11 cpu 0 nic 0
+l34: send 65536b to 10 tag 11 cpu 0 nic 0
+l35: send 65536b to 11 tag 11 cpu 0 nic 0
+l36: recv 65536b from 9 tag 11 cpu 0 nic 0
+l37: recv 65536b from 10 tag 11 cpu 0 nic 0
+l38: recv 65536b from 11 tag 11 cpu 0 nic 0
+l39: calc 0 cpu 0
+l40: calc 0 cpu 0
+l41: calc 0 cpu 0
+l42: calc 0 cpu 0
+l43: send 65536b to 9 tag 14 cpu 0 nic 0
+l44: send 65536b to 10 tag 14 cpu 0 nic 0
+l45: send 65536b to 11 tag 14 cpu 0 nic 0
+l46: recv 65536b from 9 tag 14 cpu 0 nic 0
+l47: recv 65536b from 10 tag 14 cpu 0 nic 0
+l48: recv 65536b from 11 tag 14 cpu 0 nic 0
+l49: calc 0 cpu 0
+l50: calc 0 cpu 0
+l51: calc 0 cpu 0
+l52: calc 0 cpu 0
+l53: send 65536b to 9 tag 17 cpu 0 nic 0
+l54: send 65536b to 10 tag 17 cpu 0 nic 0
+l55: send 65536b to 11 tag 17 cpu 0 nic 0
+l56: recv 65536b from 9 tag 17 cpu 0 nic 0
+l57: recv 65536b from 10 tag 17 cpu 0 nic 0
+l58: recv 65536b from 11 tag 17 cpu 0 nic 0
+l59: calc 0 cpu 0
+l60: calc 0 cpu 0
+l61: calc 0 cpu 0
+l62: calc 0 cpu 0
+l63: send 65536b to 9 tag 20 cpu 0 nic 0
+l64: send 65536b to 10 tag 20 cpu 0 nic 0
+l65: send 65536b to 11 tag 20 cpu 0 nic 0
+l66: recv 65536b from 9 tag 20 cpu 0 nic 0
+l67: recv 65536b from 10 tag 20 cpu 0 nic 0
+l68: recv 65536b from 11 tag 20 cpu 0 nic 0
+l69: calc 0 cpu 0
+l70: calc 0 cpu 0
+l71: calc 0 cpu 0
+l72: calc 0 cpu 0
+l73: send 65536b to 9 tag 23 cpu 0 nic 0
+l74: send 65536b to 10 tag 23 cpu 0 nic 0
+l75: send 65536b to 11 tag 23 cpu 0 nic 0
+l76: recv 65536b from 9 tag 23 cpu 0 nic 0
+l77: recv 65536b from 10 tag 23 cpu 0 nic 0
+l78: recv 65536b from 11 tag 23 cpu 0 nic 0
+l79: calc 0 cpu 0
+l80: calc 0 cpu 0
+l81: calc 0 cpu 0
+l82: calc 0 cpu 0
+l83: send 65536b to 9 tag 26 cpu 0 nic 0
+l84: send 65536b to 10 tag 26 cpu 0 nic 0
+l85: send 65536b to 11 tag 26 cpu 0 nic 0
+l86: recv 65536b from 9 tag 26 cpu 0 nic 0
+l87: recv 65536b from 10 tag 26 cpu 0 nic 0
+l88: recv 65536b from 11 tag 26 cpu 0 nic 0
+l89: calc 0 cpu 0
+l90: calc 0 cpu 0
+l91: calc 0 cpu 0
+l92: calc 0 cpu 0
+l93: send 65536b to 9 tag 29 cpu 0 nic 0
+l94: send 65536b to 10 tag 29 cpu 0 nic 0
+l95: send 65536b to 11 tag 29 cpu 0 nic 0
+l96: recv 65536b from 9 tag 29 cpu 0 nic 0
+l97: recv 65536b from 10 tag 29 cpu 0 nic 0
+l98: recv 65536b from 11 tag 29 cpu 0 nic 0
+l99: calc 0 cpu 0
+l1 requires l0
+l2 requires l3
+l2 requires l4
+l2 requires l5
+l2 requires l6
+l2 requires l7
+l2 requires l8
+l3 requires l1
+l4 requires l6
+l5 requires l7
+l6 requires l3
+l7 requires l4
+l8 requires l5
+l9 requires l2
+l10 requires l9
+l11 requires l10
+l12 requires l13
+l12 requires l14
+l12 requires l15
+l12 requires l16
+l12 requires l17
+l12 requires l18
+l13 requires l11
+l14 requires l16
+l15 requires l17
+l16 requires l13
+l17 requires l14
+l18 requires l15
+l19 requires l12
+l20 requires l19
+l21 requires l20
+l22 requires l23
+l22 requires l24
+l22 requires l25
+l22 requires l26
+l22 requires l27
+l22 requires l28
+l23 requires l21
+l24 requires l26
+l25 requires l27
+l26 requires l23
+l27 requires l24
+l28 requires l25
+l29 requires l22
+l30 requires l29
+l31 requires l30
+l32 requires l33
+l32 requires l34
+l32 requires l35
+l32 requires l36
+l32 requires l37
+l32 requires l38
+l33 requires l31
+l34 requires l36
+l35 requires l37
+l36 requires l33
+l37 requires l34
+l38 requires l35
+l39 requires l32
+l40 requires l39
+l41 requires l40
+l42 requires l43
+l42 requires l44
+l42 requires l45
+l42 requires l46
+l42 requires l47
+l42 requires l48
+l43 requires l41
+l44 requires l46
+l45 requires l47
+l46 requires l43
+l47 requires l44
+l48 requires l45
+l49 requires l42
+l50 requires l49
+l51 requires l50
+l52 requires l53
+l52 requires l54
+l52 requires l55
+l52 requires l56
+l52 requires l57
+l52 requires l58
+l53 requires l51
+l54 requires l56
+l55 requires l57
+l56 requires l53
+l57 requires l54
+l58 requires l55
+l59 requires l52
+l60 requires l59
+l61 requires l60
+l62 requires l63
+l62 requires l64
+l62 requires l65
+l62 requires l66
+l62 requires l67
+l62 requires l68
+l63 requires l61
+l64 requires l66
+l65 requires l67
+l66 requires l63
+l67 requires l64
+l68 requires l65
+l69 requires l62
+l70 requires l69
+l71 requires l70
+l72 requires l73
+l72 requires l74
+l72 requires l75
+l72 requires l76
+l72 requires l77
+l72 requires l78
+l73 requires l71
+l74 requires l76
+l75 requires l77
+l76 requires l73
+l77 requires l74
+l78 requires l75
+l79 requires l72
+l80 requires l79
+l81 requires l80
+l82 requires l83
+l82 requires l84
+l82 requires l85
+l82 requires l86
+l82 requires l87
+l82 requires l88
+l83 requires l81
+l84 requires l86
+l85 requires l87
+l86 requires l83
+l87 requires l84
+l88 requires l85
+l89 requires l82
+l90 requires l89
+l91 requires l90
+l92 requires l93
+l92 requires l94
+l92 requires l95
+l92 requires l96
+l92 requires l97
+l92 requires l98
+l93 requires l91
+l94 requires l96
+l95 requires l97
+l96 requires l93
+l97 requires l94
+l98 requires l95
+l99 requires l92
+}
+
+rank 9 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: calc 0 cpu 0
+l3: recv 65536b from 8 tag 2 cpu 0 nic 0
+l4: send 65536b to 8 tag 2 cpu 0 nic 0
+l5: send 65536b to 10 tag 2 cpu 0 nic 0
+l6: send 65536b to 11 tag 2 cpu 0 nic 0
+l7: recv 65536b from 10 tag 2 cpu 0 nic 0
+l8: recv 65536b from 11 tag 2 cpu 0 nic 0
+l9: calc 0 cpu 0
+l10: calc 0 cpu 0
+l11: calc 0 cpu 0
+l12: calc 0 cpu 0
+l13: recv 65536b from 8 tag 5 cpu 0 nic 0
+l14: send 65536b to 8 tag 5 cpu 0 nic 0
+l15: send 65536b to 10 tag 5 cpu 0 nic 0
+l16: send 65536b to 11 tag 5 cpu 0 nic 0
+l17: recv 65536b from 10 tag 5 cpu 0 nic 0
+l18: recv 65536b from 11 tag 5 cpu 0 nic 0
+l19: calc 0 cpu 0
+l20: calc 0 cpu 0
+l21: calc 0 cpu 0
+l22: calc 0 cpu 0
+l23: recv 65536b from 8 tag 8 cpu 0 nic 0
+l24: send 65536b to 8 tag 8 cpu 0 nic 0
+l25: send 65536b to 10 tag 8 cpu 0 nic 0
+l26: send 65536b to 11 tag 8 cpu 0 nic 0
+l27: recv 65536b from 10 tag 8 cpu 0 nic 0
+l28: recv 65536b from 11 tag 8 cpu 0 nic 0
+l29: calc 0 cpu 0
+l30: calc 0 cpu 0
+l31: calc 0 cpu 0
+l32: calc 0 cpu 0
+l33: recv 65536b from 8 tag 11 cpu 0 nic 0
+l34: send 65536b to 8 tag 11 cpu 0 nic 0
+l35: send 65536b to 10 tag 11 cpu 0 nic 0
+l36: send 65536b to 11 tag 11 cpu 0 nic 0
+l37: recv 65536b from 10 tag 11 cpu 0 nic 0
+l38: recv 65536b from 11 tag 11 cpu 0 nic 0
+l39: calc 0 cpu 0
+l40: calc 0 cpu 0
+l41: calc 0 cpu 0
+l42: calc 0 cpu 0
+l43: recv 65536b from 8 tag 14 cpu 0 nic 0
+l44: send 65536b to 8 tag 14 cpu 0 nic 0
+l45: send 65536b to 10 tag 14 cpu 0 nic 0
+l46: send 65536b to 11 tag 14 cpu 0 nic 0
+l47: recv 65536b from 10 tag 14 cpu 0 nic 0
+l48: recv 65536b from 11 tag 14 cpu 0 nic 0
+l49: calc 0 cpu 0
+l50: calc 0 cpu 0
+l51: calc 0 cpu 0
+l52: calc 0 cpu 0
+l53: recv 65536b from 8 tag 17 cpu 0 nic 0
+l54: send 65536b to 8 tag 17 cpu 0 nic 0
+l55: send 65536b to 10 tag 17 cpu 0 nic 0
+l56: send 65536b to 11 tag 17 cpu 0 nic 0
+l57: recv 65536b from 10 tag 17 cpu 0 nic 0
+l58: recv 65536b from 11 tag 17 cpu 0 nic 0
+l59: calc 0 cpu 0
+l60: calc 0 cpu 0
+l61: calc 0 cpu 0
+l62: calc 0 cpu 0
+l63: recv 65536b from 8 tag 20 cpu 0 nic 0
+l64: send 65536b to 8 tag 20 cpu 0 nic 0
+l65: send 65536b to 10 tag 20 cpu 0 nic 0
+l66: send 65536b to 11 tag 20 cpu 0 nic 0
+l67: recv 65536b from 10 tag 20 cpu 0 nic 0
+l68: recv 65536b from 11 tag 20 cpu 0 nic 0
+l69: calc 0 cpu 0
+l70: calc 0 cpu 0
+l71: calc 0 cpu 0
+l72: calc 0 cpu 0
+l73: recv 65536b from 8 tag 23 cpu 0 nic 0
+l74: send 65536b to 8 tag 23 cpu 0 nic 0
+l75: send 65536b to 10 tag 23 cpu 0 nic 0
+l76: send 65536b to 11 tag 23 cpu 0 nic 0
+l77: recv 65536b from 10 tag 23 cpu 0 nic 0
+l78: recv 65536b from 11 tag 23 cpu 0 nic 0
+l79: calc 0 cpu 0
+l80: calc 0 cpu 0
+l81: calc 0 cpu 0
+l82: calc 0 cpu 0
+l83: recv 65536b from 8 tag 26 cpu 0 nic 0
+l84: send 65536b to 8 tag 26 cpu 0 nic 0
+l85: send 65536b to 10 tag 26 cpu 0 nic 0
+l86: send 65536b to 11 tag 26 cpu 0 nic 0
+l87: recv 65536b from 10 tag 26 cpu 0 nic 0
+l88: recv 65536b from 11 tag 26 cpu 0 nic 0
+l89: calc 0 cpu 0
+l90: calc 0 cpu 0
+l91: calc 0 cpu 0
+l92: calc 0 cpu 0
+l93: recv 65536b from 8 tag 29 cpu 0 nic 0
+l94: send 65536b to 8 tag 29 cpu 0 nic 0
+l95: send 65536b to 10 tag 29 cpu 0 nic 0
+l96: send 65536b to 11 tag 29 cpu 0 nic 0
+l97: recv 65536b from 10 tag 29 cpu 0 nic 0
+l98: recv 65536b from 11 tag 29 cpu 0 nic 0
+l99: calc 0 cpu 0
+l1 requires l0
+l2 requires l3
+l2 requires l4
+l2 requires l5
+l2 requires l6
+l2 requires l7
+l2 requires l8
+l3 requires l1
+l4 requires l3
+l5 requires l4
+l6 requires l7
+l7 requires l5
+l8 requires l6
+l9 requires l2
+l10 requires l9
+l11 requires l10
+l12 requires l13
+l12 requires l14
+l12 requires l15
+l12 requires l16
+l12 requires l17
+l12 requires l18
+l13 requires l11
+l14 requires l13
+l15 requires l14
+l16 requires l17
+l17 requires l15
+l18 requires l16
+l19 requires l12
+l20 requires l19
+l21 requires l20
+l22 requires l23
+l22 requires l24
+l22 requires l25
+l22 requires l26
+l22 requires l27
+l22 requires l28
+l23 requires l21
+l24 requires l23
+l25 requires l24
+l26 requires l27
+l27 requires l25
+l28 requires l26
+l29 requires l22
+l30 requires l29
+l31 requires l30
+l32 requires l33
+l32 requires l34
+l32 requires l35
+l32 requires l36
+l32 requires l37
+l32 requires l38
+l33 requires l31
+l34 requires l33
+l35 requires l34
+l36 requires l37
+l37 requires l35
+l38 requires l36
+l39 requires l32
+l40 requires l39
+l41 requires l40
+l42 requires l43
+l42 requires l44
+l42 requires l45
+l42 requires l46
+l42 requires l47
+l42 requires l48
+l43 requires l41
+l44 requires l43
+l45 requires l44
+l46 requires l47
+l47 requires l45
+l48 requires l46
+l49 requires l42
+l50 requires l49
+l51 requires l50
+l52 requires l53
+l52 requires l54
+l52 requires l55
+l52 requires l56
+l52 requires l57
+l52 requires l58
+l53 requires l51
+l54 requires l53
+l55 requires l54
+l56 requires l57
+l57 requires l55
+l58 requires l56
+l59 requires l52
+l60 requires l59
+l61 requires l60
+l62 requires l63
+l62 requires l64
+l62 requires l65
+l62 requires l66
+l62 requires l67
+l62 requires l68
+l63 requires l61
+l64 requires l63
+l65 requires l64
+l66 requires l67
+l67 requires l65
+l68 requires l66
+l69 requires l62
+l70 requires l69
+l71 requires l70
+l72 requires l73
+l72 requires l74
+l72 requires l75
+l72 requires l76
+l72 requires l77
+l72 requires l78
+l73 requires l71
+l74 requires l73
+l75 requires l74
+l76 requires l77
+l77 requires l75
+l78 requires l76
+l79 requires l72
+l80 requires l79
+l81 requires l80
+l82 requires l83
+l82 requires l84
+l82 requires l85
+l82 requires l86
+l82 requires l87
+l82 requires l88
+l83 requires l81
+l84 requires l83
+l85 requires l84
+l86 requires l87
+l87 requires l85
+l88 requires l86
+l89 requires l82
+l90 requires l89
+l91 requires l90
+l92 requires l93
+l92 requires l94
+l92 requires l95
+l92 requires l96
+l92 requires l97
+l92 requires l98
+l93 requires l91
+l94 requires l93
+l95 requires l94
+l96 requires l97
+l97 requires l95
+l98 requires l96
+l99 requires l92
+}
+
+rank 10 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: calc 0 cpu 0
+l3: recv 65536b from 8 tag 2 cpu 0 nic 0
+l4: recv 65536b from 9 tag 2 cpu 0 nic 0
+l5: send 65536b to 8 tag 2 cpu 0 nic 0
+l6: send 65536b to 9 tag 2 cpu 0 nic 0
+l7: send 65536b to 11 tag 2 cpu 0 nic 0
+l8: recv 65536b from 11 tag 2 cpu 0 nic 0
+l9: calc 0 cpu 0
+l10: calc 0 cpu 0
+l11: calc 0 cpu 0
+l12: calc 0 cpu 0
+l13: recv 65536b from 8 tag 5 cpu 0 nic 0
+l14: recv 65536b from 9 tag 5 cpu 0 nic 0
+l15: send 65536b to 8 tag 5 cpu 0 nic 0
+l16: send 65536b to 9 tag 5 cpu 0 nic 0
+l17: send 65536b to 11 tag 5 cpu 0 nic 0
+l18: recv 65536b from 11 tag 5 cpu 0 nic 0
+l19: calc 0 cpu 0
+l20: calc 0 cpu 0
+l21: calc 0 cpu 0
+l22: calc 0 cpu 0
+l23: recv 65536b from 8 tag 8 cpu 0 nic 0
+l24: recv 65536b from 9 tag 8 cpu 0 nic 0
+l25: send 65536b to 8 tag 8 cpu 0 nic 0
+l26: send 65536b to 9 tag 8 cpu 0 nic 0
+l27: send 65536b to 11 tag 8 cpu 0 nic 0
+l28: recv 65536b from 11 tag 8 cpu 0 nic 0
+l29: calc 0 cpu 0
+l30: calc 0 cpu 0
+l31: calc 0 cpu 0
+l32: calc 0 cpu 0
+l33: recv 65536b from 8 tag 11 cpu 0 nic 0
+l34: recv 65536b from 9 tag 11 cpu 0 nic 0
+l35: send 65536b to 8 tag 11 cpu 0 nic 0
+l36: send 65536b to 9 tag 11 cpu 0 nic 0
+l37: send 65536b to 11 tag 11 cpu 0 nic 0
+l38: recv 65536b from 11 tag 11 cpu 0 nic 0
+l39: calc 0 cpu 0
+l40: calc 0 cpu 0
+l41: calc 0 cpu 0
+l42: calc 0 cpu 0
+l43: recv 65536b from 8 tag 14 cpu 0 nic 0
+l44: recv 65536b from 9 tag 14 cpu 0 nic 0
+l45: send 65536b to 8 tag 14 cpu 0 nic 0
+l46: send 65536b to 9 tag 14 cpu 0 nic 0
+l47: send 65536b to 11 tag 14 cpu 0 nic 0
+l48: recv 65536b from 11 tag 14 cpu 0 nic 0
+l49: calc 0 cpu 0
+l50: calc 0 cpu 0
+l51: calc 0 cpu 0
+l52: calc 0 cpu 0
+l53: recv 65536b from 8 tag 17 cpu 0 nic 0
+l54: recv 65536b from 9 tag 17 cpu 0 nic 0
+l55: send 65536b to 8 tag 17 cpu 0 nic 0
+l56: send 65536b to 9 tag 17 cpu 0 nic 0
+l57: send 65536b to 11 tag 17 cpu 0 nic 0
+l58: recv 65536b from 11 tag 17 cpu 0 nic 0
+l59: calc 0 cpu 0
+l60: calc 0 cpu 0
+l61: calc 0 cpu 0
+l62: calc 0 cpu 0
+l63: recv 65536b from 8 tag 20 cpu 0 nic 0
+l64: recv 65536b from 9 tag 20 cpu 0 nic 0
+l65: send 65536b to 8 tag 20 cpu 0 nic 0
+l66: send 65536b to 9 tag 20 cpu 0 nic 0
+l67: send 65536b to 11 tag 20 cpu 0 nic 0
+l68: recv 65536b from 11 tag 20 cpu 0 nic 0
+l69: calc 0 cpu 0
+l70: calc 0 cpu 0
+l71: calc 0 cpu 0
+l72: calc 0 cpu 0
+l73: recv 65536b from 8 tag 23 cpu 0 nic 0
+l74: recv 65536b from 9 tag 23 cpu 0 nic 0
+l75: send 65536b to 8 tag 23 cpu 0 nic 0
+l76: send 65536b to 9 tag 23 cpu 0 nic 0
+l77: send 65536b to 11 tag 23 cpu 0 nic 0
+l78: recv 65536b from 11 tag 23 cpu 0 nic 0
+l79: calc 0 cpu 0
+l80: calc 0 cpu 0
+l81: calc 0 cpu 0
+l82: calc 0 cpu 0
+l83: recv 65536b from 8 tag 26 cpu 0 nic 0
+l84: recv 65536b from 9 tag 26 cpu 0 nic 0
+l85: send 65536b to 8 tag 26 cpu 0 nic 0
+l86: send 65536b to 9 tag 26 cpu 0 nic 0
+l87: send 65536b to 11 tag 26 cpu 0 nic 0
+l88: recv 65536b from 11 tag 26 cpu 0 nic 0
+l89: calc 0 cpu 0
+l90: calc 0 cpu 0
+l91: calc 0 cpu 0
+l92: calc 0 cpu 0
+l93: recv 65536b from 8 tag 29 cpu 0 nic 0
+l94: recv 65536b from 9 tag 29 cpu 0 nic 0
+l95: send 65536b to 8 tag 29 cpu 0 nic 0
+l96: send 65536b to 9 tag 29 cpu 0 nic 0
+l97: send 65536b to 11 tag 29 cpu 0 nic 0
+l98: recv 65536b from 11 tag 29 cpu 0 nic 0
+l99: calc 0 cpu 0
+l1 requires l0
+l2 requires l3
+l2 requires l4
+l2 requires l5
+l2 requires l6
+l2 requires l7
+l2 requires l8
+l3 requires l1
+l4 requires l5
+l5 requires l3
+l6 requires l4
+l7 requires l6
+l8 requires l7
+l9 requires l2
+l10 requires l9
+l11 requires l10
+l12 requires l13
+l12 requires l14
+l12 requires l15
+l12 requires l16
+l12 requires l17
+l12 requires l18
+l13 requires l11
+l14 requires l15
+l15 requires l13
+l16 requires l14
+l17 requires l16
+l18 requires l17
+l19 requires l12
+l20 requires l19
+l21 requires l20
+l22 requires l23
+l22 requires l24
+l22 requires l25
+l22 requires l26
+l22 requires l27
+l22 requires l28
+l23 requires l21
+l24 requires l25
+l25 requires l23
+l26 requires l24
+l27 requires l26
+l28 requires l27
+l29 requires l22
+l30 requires l29
+l31 requires l30
+l32 requires l33
+l32 requires l34
+l32 requires l35
+l32 requires l36
+l32 requires l37
+l32 requires l38
+l33 requires l31
+l34 requires l35
+l35 requires l33
+l36 requires l34
+l37 requires l36
+l38 requires l37
+l39 requires l32
+l40 requires l39
+l41 requires l40
+l42 requires l43
+l42 requires l44
+l42 requires l45
+l42 requires l46
+l42 requires l47
+l42 requires l48
+l43 requires l41
+l44 requires l45
+l45 requires l43
+l46 requires l44
+l47 requires l46
+l48 requires l47
+l49 requires l42
+l50 requires l49
+l51 requires l50
+l52 requires l53
+l52 requires l54
+l52 requires l55
+l52 requires l56
+l52 requires l57
+l52 requires l58
+l53 requires l51
+l54 requires l55
+l55 requires l53
+l56 requires l54
+l57 requires l56
+l58 requires l57
+l59 requires l52
+l60 requires l59
+l61 requires l60
+l62 requires l63
+l62 requires l64
+l62 requires l65
+l62 requires l66
+l62 requires l67
+l62 requires l68
+l63 requires l61
+l64 requires l65
+l65 requires l63
+l66 requires l64
+l67 requires l66
+l68 requires l67
+l69 requires l62
+l70 requires l69
+l71 requires l70
+l72 requires l73
+l72 requires l74
+l72 requires l75
+l72 requires l76
+l72 requires l77
+l72 requires l78
+l73 requires l71
+l74 requires l75
+l75 requires l73
+l76 requires l74
+l77 requires l76
+l78 requires l77
+l79 requires l72
+l80 requires l79
+l81 requires l80
+l82 requires l83
+l82 requires l84
+l82 requires l85
+l82 requires l86
+l82 requires l87
+l82 requires l88
+l83 requires l81
+l84 requires l85
+l85 requires l83
+l86 requires l84
+l87 requires l86
+l88 requires l87
+l89 requires l82
+l90 requires l89
+l91 requires l90
+l92 requires l93
+l92 requires l94
+l92 requires l95
+l92 requires l96
+l92 requires l97
+l92 requires l98
+l93 requires l91
+l94 requires l95
+l95 requires l93
+l96 requires l94
+l97 requires l96
+l98 requires l97
+l99 requires l92
+}
+
+rank 11 {
+l0: calc 0 cpu 0
+l1: calc 0 cpu 0
+l2: calc 0 cpu 0
+l3: recv 65536b from 8 tag 2 cpu 0 nic 0
+l4: recv 65536b from 9 tag 2 cpu 0 nic 0
+l5: recv 65536b from 10 tag 2 cpu 0 nic 0
+l6: send 65536b to 8 tag 2 cpu 0 nic 0
+l7: send 65536b to 9 tag 2 cpu 0 nic 0
+l8: send 65536b to 10 tag 2 cpu 0 nic 0
+l9: calc 0 cpu 0
+l10: calc 0 cpu 0
+l11: calc 0 cpu 0
+l12: calc 0 cpu 0
+l13: recv 65536b from 8 tag 5 cpu 0 nic 0
+l14: recv 65536b from 9 tag 5 cpu 0 nic 0
+l15: recv 65536b from 10 tag 5 cpu 0 nic 0
+l16: send 65536b to 8 tag 5 cpu 0 nic 0
+l17: send 65536b to 9 tag 5 cpu 0 nic 0
+l18: send 65536b to 10 tag 5 cpu 0 nic 0
+l19: calc 0 cpu 0
+l20: calc 0 cpu 0
+l21: calc 0 cpu 0
+l22: calc 0 cpu 0
+l23: recv 65536b from 8 tag 8 cpu 0 nic 0
+l24: recv 65536b from 9 tag 8 cpu 0 nic 0
+l25: recv 65536b from 10 tag 8 cpu 0 nic 0
+l26: send 65536b to 8 tag 8 cpu 0 nic 0
+l27: send 65536b to 9 tag 8 cpu 0 nic 0
+l28: send 65536b to 10 tag 8 cpu 0 nic 0
+l29: calc 0 cpu 0
+l30: calc 0 cpu 0
+l31: calc 0 cpu 0
+l32: calc 0 cpu 0
+l33: recv 65536b from 8 tag 11 cpu 0 nic 0
+l34: recv 65536b from 9 tag 11 cpu 0 nic 0
+l35: recv 65536b from 10 tag 11 cpu 0 nic 0
+l36: send 65536b to 8 tag 11 cpu 0 nic 0
+l37: send 65536b to 9 tag 11 cpu 0 nic 0
+l38: send 65536b to 10 tag 11 cpu 0 nic 0
+l39: calc 0 cpu 0
+l40: calc 0 cpu 0
+l41: calc 0 cpu 0
+l42: calc 0 cpu 0
+l43: recv 65536b from 8 tag 14 cpu 0 nic 0
+l44: recv 65536b from 9 tag 14 cpu 0 nic 0
+l45: recv 65536b from 10 tag 14 cpu 0 nic 0
+l46: send 65536b to 8 tag 14 cpu 0 nic 0
+l47: send 65536b to 9 tag 14 cpu 0 nic 0
+l48: send 65536b to 10 tag 14 cpu 0 nic 0
+l49: calc 0 cpu 0
+l50: calc 0 cpu 0
+l51: calc 0 cpu 0
+l52: calc 0 cpu 0
+l53: recv 65536b from 8 tag 17 cpu 0 nic 0
+l54: recv 65536b from 9 tag 17 cpu 0 nic 0
+l55: recv 65536b from 10 tag 17 cpu 0 nic 0
+l56: send 65536b to 8 tag 17 cpu 0 nic 0
+l57: send 65536b to 9 tag 17 cpu 0 nic 0
+l58: send 65536b to 10 tag 17 cpu 0 nic 0
+l59: calc 0 cpu 0
+l60: calc 0 cpu 0
+l61: calc 0 cpu 0
+l62: calc 0 cpu 0
+l63: recv 65536b from 8 tag 20 cpu 0 nic 0
+l64: recv 65536b from 9 tag 20 cpu 0 nic 0
+l65: recv 65536b from 10 tag 20 cpu 0 nic 0
+l66: send 65536b to 8 tag 20 cpu 0 nic 0
+l67: send 65536b to 9 tag 20 cpu 0 nic 0
+l68: send 65536b to 10 tag 20 cpu 0 nic 0
+l69: calc 0 cpu 0
+l70: calc 0 cpu 0
+l71: calc 0 cpu 0
+l72: calc 0 cpu 0
+l73: recv 65536b from 8 tag 23 cpu 0 nic 0
+l74: recv 65536b from 9 tag 23 cpu 0 nic 0
+l75: recv 65536b from 10 tag 23 cpu 0 nic 0
+l76: send 65536b to 8 tag 23 cpu 0 nic 0
+l77: send 65536b to 9 tag 23 cpu 0 nic 0
+l78: send 65536b to 10 tag 23 cpu 0 nic 0
+l79: calc 0 cpu 0
+l80: calc 0 cpu 0
+l81: calc 0 cpu 0
+l82: calc 0 cpu 0
+l83: recv 65536b from 8 tag 26 cpu 0 nic 0
+l84: recv 65536b from 9 tag 26 cpu 0 nic 0
+l85: recv 65536b from 10 tag 26 cpu 0 nic 0
+l86: send 65536b to 8 tag 26 cpu 0 nic 0
+l87: send 65536b to 9 tag 26 cpu 0 nic 0
+l88: send 65536b to 10 tag 26 cpu 0 nic 0
+l89: calc 0 cpu 0
+l90: calc 0 cpu 0
+l91: calc 0 cpu 0
+l92: calc 0 cpu 0
+l93: recv 65536b from 8 tag 29 cpu 0 nic 0
+l94: recv 65536b from 9 tag 29 cpu 0 nic 0
+l95: recv 65536b from 10 tag 29 cpu 0 nic 0
+l96: send 65536b to 8 tag 29 cpu 0 nic 0
+l97: send 65536b to 9 tag 29 cpu 0 nic 0
+l98: send 65536b to 10 tag 29 cpu 0 nic 0
+l99: calc 0 cpu 0
+l1 requires l0
+l2 requires l3
+l2 requires l4
+l2 requires l5
+l2 requires l6
+l2 requires l7
+l2 requires l8
+l3 requires l1
+l4 requires l6
+l5 requires l7
+l6 requires l3
+l7 requires l4
+l8 requires l5
+l9 requires l2
+l10 requires l9
+l11 requires l10
+l12 requires l13
+l12 requires l14
+l12 requires l15
+l12 requires l16
+l12 requires l17
+l12 requires l18
+l13 requires l11
+l14 requires l16
+l15 requires l17
+l16 requires l13
+l17 requires l14
+l18 requires l15
+l19 requires l12
+l20 requires l19
+l21 requires l20
+l22 requires l23
+l22 requires l24
+l22 requires l25
+l22 requires l26
+l22 requires l27
+l22 requires l28
+l23 requires l21
+l24 requires l26
+l25 requires l27
+l26 requires l23
+l27 requires l24
+l28 requires l25
+l29 requires l22
+l30 requires l29
+l31 requires l30
+l32 requires l33
+l32 requires l34
+l32 requires l35
+l32 requires l36
+l32 requires l37
+l32 requires l38
+l33 requires l31
+l34 requires l36
+l35 requires l37
+l36 requires l33
+l37 requires l34
+l38 requires l35
+l39 requires l32
+l40 requires l39
+l41 requires l40
+l42 requires l43
+l42 requires l44
+l42 requires l45
+l42 requires l46
+l42 requires l47
+l42 requires l48
+l43 requires l41
+l44 requires l46
+l45 requires l47
+l46 requires l43
+l47 requires l44
+l48 requires l45
+l49 requires l42
+l50 requires l49
+l51 requires l50
+l52 requires l53
+l52 requires l54
+l52 requires l55
+l52 requires l56
+l52 requires l57
+l52 requires l58
+l53 requires l51
+l54 requires l56
+l55 requires l57
+l56 requires l53
+l57 requires l54
+l58 requires l55
+l59 requires l52
+l60 requires l59
+l61 requires l60
+l62 requires l63
+l62 requires l64
+l62 requires l65
+l62 requires l66
+l62 requires l67
+l62 requires l68
+l63 requires l61
+l64 requires l66
+l65 requires l67
+l66 requires l63
+l67 requires l64
+l68 requires l65
+l69 requires l62
+l70 requires l69
+l71 requires l70
+l72 requires l73
+l72 requires l74
+l72 requires l75
+l72 requires l76
+l72 requires l77
+l72 requires l78
+l73 requires l71
+l74 requires l76
+l75 requires l77
+l76 requires l73
+l77 requires l74
+l78 requires l75
+l79 requires l72
+l80 requires l79
+l81 requires l80
+l82 requires l83
+l82 requires l84
+l82 requires l85
+l82 requires l86
+l82 requires l87
+l82 requires l88
+l83 requires l81
+l84 requires l86
+l85 requires l87
+l86 requires l83
+l87 requires l84
+l88 requires l85
+l89 requires l82
+l90 requires l89
+l91 requires l90
+l92 requires l93
+l92 requires l94
+l92 requires l95
+l92 requires l96
+l92 requires l97
+l92 requires l98
+l93 requires l91
+l94 requires l96
+l95 requires l97
+l96 requires l93
+l97 requires l94
+l98 requires l95
+l99 requires l92
+}
