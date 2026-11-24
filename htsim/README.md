@@ -545,9 +545,11 @@ The entry switch computes a service priority when it commits the route. It cache
 the score per messagelet and tags subsequent packets and retransmissions with that
 score. `routing.soft_claim.priority` selects the DAG urgency strategy even when
 Soft Claim is disabled. The slack strategies use negative relative slack, so
-smaller slack is served first and scores remain comparable across commits. The
-`dag_downstream` strategy uses its downstream score directly. Decision tracing
-includes the frozen `service_priority` in `entry_decisions.csv`'s `policy_state`.
+smaller slack is served first and scores remain comparable across commits.
+`join_slack` uses zero when there is no open Join context, matching its claim
+ordering. The `dag_downstream` strategy uses its downstream score directly.
+Decision tracing includes the frozen `service_priority` in the `policy_state`
+column of `entry_decisions.csv`.
 
 Dragonfly switch egress queues select the highest-scoring waiting data packet
 when the link becomes available. Equal scores follow arrival order. Untagged

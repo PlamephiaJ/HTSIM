@@ -124,6 +124,8 @@ std::optional<long double> GroupRoutingAgent::servicePriority(Messagelet message
     // Dynamic ordinal ranks only compare members of one READY snapshot.
     // Negated relative slack orders frozen scores across groups and commits.
     if (estimate.relative_slack) return -*estimate.relative_slack;
+    // Join Slack ranks a missing context as zero relative slack.
+    if (estimate.strategy == "join_slack") return 0.0L;
     return estimate.priority;
 }
 

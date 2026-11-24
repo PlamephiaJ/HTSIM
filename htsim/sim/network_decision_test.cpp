@@ -313,6 +313,43 @@ void checkServicePriorityCommit() {
     probe->free();
 }
 
+void checkJoinSlackServicePriority() {
+    auto& events = EventList::getTheEventList();
+    DragonflyTopology topology(COMPOSITE, 1000000, nullptr, &events);
+    topology.construct_topology(2, 1, 1);
+    using G = GraStaticGraph;
+    G::Dag dag{0, {
+        {G::Type::COMM, 10, 8192, {3}}, {G::Type::COMM, 20, 4096, {3}},
+        {G::Type::COMM, 30, 4096, {4}}, {G::Type::COMP, 0, 0, {}},
+        {G::Type::COMP, 0, 1, {6}}, {G::Type::COMP, 0, 1, {6}}, {G::Type::COMP, 0, 0, {}}}};
+    dag.tasks.emplace(G::TaskKey{4, 0}, G::TaskBinding{4, G::Event::START});
+    dag.tasks.emplace(G::TaskKey{5, 0}, G::TaskBinding{5, G::Event::START});
+    topology.initializeGraStaticGraphs({dag});
+    auto& gra = topology.groupRoutingAgent(0);
+    // Both branch ends of the second Join are visible, while flow 30's own
+    // FINISH has not been received by the GRA.
+    for (uint32_t rank : {4, 5}) {
+        gra.receiveProgress({0, rank, 0, GraTaskEvent::START, 1, 100});
+        gra.receiveProgress({0, rank, 0, GraTaskEvent::FINISH, 2, 101});
+    }
+    const MessageletKey urgent{0, 10, 0}, ordinary{0, 20, 0}, no_open_join{0, 30, 0};
+    const std::shared_ptr<const RoutingPriorityStrategy> strategy =
+        makeRoutingPriorityStrategy("join_slack", gra.staticGraph());
+    const auto estimates = strategy->evaluate(gra.executionProgress(), 101, {
+        {urgent, {urgent, 0, 2, 4096, 0}}, {ordinary, {ordinary, 0, 2, 4096, 0}},
+        {no_open_join, {no_open_join, 0, 2, 4096, 0}}});
+    const auto& neutral = estimates.at(no_open_join);
+    assert(neutral.scope == "no_open_join" && !neutral.relative_slack);
+    assert(estimates.at(urgent).priority > neutral.priority && neutral.priority > estimates.at(ordinary).priority);
+
+    gra.setPriorityStrategy(strategy);
+    const auto score = [&](MessageletKey key) { return gra.servicePriority(key, 0, 2, 4096, 101); };
+    const auto ordinary_score = score(ordinary);
+    assert(score(urgent) > 0.0L);
+    assert(score(no_open_join) == 0.0L);
+    assert(ordinary_score && *ordinary_score < 0.0L);
+}
+
 void checkEntryCommitBeforeAdmission() {
     auto& events = EventList::getTheEventList();
     events.setEndtime(1);
@@ -578,6 +615,7 @@ int main(int argc, char** argv) {
     if (argc > 1 && std::string(argv[1]) == "priority_dequeue") {
         checkPriorityDequeue();
         checkServicePriorityCommit();
+        checkJoinSlackServicePriority();
         std::cout << "Priority dequeue tests passed\n";
         return 0;
     }
