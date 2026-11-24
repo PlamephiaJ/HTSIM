@@ -529,6 +529,34 @@ python3 -m unittest discover -s tests -p test_entry_switch_routing.py -v
 python3 -m unittest discover -s tests -p test_gra_start_dependencies.py -v
 ```
 
+### Optional DAG-aware priority dequeue
+
+Enable `scheduling.priority_dequeue` in an `ENTRY_SWITCH` messagelet config:
+
+```json
+{
+  "runtime": {"routing_mode": "ENTRY_SWITCH"},
+  "routing": {"soft_claim": {"enabled": false, "priority": "global_slack"}},
+  "scheduling": {"priority_dequeue": true}
+}
+```
+
+The entry switch computes a service priority when it commits the route. It caches
+the score per messagelet and tags subsequent packets and retransmissions with that
+score. `routing.soft_claim.priority` selects the DAG urgency strategy even when
+Soft Claim is disabled. The slack strategies use negative relative slack, so
+smaller slack is served first and scores remain comparable across commits. The
+`dag_downstream` strategy uses its downstream score directly. Decision tracing
+includes the frozen `service_priority` in `entry_decisions.csv`'s `policy_state`.
+
+Dragonfly switch egress queues select the highest-scoring waiting data packet
+when the link becomes available. Equal scores follow arrival order. Untagged
+data uses FIFO behind tagged data. A packet already in service finishes sending,
+and the existing high-priority header/control queue keeps its service policy.
+On overflow, the buffer can evict the newest waiting data packet if that makes
+enough room. Omitting `scheduling.priority_dequeue` or setting it to `false`
+keeps FIFO data service. Soft Claim can be toggled independently.
+
 ### Optional DAG-aware Soft Claim
 
 Soft Claim is disabled by default. For `ENTRY_SWITCH` with

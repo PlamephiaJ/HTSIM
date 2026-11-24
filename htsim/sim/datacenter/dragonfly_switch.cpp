@@ -1,6 +1,9 @@
 // -*- c-basic-offset: 4; indent-tabs-mode: nil -*-
 #include "dragonfly_switch.h"
+#include <iomanip>
+#include <limits>
 #include <random>
+#include <sstream>
 #include <stdexcept>
 #include "config.h"
 #include "dragonfly_topology.h"
@@ -312,7 +315,15 @@ void DragonflySwitch::routeEntryPacket(Packet& packet) {
             route.path_id = (first << 16) | second;
         }
         const auto corridor = gra.corridorForRoute(packet.src(), packet.dst(), route.path_id);
+        const auto service_priority = _entry_config.scheduling.priority_dequeue ?
+            gra.servicePriority(info.key, packet.src(), packet.dst(), info.meta.mlet_size, eventlist().now() / 1000) :
+            std::nullopt;
         if (_entry_config.logging.trace_decisions) {
+            if (service_priority) {
+                std::ostringstream value;
+                value << std::setprecision(std::numeric_limits<long double>::max_digits10) << *service_priority;
+                route.log_info.emplace("service_priority", value.str());
+            }
             std::string policy_state;
             for (const auto& item : route.log_info) policy_state += item.first + "=" + item.second + ";";
             auto& collector = htsim::DataCollector::get_instance();
@@ -335,7 +346,7 @@ void DragonflySwitch::routeEntryPacket(Packet& packet) {
         if (corridor) gra.commit(info.key, *corridor, info.meta.mlet_size, packet.flow_id());
         else gra.routeDecided(info.key);
         found = _entry_routes.emplace(info.key, EntryRoute{
-            std::move(route), info.meta, packet.src(), packet.dst(), packet.flow_id()}).first;
+            std::move(route), info.meta, packet.src(), packet.dst(), packet.flow_id(), service_priority}).first;
     }
     const auto& cached = found->second;
     if (!(cached.meta == info.meta) || cached.src != packet.src() || cached.dst != packet.dst() ||
@@ -344,6 +355,7 @@ void DragonflySwitch::routeEntryPacket(Packet& packet) {
     const auto corridor = gra.corridorForRoute(packet.src(), packet.dst(), cached.route.path_id);
     if (corridor && !packet.header_only() && data.packet_type() != UecBasePacket::DATA_PROBE)
         gra.bindPacketOnce(info.key, data.epsn(), packet.size() - UecSrc::_hdr_size);
+    data.set_service_priority(cached.service_priority);
     packet.set_pathid(cached.route.path_id);
 }
 

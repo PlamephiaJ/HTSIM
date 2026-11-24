@@ -213,6 +213,106 @@ public:
     uint32_t& calls;
 };
 
+class DepartureSink : public PacketSink {
+public:
+    void receivePacket(Packet& packet) override {
+        departures.emplace_back(packet.id(), packet.header_only());
+        packet.free();
+    }
+    const std::string& nodename() override { return name; }
+
+    std::vector<std::pair<packetid_t, bool>> departures;
+    const std::string name = "departures";
+};
+
+void checkPriorityDequeue() {
+    auto& events = EventList::getTheEventList();
+    for (bool enabled : {false, true}) {
+        CompositeQueue queue(speedFromGbps(200), 1000000, events, nullptr, 64);
+        if (enabled) queue.enablePriorityDequeue();
+        DepartureSink sink;
+        Route route;
+        route.push_back(&sink);
+        PacketFlow flow(nullptr);
+        auto enqueue = [&](packetid_t id, std::optional<long double> priority, bool header = false) {
+            auto* packet = UecDataPacket::newpkt(flow, route, id, 4160, UecBasePacket::DATA_PULL, 0);
+            packet->set_service_priority(priority);
+            if (header) packet->strip_payload(64);
+            queue.receivePacket(*packet);
+        };
+        enqueue(0, std::nullopt); // already in service when urgent data arrives
+        enqueue(1, -0.7L);
+        enqueue(2, -0.2L);
+        enqueue(3, -0.2L);
+        enqueue(4, std::nullopt);
+        enqueue(5, std::nullopt, true);
+        assert(queue.queuesize() == 5 * 4160 + 64);
+        while (events.doNextEvent()) {}
+        assert(queue.queuesize() == 0);
+        const std::vector<std::pair<packetid_t, bool>> expected = enabled ?
+            decltype(expected){{0, false}, {5, true}, {2, false}, {3, false}, {1, false}, {4, false}} :
+            decltype(expected){{0, false}, {5, true}, {1, false}, {2, false}, {3, false}, {4, false}};
+        assert(sink.departures == expected);
+    }
+
+    // With a one-packet buffer the in-service packet cannot be evicted.
+    CompositeQueue queue(speedFromGbps(200), 4160, events, nullptr, 64);
+    queue.enablePriorityDequeue();
+    DepartureSink sink;
+    Route route;
+    route.push_back(&sink);
+    PacketFlow flow(nullptr);
+    for (packetid_t id : {0, 1}) {
+        auto* packet = UecDataPacket::newpkt(flow, route, id, 4160, UecBasePacket::DATA_PULL, 0);
+        packet->set_service_priority(id);
+        queue.receivePacket(*packet);
+    }
+    assert(queue.queuesize() == 4160 + 64);
+    while (events.doNextEvent()) {}
+    assert((sink.departures == decltype(sink.departures){{0, false}, {1, true}}));
+}
+
+void checkServicePriorityCommit() {
+    auto& events = EventList::getTheEventList();
+    DragonflySwitch::set_config(DragonflySwitch::ENTRY_SWITCH, false, 64);
+    MessageletConfig config;
+    config.runtime.routing_mode = MessageletConfig::RoutingMode::ENTRY_SWITCH;
+    config.scheduling.priority_dequeue = true;
+    config.validate();
+    DragonflySwitch::configureEntryRouting(config);
+    DragonflyTopology topology(COMPOSITE, 1000000, nullptr, &events);
+    topology.construct_topology(2, 1, 1);
+    using G = GraStaticGraph;
+    topology.initializeGraStaticGraphs({{0, {
+        {G::Type::COMM, 10, 8192, {}}, {G::Type::COMM, 20, 8192, {2}},
+        {G::Type::COMP, 0, 100000, {}}}}});
+    auto& gra = topology.groupRoutingAgent(0);
+    gra.setPriorityStrategy(makeRoutingPriorityStrategy("global_slack", gra.staticGraph()));
+    auto& entry = *topology.switches[0];
+    PacketFlow low_flow(nullptr), high_flow(nullptr);
+    Route route;
+    auto tag = [&](PacketFlow& flow, uint64_t flow_id, uint64_t index, UecBasePacket::PacketType type) {
+        auto* packet = UecDataPacket::newpkt(flow, route, index, 4160, type, 0, 2);
+        packet->set_src(0);
+        packet->set_messagelet({{0, flow_id, index}, {4096, 2}});
+        entry.getNextHop(*packet, nullptr);
+        return packet;
+    };
+    auto* low = tag(low_flow, 10, 0, UecBasePacket::DATA_PULL);
+    auto* high = tag(high_flow, 20, 0, UecBasePacket::DATA_PULL);
+    assert(low->service_priority() && high->service_priority() && low->pathid() == high->pathid());
+    assert(*high->service_priority() > *low->service_priority());
+    gra.setPriorityStrategy(makeRoutingPriorityStrategy("dag_downstream", gra.staticGraph()));
+    auto* retry = tag(low_flow, 10, 0, UecBasePacket::DATA_RTX);
+    auto* next = tag(low_flow, 10, 1, UecBasePacket::DATA_PULL);
+    assert(retry->service_priority() == low->service_priority());
+    assert(next->service_priority() == gra.staticGraph().dTable().at({0, 10}));
+    for (auto* packet : {low, high, retry, next}) packet->free();
+    auto* probe = UecDataPacket::newpkt(low_flow, route, 2, 64, UecBasePacket::DATA_PROBE, 0, 2);
+    assert(!probe->service_priority());
+    probe->free();
+}
+
 void checkEntryCommitBeforeAdmission() {
     auto& events = EventList::getTheEventList();
     events.setEndtime(1);
@@ -475,6 +575,12 @@ void checkRuntimeFreezingAndRetransmission(MessageletRuntime::Granularity granul
 
 int main(int argc, char** argv) {
     Packet::set_packet_size(4160);
+    if (argc > 1 && std::string(argv[1]) == "priority_dequeue") {
+        checkPriorityDequeue();
+        checkServicePriorityCommit();
+        std::cout << "Priority dequeue tests passed\n";
+        return 0;
+    }
     if (argc > 1 && std::string(argv[1]) == "entry_admission") {
         checkEntryCommitBeforeAdmission();
         std::cout << "Entry commitment tests passed\n";

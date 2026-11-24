@@ -39,7 +39,8 @@ class EntrySwitchRoutingTests(unittest.TestCase):
 
     def run_flow(self, dst_group=3, dst_switch=0, strategy="ugal_l", size=8192,
                  routing="SOURCE", extra=(), granularity=None, mode=None, alpha=None,
-                 routing_mode=None, dag_id=0, soft_claim=None, beta=None, trace_decisions=True, priority=None):
+                 routing_mode=None, dag_id=0, soft_claim=None, beta=None, trace_decisions=True,
+                 priority=None, priority_dequeue=None):
         placement = self.root / "placement.json"
         placement.write_text(json.dumps({"schema_version": 1, "placements": [
             {"rank": 0, "group": 0, "switch": 0, "host": 0},
@@ -55,6 +56,8 @@ class EntrySwitchRoutingTests(unittest.TestCase):
             settings["routing"].setdefault("soft_claim", {})["beta"] = beta
         if priority is not None:
             settings["routing"].setdefault("soft_claim", {})["priority"] = priority
+        if priority_dequeue is not None:
+            settings["scheduling"] = {"priority_dequeue": priority_dequeue}
         if size is not None:
             settings["messagelet"] = {"size_bytes": size}
         if granularity is not None:
@@ -142,6 +145,24 @@ class EntrySwitchRoutingTests(unittest.TestCase):
         result = self.run_flow(routing="ENTRY_SWITCH", routing_mode="ENTRY_SWITCH")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("requires workload flow metadata", result.stderr)
+
+    def test_priority_dequeue_runs_without_soft_claim(self):
+        for group, enabled in ((3, None), (3, False), (3, True), (0, True)):
+            with self.subTest(group=group, enabled=enabled):
+                result = self.run_flow(dst_group=group, strategy="none", routing="ENTRY_SWITCH",
+                                       routing_mode="ENTRY_SWITCH", priority_dequeue=enabled)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                metrics = self.last_run / "output_metrics"
+                self.assertFalse((metrics / "gra_soft_claims.csv").exists())
+                with (metrics / "entry_decisions.csv").open() as stream:
+                    decisions = list(csv.DictReader(stream))
+                self.assertTrue(decisions)
+                for decision in decisions:
+                    self.assertEqual("service_priority=" in decision["policy_state"], enabled is True)
+
+        result = self.run_flow(priority_dequeue=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Priority dequeue requires label ENTRY_SWITCH", result.stderr)
 
     def test_soft_claim_runtime_ready_and_tail(self):
         self.write_workload(65537)

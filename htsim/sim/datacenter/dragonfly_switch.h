@@ -4,6 +4,7 @@
 
 #include <random>
 #include <functional>
+#include <optional>
 #include <unordered_map>
 #include <unordered_set>
 #include "callback_pipe.h"
@@ -108,6 +109,7 @@ private:
         MessageletMeta meta;
         uint32_t src, dst;
         uint64_t transport_flow_id;
+        std::optional<long double> service_priority;
     };
     std::map<MessageletKey, EntryRoute> _entry_routes;
     void routeEntryPacket(Packet& packet);

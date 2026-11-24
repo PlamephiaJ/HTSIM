@@ -49,6 +49,7 @@ public:
         UecDataPacket* p = _packetdb.allocPacket();
         p->set_route(flow, route, full_size, epsn);  // also sets size and seqno
         p->_messagelet.reset();
+        p->_service_priority.reset();
         p->_type = UECDATA;
         p->_is_header = false;
         p->_bounced = false;
@@ -99,6 +100,8 @@ public:
 
     const std::optional<MessageletInfo>& messagelet() const { return _messagelet; }
     void set_messagelet(const MessageletInfo& info) { _messagelet = info; }
+    std::optional<long double> service_priority() const { return _service_priority; }
+    void set_service_priority(std::optional<long double> priority) { _service_priority = priority; }
 
     inline seq_t epsn() const {return _epsn;}
 
@@ -128,6 +131,7 @@ public:
 
 protected:
     std::optional<MessageletInfo> _messagelet;
+    std::optional<long double> _service_priority;
     seq_t _epsn;
 
     pull_quanta _pull_target;  // in a real implemention we'd handle wrapping, but here just never wrap

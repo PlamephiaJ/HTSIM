@@ -45,6 +45,10 @@ struct MessageletConfig {
         bool trace_decisions = false;
     } logging;
 
+    struct SchedulingSettings {
+        bool priority_dequeue = false;
+    } scheduling;
+
     static MessageletConfig loadFromFile(const std::string& filename);
     static const char* granularityName(Granularity granularity);
     void validate() const;

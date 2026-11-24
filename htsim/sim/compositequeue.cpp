@@ -4,6 +4,9 @@
 #include <math.h>
 #include <iostream>
 #include <sstream>
+#include <iterator>
+#include <stdexcept>
+#include "uecpacket.h"
 #include "ecn.h"
 
 static int global_queue_id=0;
@@ -45,8 +48,65 @@ CompositeQueue::CompositeQueue(linkspeed_bps bitrate, mem_b maxsize, EventList& 
         cout << "queueid " << _queue_id << " bitrate " << bitrate/1000000 << "Mb/s," << endl;
 }
 
+void CompositeQueue::enablePriorityDequeue() {
+    if (_serv != QUEUE_INVALID || !_enqueued_low.empty() || !_enqueued_high.empty())
+        throw std::logic_error("Priority dequeue must be enabled before queue service starts");
+    if (!_priority_data) _priority_data = std::make_unique<PriorityDataQueue>();
+}
+
+bool CompositeQueue::hasWaitingData() {
+    return _priority_data ? !_priority_data->waiting.empty() : !_enqueued_low.empty();
+}
+
+void CompositeQueue::enqueueData(Packet* packet) {
+    if (!_priority_data) {
+        _enqueued_low.push(packet);
+        return;
+    }
+
+    const auto priority = packet->type() == UECDATA ?
+        static_cast<const UecDataPacket&>(*packet).service_priority() : std::nullopt;
+    auto& data = *_priority_data;
+    const auto arrival = data.next_arrival++;
+    const auto inserted = data.waiting.emplace(PriorityDataQueue::Key{priority, arrival}, packet);
+    data.arrivals.emplace(arrival, inserted.first);
+}
+
+void CompositeQueue::beginDataService() {
+    _serv = QUEUE_LOW;
+    Packet* packet;
+    if (_priority_data) {
+        auto& data = *_priority_data;
+        const auto next = data.waiting.begin();
+        packet = next->second;
+        data.in_service = packet;
+        data.arrivals.erase(next->first.arrival);
+        data.waiting.erase(next);
+    } else {
+        packet = _enqueued_low.back();
+    }
+    eventlist().sourceIsPendingRel(*this, drainTime(packet));
+}
+
+bool CompositeQueue::canReplaceNewestData(mem_b size) const {
+    if (!_priority_data) return true;
+    const auto& arrivals = _priority_data->arrivals;
+    return !arrivals.empty() && _queuesize_low - arrivals.rbegin()->second->second->size() + size <= _maxsize;
+}
+
+Packet* CompositeQueue::evictNewestData() {
+    if (!_priority_data) return _enqueued_low.pop_front();
+
+    auto& data = *_priority_data;
+    const auto last = std::prev(data.arrivals.end());
+    Packet* packet = last->second->second;
+    data.waiting.erase(last->second);
+    data.arrivals.erase(last);
+    return packet;
+}
+
 void CompositeQueue::beginService(){
-    if (!_enqueued_high.empty()&&!_enqueued_low.empty()){
+    if (!_enqueued_high.empty() && hasWaitingData()) {
         _crt++;
 
         if (_crt >= (_ratio_high+_ratio_low))
@@ -57,8 +117,7 @@ void CompositeQueue::beginService(){
             eventlist().sourceIsPendingRel(*this, drainTime(_enqueued_high.back()));
         } else {
             assert(_crt < _ratio_high+_ratio_low);
-            _serv = QUEUE_LOW;
-            eventlist().sourceIsPendingRel(*this, drainTime(_enqueued_low.back()));      
+            beginDataService();
         }
         return;
     }
@@ -66,9 +125,8 @@ void CompositeQueue::beginService(){
     if (!_enqueued_high.empty()) {
         _serv = QUEUE_HIGH;
         eventlist().sourceIsPendingRel(*this, drainTime(_enqueued_high.back()));
-    } else if (!_enqueued_low.empty()) {
-        _serv = QUEUE_LOW;
-        eventlist().sourceIsPendingRel(*this, drainTime(_enqueued_low.back()));
+    } else if (hasWaitingData()) {
+        beginDataService();
     } else {
         assert(0);
         _serv = QUEUE_INVALID;
@@ -91,8 +149,12 @@ bool CompositeQueue::decide_ECN() {
 void CompositeQueue::completeService(){
     Packet* pkt;
     if (_serv==QUEUE_LOW){
-        assert(!_enqueued_low.empty());
-        pkt = _enqueued_low.pop();
+        if (_priority_data) {
+            pkt = _priority_data->in_service;
+            _priority_data->in_service = nullptr;
+        } else {
+            pkt = _enqueued_low.pop();
+        }
         _queuesize_low -= pkt->size();
 
         bool ecn = decide_ECN();
@@ -143,7 +205,7 @@ void CompositeQueue::completeService(){
   
     _serv = QUEUE_INVALID;
   
-    if (!_enqueued_high.empty()||!_enqueued_low.empty())
+    if (!_enqueued_high.empty() || hasWaitingData())
         beginService();
 }
 
@@ -180,7 +242,7 @@ void CompositeQueue::receivePacket(Packet& pkt)
     if (_logger) _logger->logQueue(*this, QueueLogger::PKT_ARRIVE, pkt);
 
     if (!pkt.header_only()){
-        if (_queuesize_low+pkt.size() <= _maxsize  || drand()<0.5) {
+        if (_queuesize_low+pkt.size() <= _maxsize || (drand()<0.5 && canReplaceNewestData(pkt.size()))) {
             //regular packet; don't drop the arriving packet
 
             // we are here because either the queue isn't full or,
@@ -189,12 +251,12 @@ void CompositeQueue::receivePacket(Packet& pkt)
             
             if (_queuesize_low+pkt.size()>_maxsize){
                 // we're going to drop an existing packet from the queue
-                if (_enqueued_low.empty()){
+                if (!hasWaitingData()) {
                     //cout << "QUeuesize " << _queuesize_low << " packetsize " << pkt.size() << " maxsize " << _maxsize << endl;
                     assert(0);
                 }
                 //take last packet from low prio queue, make it a header and place it in the high prio queue
-                Packet* booted_pkt = _enqueued_low.pop_front();
+                Packet* booted_pkt = evictNewestData();
                 _queuesize_low -= booted_pkt->size();
                 if (_logger) _logger->logQueue(*this, QueueLogger::PKT_UNQUEUE, *booted_pkt);
 
@@ -250,8 +312,7 @@ void CompositeQueue::receivePacket(Packet& pkt)
             }
 
             //assert(_queuesize_low+pkt.size()<= _maxsize);
-            Packet* pkt_p = &pkt;
-            _enqueued_low.push(pkt_p);
+            enqueueData(&pkt);
             _queuesize_low += pkt.size();
             notifyAdmission(pkt);
             if (_logger) _logger->logQueue(*this, QueueLogger::PKT_ENQUEUE, pkt);

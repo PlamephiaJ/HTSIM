@@ -56,6 +56,8 @@ public:
     // Install before READY reports. A replacement policy owns its own state.
     void setDemandPolicy(std::unique_ptr<RoutingDemandPolicy> policy, double alpha = 1.0);
     void setPriorityStrategy(std::shared_ptr<const RoutingPriorityStrategy> strategy);
+    std::optional<long double> servicePriority(Messagelet messagelet, uint32_t from, uint32_t to,
+                                               uint64_t payload_bytes, uint64_t now_ns) const;
     const RoutingDemandPolicy* demandPolicy() const { return _demand_policy.get(); }
     void messageletReady(Messagelet messagelet, uint32_t from, uint32_t to, uint64_t payload_bytes);
     void cancelReady(Messagelet messagelet);

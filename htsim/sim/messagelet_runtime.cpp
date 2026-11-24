@@ -279,15 +279,17 @@ void MessageletRuntime::initializeGoalGraph(const Parser& parser) {
     auto graph = buildGraGoalGraph(parser, _config.runtime.dag_id,
         (_routing_config_loaded || _flow_metadata_loaded) ? &identities : nullptr);
     topology->initializeGraStaticGraphs({std::move(graph.dag)});
-    if (_config.routing.soft_claim.enabled) {
+    if (_config.scheduling.priority_dequeue) topology->enablePriorityDequeue();
+    if (_config.routing.soft_claim.enabled || _config.scheduling.priority_dequeue) {
         if (_config.routing.soft_claim.priority == "global_slack_online")
             _fct_predictor = std::make_shared<OnlineFctPredictor>(topology->groupRoutingAgent(0).staticGraph());
         const std::shared_ptr<const RoutingPriorityStrategy> priority = makeRoutingPriorityStrategy(
             _config.routing.soft_claim.priority, topology->groupRoutingAgent(0).staticGraph(), _fct_predictor);
         for (uint32_t group = 0; group < topology->get_no_groups(); ++group) {
             auto& gra = topology->groupRoutingAgent(group);
-            gra.setDemandPolicy(makeRoutingDemandPolicy(_config.routing.soft_claim.policy),
-                                _config.routing.commitment_alpha);
+            if (_config.routing.soft_claim.enabled)
+                gra.setDemandPolicy(makeRoutingDemandPolicy(_config.routing.soft_claim.policy),
+                                    _config.routing.commitment_alpha);
             gra.setTrace(_config.logging.trace_decisions);
             gra.setPriorityStrategy(priority);
         }

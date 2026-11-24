@@ -12,6 +12,9 @@
 
 
 #include <list>
+#include <map>
+#include <memory>
+#include <optional>
 #include "queue.h"
 #include "config.h"
 #include "eventlist.h"
@@ -23,6 +26,7 @@ class CompositeQueue : public Queue {
     CompositeQueue(linkspeed_bps bitrate, mem_b maxsize, 
                    EventList &eventlist, QueueLogger* logger, 
                    uint16_t trim_size, bool disable_trim=false);
+    void enablePriorityDequeue();
     virtual void receivePacket(Packet& pkt);
     virtual void doNextEvent();
     // should really be private, but loggers want to see
@@ -96,6 +100,31 @@ class CompositeQueue : public Queue {
     bool _is_failing;
     int _fail_rate;
     int _packet_count;
+
+private:
+    struct PriorityDataQueue {
+        struct Key {
+            std::optional<long double> priority;
+            uint64_t arrival;
+            bool operator<(const Key& other) const {
+                if (priority != other.priority) return priority > other.priority;
+                return arrival < other.arrival;
+            }
+        };
+
+        std::map<Key, Packet*> waiting;
+        // Overflow still trims the newest waiting arrival, regardless of score.
+        std::map<uint64_t, decltype(waiting)::iterator> arrivals;
+        uint64_t next_arrival = 0;
+        Packet* in_service = nullptr;
+    };
+
+    std::unique_ptr<PriorityDataQueue> _priority_data;
+    bool hasWaitingData();
+    void enqueueData(Packet* packet);
+    void beginDataService();
+    bool canReplaceNewestData(mem_b size) const;
+    Packet* evictNewestData();
 };
 
 #endif

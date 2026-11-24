@@ -111,6 +111,22 @@ void GroupRoutingAgent::setPriorityStrategy(std::shared_ptr<const RoutingPriorit
     if (_demand_policy) refreshDemand("priority_strategy");
 }
 
+std::optional<long double> GroupRoutingAgent::servicePriority(Messagelet messagelet, uint32_t from,
+    uint32_t to, uint64_t payload_bytes, uint64_t now_ns) const {
+    if (!_priority_strategy) return std::nullopt;
+    const auto& downstream = staticGraph().dTable();
+    const auto flow = downstream.find({messagelet.dag_id, messagelet.flow_id});
+    if (flow == downstream.end()) return std::nullopt;
+    const auto estimates = _priority_strategy->evaluate(executionProgress(), now_ns,
+        {{messagelet, {messagelet, from, to, payload_bytes, flow->second}}});
+    const auto& estimate = estimates.at(messagelet);
+    if (estimate.scope == "completed") return std::nullopt;
+    // Dynamic ordinal ranks only compare members of one READY snapshot.
+    // Negated relative slack orders frozen scores across groups and commits.
+    if (estimate.relative_slack) return -*estimate.relative_slack;
+    return estimate.priority;
+}
+
 void GroupRoutingAgent::messageletReady(Messagelet m, uint32_t from, uint32_t to, uint64_t bytes) {
     if (!_demand_policy || _commitments.count(m)) return; // late READY after commit
     const auto src = _topology.get_host_switch(from);

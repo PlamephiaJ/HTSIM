@@ -57,6 +57,17 @@ void DragonflyTopology::init_group_agents() {
         _group_agents.push_back(std::make_unique<GroupRoutingAgent>(*this, group));
 }
 
+void DragonflyTopology::enablePriorityDequeue() {
+    if (_queue_type != COMPOSITE) throw std::logic_error("Priority dequeue requires CompositeQueue");
+    for (const auto* queues : {&queues_switch_switch, &queues_switch_host}) {
+        for (const auto& ports : *queues) {
+            for (auto* queue : ports) {
+                if (queue) static_cast<CompositeQueue*>(queue)->enablePriorityDequeue();
+            }
+        }
+    }
+}
+
 void DragonflyTopology::construct_topology(uint32_t p, uint32_t a, uint32_t h) {
     assert(p > 0 && a > 0 && h > 0);
 

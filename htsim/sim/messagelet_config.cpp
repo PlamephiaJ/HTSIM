@@ -81,6 +81,7 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
         readOptional(tree, "routing.soft_claim.beta", beta, filename);
         config.routing.soft_claim.beta = beta;
     }
+    readOptional(tree, "scheduling.priority_dequeue", config.scheduling.priority_dequeue, filename);
     readOptional(tree, "logging.trace_decisions", config.logging.trace_decisions, filename);
 
     if (schema_version != kSchemaVersion) {
@@ -103,6 +104,9 @@ void MessageletConfig::validate() const {
         (runtime.mode != Mode::Label || runtime.routing_mode != RoutingMode::ENTRY_SWITCH ||
          routing.network_decision != "commitment_aware_ugal"))
         throw std::invalid_argument("Soft claim requires label ENTRY_SWITCH with commitment_aware_ugal");
+    if (scheduling.priority_dequeue &&
+        (runtime.mode != Mode::Label || runtime.routing_mode != RoutingMode::ENTRY_SWITCH))
+        throw std::invalid_argument("Priority dequeue requires label ENTRY_SWITCH");
     if (runtime.routing_mode != RoutingMode::SOURCE && runtime.routing_mode != RoutingMode::ENTRY_SWITCH)
         throw std::invalid_argument("Unsupported runtime routing_mode");
     if (runtime.mode == Mode::Transparent && runtime.routing_mode == RoutingMode::ENTRY_SWITCH)
