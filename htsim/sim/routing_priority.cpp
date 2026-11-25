@@ -274,9 +274,12 @@ public:
             // Include blocked/downstream flows, not just local READY demands.
             for (const auto& item : _timing.finishes) {
                 if (!dags.count(item.first.first)) continue;
-                const auto fct = _predictor->predict(item.first, now_ns);
+                const Key start{item.second.dag_index, item.second.node_index, G::Event::START};
+                const auto horizon = progress.eventTime(start) ? OnlineFctPredictor::Horizon::ShortTerm
+                                                               : OnlineFctPredictor::Horizon::LongTerm;
+                const auto fct = _predictor->predict(item.first, now_ns, horizon);
                 fcts.emplace(item.first, fct);
-                costs.emplace(Key{item.second.dag_index, item.second.node_index, G::Event::START}, fct.fct_ns);
+                costs.emplace(start, fct.fct_ns);
             }
         }
         const auto prediction = _timing.predict(progress, now_ns, pending, _predictor ? &costs : nullptr);
@@ -305,6 +308,7 @@ public:
                 estimate.predicted_fct_ns = fct.fct_ns;
                 estimate.fct_sample_count = fct.sample_count;
                 estimate.nominal_fallback = fct.nominal_fallback;
+                estimate.fct_horizon = fct.horizon == OnlineFctPredictor::Horizon::ShortTerm ? "short_term" : "long_term";
                 estimate.dynamic_tail_ns = dynamic_tails.at(finish);
             }
             if (progress.eventTime(finish)) {

@@ -101,11 +101,14 @@ class OnlineFctPredictorTests(unittest.TestCase):
             visible = sum(end <= now_ps for end, _, _ in samples)
             count = int(row["fct_sample_count"])
             predicted = float(row["predicted_fct_ns"])
+            horizon = row["fct_horizon"]
+            self.assertIn(horizon, {"short_term", "long_term"})
             # Several callbacks may share a timestamp; the log row must match
             # a prefix of completions already delivered at that event time.
             candidates = []
             for prefix in range(earlier, visible + 1):
-                window = samples[max(0, prefix - 8):prefix]
+                start = max(0, prefix - 8) if horizon == "short_term" else 0
+                window = samples[start:prefix]
                 if len(window) != count:
                     continue
                 own_fct = next((fct for _, fct, completed_id in samples[:prefix]

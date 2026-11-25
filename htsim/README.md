@@ -659,14 +659,17 @@ missing identities cause an explicit startup error. Flow identities and collecti
 IDs pass from metadata through `FlowRoutingConfig` and `GraGoalGraph` into the
 static graph; collective membership is never inferred from ranks or Flow IDs.
 
-`OnlineFctPredictor` maintains at most eight completed network FCT samples per
-`(dag_id, collective_id, comm_position)`. The generator reuses a position when
+`OnlineFctPredictor` maintains two means per `(dag_id, collective_id, comm_position)`.
+The short-term mean uses up to eight recent network completions. The long-term
+mean uses all visible network completions through a running sum and count.
+The generator reuses a position when
 chunks and iterations repeat the same communication role. The runtime uses
 `workload.dag_id` by default, with an explicit `runtime.dag_id` taking precedence.
 Legacy flows with no `comm_position` use a separate collective-wide window.
 
-For an unfinished flow, the predictor uses the arithmetic mean of its window.
-An empty window falls back to that COMM's original
+For a COMM with confirmed SEND START, the predictor uses the short-term mean.
+Until SEND START is confirmed, it uses the long-term mean, even if RECV has
+started. With no visible samples, the predictor falls back to that COMM's original
 `ceil(bytes * 8 * 1e9 / bandwidth_bps)` cost. Once a flow's network completion is
 visible, its own actual FCT takes precedence, including while GOAL FINISH is
 waiting for RECV readiness. Per-flow actual FCTs are retained after their samples
@@ -685,10 +688,11 @@ converted from the ps duration to fractional ns. Observation visibility uses the
 estimator's integer-ns clock and begins only after the completion callback runs.
 There is no modeled dissemination delay, matching existing host progress sharing.
 
-Each online evaluation takes one COMM cost snapshot for the entire participating
-DAG, including blocked, remote and non-READY communications. Both forward ETAs
-and full backward longest tails use that snapshot. Only COMM's SEND START to
-FINISH edge changes; its RECV START to FINISH edge remains zero. COMP and
+Each online evaluation selects a cost for each COMM in the participating DAG,
+including blocked, remote and non-READY communications. The forward ETA of a
+started COMM uses the short-term cost. Future COMMs use the long-term cost in
+both the forward workload ETA and the backward longest tails. Only COMM's SEND
+START to FINISH edge changes. Its RECV START to FINISH edge remains zero. COMP and
 dependency edges retain their original costs. Confirmed event timestamps,
 elapsed-time handling and the one-ns residual for overdue unconfirmed FINISH
 remain unchanged. Thus completion still waits for both predicted network
@@ -696,19 +700,21 @@ transfer and RECV readiness. Tail propagation crosses every downstream Join.
 The original `global_slack`, `join_slack` and `dag_downstream` strategies do not
 read or train the predictor.
 
-With `logging.trace_decisions: true`, `gra_pending_preferences.csv` adds
+With `logging.trace_decisions: true`, `gra_pending_preferences.csv` records
 `collective_id`, `comm_position`, `prediction_time_ns`, `predicted_fct_ns`, `fct_sample_count`,
-`nominal_fallback` and `dynamic_tail_ns`. `predicted_fct_ns` contains the actual
-FCT when the flow's own completion is visible; `fct_sample_count` still counts
-the visible samples in that position's window, and `nominal_fallback` is false in that case.
+`nominal_fallback`, `dynamic_tail_ns`, and `fct_horizon` (`short_term` or `long_term`).
+`fct_sample_count` counts visible samples for the selected horizon. When the
+flow's completion is visible, `predicted_fct_ns` contains the actual FCT and
+`nominal_fallback` is false.
 Existing ETA, workload end, slack and
 priority columns remain available. `nominal_tail_ns` always denotes the original
 static tail; the online slack equation uses `dynamic_tail_ns` instead.
 `refresh_reason: fct_completion` identifies refreshes caused by new samples.
 
-`online_fct_predictor_test` checks cold-start equivalence, the eight-sample
-window, duplicate/future rejection, position/collective/DAG isolation, RECV gating and
-dynamic tails across nested Joins. Run the integration checks with
+`online_fct_predictor_test` checks cold-start equivalence, both means, horizon
+selection at SEND START, duplicate/future rejection, position/collective/DAG
+isolation, RECV gating and dynamic tails across nested Joins. Run the integration
+checks with
 `python3 -m unittest discover -s tests -p test_online_fct_predictor.py -v`
 from the repository root. They run the existing 60-flow collective workload,
 reconstruct predictions from UEC FCT logs, check fallback and dynamic tails,

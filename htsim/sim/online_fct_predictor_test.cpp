@@ -13,6 +13,7 @@ namespace {
 using G = GraStaticGraph;
 using Type = G::Type;
 using Event = G::Event;
+using Horizon = OnlineFctPredictor::Horizon;
 using Pending = std::map<MessageletKey, RoutingDemandPolicy::Ready>;
 constexpr uint64_t bps = 8000000000ULL; // one payload byte/ns
 
@@ -73,6 +74,13 @@ void checkWindowIsolationAndVisibility() {
     assert(predictor.observeCompletion({7, 0}, 100000, 150000, 200000));
     assert(predictor.predict({7, 0}, 200).fct_ns == 50);
     assert(predictor.predict({0, 10}, 200).fct_ns == 5.5L);
+    const auto lifetime = predictor.predict({0, 10}, 200, Horizon::LongTerm);
+    assert(lifetime.fct_ns == 5 && lifetime.sample_count == 9 && !lifetime.nominal_fallback);
+    const auto first = predictor.predict({0, 10}, 100, Horizon::LongTerm);
+    assert(first.fct_ns == 1 && first.sample_count == 1);
+    assert(predictor.predict({0, 10}, 99, Horizon::LongTerm).nominal_fallback);
+    assert(predictor.predict({0, 12}, 200, Horizon::LongTerm).sample_count == 1);
+    assert(predictor.predict({0, 13}, 200, Horizon::LongTerm).nominal_fallback);
     OnlineFctPredictor independent(*graph);
     assert(independent.predict({0, 10}, 200).nominal_fallback); // no simulation state leak
 }
@@ -246,6 +254,47 @@ void checkReceiveGateAndStartDependencies() {
     assert(predictor->predict({0, 10}, 220).fct_ns == 30); // GOAL FINISH does not train
 }
 
+void checkStartedAndFuturePredictionHorizons() {
+    G::Dag dag{0, {{Type::COMM, 10, 10, {1}, 3, 0}, {Type::COMM, 20, 10, {2}, 3, 0},
+                   {Type::COMM, 30, 10, {}, 3, 0}}};
+    for (uint64_t id = 100; id < 109; ++id) dag.nodes.push_back({Type::COMM, id, 10, {}, 3, 0});
+    bind(dag);
+    const auto graph = G::build({dag}, bps);
+    GraExecutionProgress progress(graph);
+    auto predictor = std::make_shared<OnlineFctPredictor>(*graph);
+    auto online = makeRoutingPriorityStrategy("global_slack_online", *graph, predictor);
+    for (uint32_t i = 0; i < 9; ++i) {
+        const uint64_t end = 100 + i;
+        const uint64_t start = end - (i == 0 ? 100 : 10);
+        progress.receive({0, i + 3, 0, GraTaskEvent::START, 1, start});
+        progress.receive({0, i + 103, 0, GraTaskEvent::START, 1, start});
+        progress.receive({0, i + 3, 0, GraTaskEvent::FINISH, 2, end});
+        assert(predictor->observeCompletion({0, 100 + i}, start * 1000, end * 1000, end * 1000));
+    }
+
+    progress.receive({0, 0, 0, GraTaskEvent::START, 1, 120});
+    progress.receive({0, 101, 0, GraTaskEvent::START, 1, 120}); // B's RECV starts before its SEND
+    const auto demands = pending({{0, 10, 0}, {0, 20, 0}, {0, 30, 0}});
+    const auto before = online->evaluate(progress, 120, demands);
+    const auto& a = before.at({0, 10, 0});
+    const auto& b = before.at({0, 20, 0});
+    assert(a.fct_horizon == "short_term" && a.predicted_fct_ns == 10 && a.fct_sample_count == 8);
+    assert(a.estimated_finish_time_ns == 130 && a.dynamic_tail_ns == 40 && a.estimated_workload_end_ns == 170);
+    assert(b.fct_horizon == "long_term" && b.predicted_fct_ns == 20 && b.fct_sample_count == 9);
+    assert(b.estimated_finish_time_ns == 150 && b.dynamic_tail_ns == 20);
+
+    assert(predictor->observeCompletion({0, 10}, 120000, 130000, 130000));
+    progress.receive({0, 0, 0, GraTaskEvent::FINISH, 2, 130});
+    progress.receive({0, 1, 0, GraTaskEvent::START, 1, 130});
+    const auto after = online->evaluate(progress, 130, demands);
+    const auto& started = after.at({0, 20, 0});
+    assert(started.fct_horizon == "short_term" && started.predicted_fct_ns == 10 && started.fct_sample_count == 8);
+    assert(started.estimated_finish_time_ns == 140 && started.dynamic_tail_ns == 19);
+    const auto& future = after.at({0, 30, 0});
+    assert(future.fct_horizon == "long_term" && future.predicted_fct_ns == 19 && future.fct_sample_count == 10);
+    assert(future.estimated_finish_time_ns == 159 && future.estimated_workload_end_ns == 159);
+}
+
 void checkMissingMetadata() {
     const auto graph = G::build({{0, {{Type::COMM, 1, 10, {}}}}}, bps);
     invalid([&] { makeRoutingPriorityStrategy("global_slack_online", *graph); });
@@ -259,6 +308,7 @@ int main() {
     checkKnownNetworkFctUpdatesGatedFinish();
     checkColdStartAndDynamicTail();
     checkReceiveGateAndStartDependencies();
+    checkStartedAndFuturePredictionHorizons();
     checkMissingMetadata();
     std::cout << "online FCT predictor tests passed\n";
 }

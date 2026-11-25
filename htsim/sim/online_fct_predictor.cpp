@@ -1,5 +1,6 @@
 #include "online_fct_predictor.h"
 
+#include <algorithm>
 #include <stdexcept>
 #include <string>
 
@@ -26,25 +27,37 @@ bool OnlineFctPredictor::observeCompletion(Flow flow, uint64_t start_ps, uint64_
     // Visibility uses the estimator's integer-ns clock; sub-ns FCT is retained.
     const Sample sample{now_ps / 1000, static_cast<long double>(end_ps - start_ps) / 1000.0L};
     if (!_completed.emplace(flow, sample).second) return false;
-    auto& samples = _history[info.window];
-    samples.push_back(sample);
-    if (samples.size() > window_size) samples.pop_front();
+    auto& history = _history[info.window];
+    history.recent.push_back(sample);
+    if (history.recent.size() > window_size) history.recent.pop_front();
+    history.lifetime.add(sample.fct_ns);
+    history.latest_visible_ns = std::max(history.latest_visible_ns, sample.visible_ns);
     return true;
 }
 
-OnlineFctPredictor::Prediction OnlineFctPredictor::predict(Flow flow, uint64_t now_ns) const {
+OnlineFctPredictor::Prediction OnlineFctPredictor::predict(Flow flow, uint64_t now_ns, Horizon horizon) const {
     const auto& info = _flows.at(flow);
-    long double sum = 0;
-    size_t count = 0;
+    Totals samples;
     const auto found = _history.find(info.window);
-    if (found != _history.end()) for (const auto& sample : found->second) {
-        if (sample.visible_ns > now_ns) continue;
-        sum += sample.fct_ns;
-        ++count;
+    if (found != _history.end()) {
+        const auto& history = found->second;
+        if (horizon == Horizon::ShortTerm) {
+            for (const auto& sample : history.recent)
+                if (sample.visible_ns <= now_ns) samples.add(sample.fct_ns);
+        } else if (history.latest_visible_ns <= now_ns) {
+            samples = history.lifetime;
+        } else {
+            // Past-time queries can recover the visible lifetime samples from
+            // the same completions retained for per-flow actual FCTs.
+            for (const auto& item : _completed)
+                if (item.second.visible_ns <= now_ns && _flows.at(item.first).window == info.window)
+                    samples.add(item.second.fct_ns);
+        }
     }
     const auto& [dag_id, collective_id, comm_position] = info.window;
     const auto completed = _completed.find(flow);
     if (completed != _completed.end() && completed->second.visible_ns <= now_ns)
-        return {collective_id, comm_position, completed->second.fct_ns, count, false};
-    return {collective_id, comm_position, count ? sum / count : static_cast<long double>(info.nominal_ns), count, count == 0};
+        return {collective_id, comm_position, completed->second.fct_ns, samples.count, false, horizon};
+    const long double fct_ns = samples.count ? samples.sum_ns / samples.count : info.nominal_ns;
+    return {collective_id, comm_position, fct_ns, samples.count, samples.count == 0, horizon};
 }

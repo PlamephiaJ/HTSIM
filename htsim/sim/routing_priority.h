@@ -23,6 +23,7 @@ public:
         std::optional<long double> predicted_fct_ns, dynamic_tail_ns;
         std::optional<size_t> fct_sample_count;
         std::optional<bool> nominal_fallback;
+        std::string fct_horizon;
         size_t frontier_events = 0;
         bool finish_at_frontier = false;
     };
