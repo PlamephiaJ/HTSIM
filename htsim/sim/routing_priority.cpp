@@ -300,6 +300,7 @@ public:
             if (_predictor) {
                 const auto& fct = fcts.at({key.dag_id, key.flow_id});
                 estimate.collective_id = fct.collective_id;
+                estimate.comm_position = fct.comm_position;
                 estimate.prediction_time_ns = now_ns;
                 estimate.predicted_fct_ns = fct.fct_ns;
                 estimate.fct_sample_count = fct.sample_count;

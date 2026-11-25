@@ -167,7 +167,7 @@ void MessageletRuntime::reportNetworkFlowCompletion(const UecSrc& source, uint64
     const auto& state = flowState(source);
     if (!state.has_flow_id) throw std::logic_error("Online FCT completion has no DAG flow identity");
     const auto now_ps = _goal_runtime.getEventList()->now();
-    if (!_fct_predictor->observeCompletion({_config.runtime.dag_id, state.flow_id}, start_ps, end_ps, now_ps)) return;
+    if (!_fct_predictor->observeCompletion({dagId(), state.flow_id}, start_ps, end_ps, now_ps)) return;
     auto* topology = _goal_runtime.getDragonflyTopology();
     // Same immediate ground-truth sharing model as reportHostProgress. Observe
     // once before sharing; neither GRA evaluation nor GOAL FINISH trains it.
@@ -182,7 +182,7 @@ void MessageletRuntime::reportTaskProgress(uint32_t rank, uint32_t task_offset, 
     auto& version = _rank_progress_versions[rank];
     if (version == std::numeric_limits<uint64_t>::max())
         throw std::overflow_error("Host progress report version exhausted");
-    GraProgressReport report{_config.runtime.dag_id, rank, task_offset,
+    GraProgressReport report{dagId(), rank, task_offset,
         finished ? GraTaskEvent::FINISH : GraTaskEvent::START, ++version, event_time_ns};
     const auto host = _goal_runtime.getHtsimNodeNumber(rank, nic);
     topology->reportHostProgress(host, report);
@@ -274,9 +274,10 @@ void MessageletRuntime::initializeGoalGraph(const Parser& parser) {
                 throw std::invalid_argument("GRA routing and metadata flow identities differ");
             route.recv_task_id = meta.recv_task_id;
             route.collective_id = meta.collective_id;
+            route.comm_position = meta.comm_position;
         }
     }
-    auto graph = buildGraGoalGraph(parser, _config.runtime.dag_id,
+    auto graph = buildGraGoalGraph(parser, dagId(),
         (_routing_config_loaded || _flow_metadata_loaded) ? &identities : nullptr);
     topology->initializeGraStaticGraphs({std::move(graph.dag)});
     if (_config.scheduling.priority_dequeue) topology->enablePriorityDequeue();
@@ -418,7 +419,7 @@ const MessageletInfo& MessageletRuntime::messageletInfo(const UecSrc& source, ui
     const uint64_t total = packet_count / packets_per_mlet + (packet_count % packets_per_mlet != 0);
     const uint64_t payload = std::min(state.flow_size - state.original_payload_sent, packets_per_mlet * mss);
     return state.messagelets.emplace(index, MessageletInfo{
-        {_config.runtime.dag_id, state.flow_id, index}, {payload, total}}).first->second;
+        {dagId(), state.flow_id, index}, {payload, total}}).first->second;
 }
 
 void MessageletRuntime::bindPacket(const UecSrc& source, uint64_t index, uint64_t seqno, uint64_t bytes) {
@@ -458,7 +459,7 @@ void MessageletRuntime::cancelMessageletReady(const UecSrc& source, uint64_t ind
     const auto& state = flowState(source);
     auto& topology = *_goal_runtime.getDragonflyTopology();
     topology.groupRoutingAgent(topology.get_host_switch(state.from) / topology.get_a())
-        .cancelReady({_config.runtime.dag_id, state.flow_id, index});
+        .cancelReady({dagId(), state.flow_id, index});
 }
 
 void MessageletRuntime::setNetworkDecision(std::unique_ptr<NetworkDecision> decision) {

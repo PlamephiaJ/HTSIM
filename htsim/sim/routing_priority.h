@@ -19,7 +19,7 @@ public:
         std::optional<long double> remaining_ns, peer_remaining_ns, slack_ns, relative_slack;
         std::optional<long double> estimated_finish_time_ns, nominal_tail_ns, estimated_workload_end_ns, global_slack_ns;
         std::optional<uint64_t> global_end_node_index;
-        std::optional<uint64_t> collective_id, prediction_time_ns;
+        std::optional<uint64_t> collective_id, comm_position, prediction_time_ns;
         std::optional<long double> predicted_fct_ns, dynamic_tail_ns;
         std::optional<size_t> fct_sample_count;
         std::optional<bool> nominal_fallback;

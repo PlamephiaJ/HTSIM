@@ -104,6 +104,7 @@ private:
     RouteInfo valiantRoute(uint32_t from, uint32_t to, uint64_t flow_id) const;
     FlowState& mutableFlowState(const UecSrc& source);
     void reportMessageletReady(const UecSrc& source, uint64_t messagelet_index);
+    uint64_t dagId() const { return _config.runtime.dag_id.value_or(_flow_metadata.dag_id.value_or(0)); }
 
     AtlahsDragonflyApi& _goal_runtime;
     MessageletConfig _config;

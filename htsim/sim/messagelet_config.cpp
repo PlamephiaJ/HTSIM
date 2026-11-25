@@ -57,7 +57,11 @@ MessageletConfig MessageletConfig::loadFromFile(const std::string& filename) {
     } else {
         throw std::invalid_argument("Unsupported runtime routing_mode '" + routing_mode + "'");
     }
-    readOptional(tree, "runtime.dag_id", config.runtime.dag_id, filename);
+    if (tree.get_child_optional("runtime.dag_id")) {
+        uint64_t dag_id = 0;
+        readOptional(tree, "runtime.dag_id", dag_id, filename);
+        config.runtime.dag_id = dag_id;
+    }
     // Legacy configs select granularity through size_bytes alone.
     std::string granularity = config.messagelet.size_bytes == 0 ? "flow" : "messagelet";
     readOptional(tree, "runtime.granularity", granularity, filename);

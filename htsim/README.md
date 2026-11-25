@@ -660,14 +660,18 @@ IDs pass from metadata through `FlowRoutingConfig` and `GraGoalGraph` into the
 static graph; collective membership is never inferred from ranks or Flow IDs.
 
 `OnlineFctPredictor` maintains at most eight completed network FCT samples per
-`(dag_id, collective_id)` and predicts their arithmetic mean for network flows
-whose completion has not yet been observed. An empty window falls back to that
-COMM's original `ceil(bytes * 8 * 1e9 / bandwidth_bps)` cost. Once a flow's network
-completion is visible, its own actual FCT takes precedence, even while GOAL FINISH
-is waiting for RECV readiness. Per-flow actual FCTs are retained independently of
-collective window eviction and never used before their observation is visible.
-This V0 averages durations directly and is intended for workloads with equal
-communication sizes within each collective; it does not normalize by bytes.
+`(dag_id, collective_id, comm_position)`. The generator reuses a position when
+chunks and iterations repeat the same communication role. The runtime uses
+`workload.dag_id` by default, with an explicit `runtime.dag_id` taking precedence.
+Legacy flows with no `comm_position` use a separate collective-wide window.
+
+For an unfinished flow, the predictor uses the arithmetic mean of its window.
+An empty window falls back to that COMM's original
+`ceil(bytes * 8 * 1e9 / bandwidth_bps)` cost. Once a flow's network completion is
+visible, its own actual FCT takes precedence, including while GOAL FINISH is
+waiting for RECV readiness. Per-flow actual FCTs are retained after their samples
+leave the window. The estimator averages durations directly and is intended for
+flows with similar sizes at each position.
 
 UEC's two Flow completion branches call `reportFlowCompletion()`, which keeps
 the existing `logFlowCompletionMetric()` and separately passes `_flow_start_time`
@@ -693,17 +697,17 @@ The original `global_slack`, `join_slack` and `dag_downstream` strategies do not
 read or train the predictor.
 
 With `logging.trace_decisions: true`, `gra_pending_preferences.csv` adds
-`collective_id`, `prediction_time_ns`, `predicted_fct_ns`, `fct_sample_count`,
+`collective_id`, `comm_position`, `prediction_time_ns`, `predicted_fct_ns`, `fct_sample_count`,
 `nominal_fallback` and `dynamic_tail_ns`. `predicted_fct_ns` contains the actual
 FCT when the flow's own completion is visible; `fct_sample_count` still counts
-the visible collective window, and `nominal_fallback` is false in that case.
+the visible samples in that position's window, and `nominal_fallback` is false in that case.
 Existing ETA, workload end, slack and
 priority columns remain available. `nominal_tail_ns` always denotes the original
 static tail; the online slack equation uses `dynamic_tail_ns` instead.
 `refresh_reason: fct_completion` identifies refreshes caused by new samples.
 
 `online_fct_predictor_test` checks cold-start equivalence, the eight-sample
-window, duplicate/future rejection, collective/DAG isolation, RECV gating and
+window, duplicate/future rejection, position/collective/DAG isolation, RECV gating and
 dynamic tails across nested Joins. Run the integration checks with
 `python3 -m unittest discover -s tests -p test_online_fct_predictor.py -v`
 from the repository root. They run the existing 60-flow collective workload,

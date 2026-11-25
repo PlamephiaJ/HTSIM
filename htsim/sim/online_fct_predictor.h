@@ -11,24 +11,26 @@ public:
     using Flow = GraStaticGraph::FlowKey;
     struct Prediction {
         uint64_t collective_id;
+        std::optional<uint64_t> comm_position;
         long double fct_ns;
-        size_t sample_count; // visible samples in the collective window, even for an actual FCT
+        size_t sample_count; // visible samples in this window, even for an actual FCT
         bool nominal_fallback;
     };
     explicit OnlineFctPredictor(const GraStaticGraph& graph);
     // Times are HTSim picoseconds. The caller supplies its current event time;
     // incomplete/future flows are rejected. Duplicate completions return false.
     bool observeCompletion(Flow flow, uint64_t start_ps, uint64_t end_ps, uint64_t now_ps);
-    // Prefer this flow's visible network FCT; otherwise use the collective
-    // mean, falling back to nominal duration when its window is empty.
+    // Prefer this flow's visible network FCT, then its position's window mean,
+    // then nominal duration. Legacy flows share a window without a position.
     Prediction predict(Flow flow, uint64_t now_ns) const;
 
 private:
-    struct FlowInfo { uint64_t collective_id, nominal_ns; };
+    using WindowKey = std::tuple<uint64_t, uint64_t, std::optional<uint64_t>>; // DAG, collective, position
+    struct FlowInfo { WindowKey window; uint64_t nominal_ns; };
     struct Sample { uint64_t visible_ns; long double fct_ns; };
     static constexpr size_t window_size = 8;
     std::map<Flow, FlowInfo> _flows;
-    std::map<std::pair<uint64_t, uint64_t>, std::deque<Sample>> _history;
+    std::map<WindowKey, std::deque<Sample>> _history;
     // Retain actual FCT independently of window eviction; also deduplicates
     // network completions while GOAL FINISH may still be unconfirmed.
     std::map<Flow, Sample> _completed;

@@ -13,7 +13,8 @@ OnlineFctPredictor::OnlineFctPredictor(const GraStaticGraph& graph) {
         if (!node.collective_id)
             throw std::invalid_argument("global_slack_online requires collective_id metadata for DAG " +
                 std::to_string(arc.source.dag_index) + " flow " + std::to_string(node.flow_id));
-        _flows.emplace(Flow{arc.source.dag_index, node.flow_id}, FlowInfo{*node.collective_id, arc.cost_ns});
+        _flows.emplace(Flow{arc.source.dag_index, node.flow_id},
+                       FlowInfo{{arc.source.dag_index, *node.collective_id, node.comm_position}, arc.cost_ns});
     }
 }
 
@@ -25,7 +26,7 @@ bool OnlineFctPredictor::observeCompletion(Flow flow, uint64_t start_ps, uint64_
     // Visibility uses the estimator's integer-ns clock; sub-ns FCT is retained.
     const Sample sample{now_ps / 1000, static_cast<long double>(end_ps - start_ps) / 1000.0L};
     if (!_completed.emplace(flow, sample).second) return false;
-    auto& samples = _history[{flow.first, info.collective_id}];
+    auto& samples = _history[info.window];
     samples.push_back(sample);
     if (samples.size() > window_size) samples.pop_front();
     return true;
@@ -35,14 +36,15 @@ OnlineFctPredictor::Prediction OnlineFctPredictor::predict(Flow flow, uint64_t n
     const auto& info = _flows.at(flow);
     long double sum = 0;
     size_t count = 0;
-    const auto found = _history.find({flow.first, info.collective_id});
+    const auto found = _history.find(info.window);
     if (found != _history.end()) for (const auto& sample : found->second) {
         if (sample.visible_ns > now_ns) continue;
         sum += sample.fct_ns;
         ++count;
     }
+    const auto& [dag_id, collective_id, comm_position] = info.window;
     const auto completed = _completed.find(flow);
     if (completed != _completed.end() && completed->second.visible_ns <= now_ns)
-        return {info.collective_id, completed->second.fct_ns, count, false};
-    return {info.collective_id, count ? sum / count : static_cast<long double>(info.nominal_ns), count, count == 0};
+        return {collective_id, comm_position, completed->second.fct_ns, count, false};
+    return {collective_id, comm_position, count ? sum / count : static_cast<long double>(info.nominal_ns), count, count == 0};
 }

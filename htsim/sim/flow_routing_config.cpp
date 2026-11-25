@@ -34,6 +34,8 @@ FlowRoutingConfig FlowRoutingConfig::loadFromFile(const std::string& filename, b
             throw std::invalid_argument("Unsupported routing schema_version");
         }
         FlowRoutingConfig config;
+        if (metadata && tree.get_optional<std::string>("workload.dag_id"))
+            config.dag_id = number(tree, "workload.dag_id");
         std::set<uint64_t> ids;
         for (const auto& item : tree.get_child("flows")) {
             const auto& row = item.second;
@@ -50,6 +52,8 @@ FlowRoutingConfig FlowRoutingConfig::loadFromFile(const std::string& filename, b
             }
             if (metadata && row.get_optional<std::string>("collective_id"))
                 entry.collective_id = number(row, "collective_id");
+            if (metadata && row.get_optional<std::string>("comm_position"))
+                entry.comm_position = number(row, "comm_position");
             if (entry.label != "minimum" && entry.label != "valiant") {
                 throw std::invalid_argument("Unknown routing label '" + entry.label + "'");
             }

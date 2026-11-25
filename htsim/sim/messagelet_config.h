@@ -18,7 +18,7 @@ struct MessageletConfig {
         Granularity granularity = Granularity::Flow;
         // Must match the Dragonfly switch strategy for ENTRY_SWITCH.
         RoutingMode routing_mode = RoutingMode::SOURCE;
-        uint64_t dag_id = 0;
+        std::optional<uint64_t> dag_id; // defaults to the workload ID, or zero for legacy metadata
     } runtime;
 
     struct MessageletSettings {

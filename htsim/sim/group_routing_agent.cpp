@@ -215,7 +215,8 @@ void GroupRoutingAgent::tracePreferences(const char* reason, std::optional<Messa
          "claim_payload_bytes", "priority_strategy", "priority_scope", "priority_join_id", "priority_branch_id",
          "estimated_remaining_ns", "peer_remaining_ns", "slack_ns", "relative_slack", "frontier_events", "finish_at_frontier",
          "estimated_finish_time_ns", "nominal_tail_ns", "estimated_workload_end_ns", "global_slack_ns", "global_end_node_index",
-         "collective_id", "prediction_time_ns", "predicted_fct_ns", "fct_sample_count", "nominal_fallback", "dynamic_tail_ns"};
+         "collective_id", "prediction_time_ns", "predicted_fct_ns", "fct_sample_count", "nominal_fallback", "dynamic_tail_ns",
+         "comm_position"};
     auto* metric = htsim::DataCollector::get_instance().RegisterCsvMetric("gra_pending_preferences", columns);
     const std::vector<std::string> prefix{std::to_string(EventList::getTheEventList().now()),
         std::to_string(_group), std::to_string(_version), std::to_string(_demand_snapshot_id), reason,
@@ -267,7 +268,7 @@ void GroupRoutingAgent::tracePreferences(const char* reason, std::optional<Messa
                 value.prediction_time_ns ? std::to_string(*value.prediction_time_ns) : "",
                 number(value.predicted_fct_ns), value.fct_sample_count ? std::to_string(*value.fct_sample_count) : "",
                 value.nominal_fallback ? (*value.nominal_fallback ? "true" : "false") : "",
-                number(value.dynamic_tail_ns)};
+                number(value.dynamic_tail_ns), value.comm_position ? std::to_string(*value.comm_position) : ""};
             row.insert(row.end(), diagnostic.begin(), diagnostic.end());
         } else {
             row.resize(columns.size());

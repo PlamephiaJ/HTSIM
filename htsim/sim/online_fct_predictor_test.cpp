@@ -36,9 +36,12 @@ template<class F> void invalid(F function) {
 
 void checkWindowIsolationAndVisibility() {
     G::Dag dag{0, {}};
-    for (uint64_t id = 0; id < 11; ++id) dag.nodes.push_back({Type::COMM, id, 10, {}, 3});
-    dag.nodes.push_back({Type::COMM, 20, 20, {}, 4});
-    auto graph = G::build({dag, {7, {{Type::COMM, 0, 30, {}, 3}}}}, bps);
+    for (uint64_t id = 0; id < 11; ++id) dag.nodes.push_back({Type::COMM, id, 10, {}, 3, 0});
+    dag.nodes.push_back({Type::COMM, 11, 11, {}, 3, 1});
+    dag.nodes.push_back({Type::COMM, 12, 12, {}, 3, 1});
+    dag.nodes.push_back({Type::COMM, 13, 13, {}, 3});
+    dag.nodes.push_back({Type::COMM, 20, 20, {}, 4, 0});
+    auto graph = G::build({dag, {7, {{Type::COMM, 0, 30, {}, 3, 0}}}}, bps);
     OnlineFctPredictor predictor(*graph);
     assert(predictor.predict({0, 10}, 0).nominal_fallback);
     assert(predictor.predict({0, 10}, 0).fct_ns == 10);
@@ -56,10 +59,16 @@ void checkWindowIsolationAndVisibility() {
         assert(!prediction.nominal_fallback);
     }
     assert(predictor.predict({0, 10}, 99).nominal_fallback); // observation not yet visible
+    assert(predictor.predict({0, 12}, 200).nominal_fallback); // other position
+    assert(predictor.predict({0, 13}, 200).nominal_fallback); // legacy window is separate from position zero
     assert(predictor.predict({0, 20}, 200).fct_ns == 20); // other collective
     assert(predictor.predict({7, 0}, 200).fct_ns == 30); // same collective ID, different DAG
     assert(predictor.observeCompletion({0, 20}, 100001, 110501, 200000));
     assert(predictor.predict({0, 20}, 200).fct_ns == 10.5L); // ps conversion
+    assert(predictor.observeCompletion({0, 11}, 185000, 200000, 200000));
+    const auto position_peer = predictor.predict({0, 12}, 200);
+    assert(position_peer.comm_position == 1 && position_peer.sample_count == 1 && position_peer.fct_ns == 15);
+    assert(predictor.predict({0, 10}, 200).comm_position == 0);
     assert(predictor.predict({0, 10}, 200).fct_ns == 5.5L);
     assert(predictor.observeCompletion({7, 0}, 100000, 150000, 200000));
     assert(predictor.predict({7, 0}, 200).fct_ns == 50);

@@ -16,8 +16,10 @@ struct FlowRoutingConfig {
         std::string label;
         std::optional<uint32_t> recv_task_id = std::nullopt;
         std::optional<uint64_t> collective_id = std::nullopt;
+        std::optional<uint64_t> comm_position = std::nullopt;
     };
     std::map<std::pair<uint32_t, uint32_t>, Entry> sends;
+    std::optional<uint64_t> dag_id = std::nullopt;
     // Metadata supplies identity only; routing labels remain a separate input.
     static FlowRoutingConfig loadFromFile(const std::string& filename, bool metadata = false);
 };

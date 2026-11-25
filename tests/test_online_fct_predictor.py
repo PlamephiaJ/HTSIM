@@ -138,14 +138,15 @@ class OnlineFctPredictorTests(unittest.TestCase):
         write_goal(goal, [[(1, 1, 2500, 1, (1,), ()), (1, 1, 2500, 2, (), ())],
                           [(3, 0, 100000, 0, (1,), ()), (2, 0, 2500, 1, (), ()),
                            (2, 0, 2500, 2, (), ())]])
-        flows = {str(flow_id): {"flow_id": flow_id, "collective_id": 77, "src": 0, "dst": 1,
+        flows = {str(flow_id): {"flow_id": flow_id, "dag_id": 7, "collective_id": 77, "comm_position": 0,
+                 "src": 0, "dst": 1,
                  "bytes": 2500, "tag": index + 1, "send_task": {"rank": 0, "task_id": index},
                  "recv_task": {"rank": 1, "task_id": index + 1}}
                  for index, flow_id in enumerate((901, 17))}
         goal.with_suffix(".meta.json").write_text(json.dumps(
-            {"schema_version": 1, "workload": {"p2p_flows": 2}, "flows": flows}))
+            {"schema_version": 1, "workload": {"p2p_flows": 2, "dag_id": 7}, "flows": flows}))
         config = run / "online.json"
-        config.write_text(json.dumps({"runtime": {"routing_mode": "ENTRY_SWITCH", "dag_id": 7},
+        config.write_text(json.dumps({"runtime": {"routing_mode": "ENTRY_SWITCH"},
             "routing": {"network_decision": "commitment_aware_ugal",
                         "soft_claim": {"enabled": True, "priority": "global_slack_online"}},
             "logging": {"trace_decisions": True}}))
@@ -168,7 +169,9 @@ class OnlineFctPredictorTests(unittest.TestCase):
         rows = [row for row in read_csv(run, "gra_pending_preferences") if row["flow_id"] == "17"]
         self.assertTrue(rows)
         for row in rows:
+            self.assertEqual(row["dag_id"], "7")
             self.assertEqual(row["collective_id"], "77")
+            self.assertEqual(row["comm_position"], "0")
             self.assertEqual(row["fct_sample_count"], "1")
             self.assertAlmostEqual(float(row["predicted_fct_ns"]), fct, places=6)
 

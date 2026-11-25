@@ -24,6 +24,7 @@ public:
         uint64_t work; // COMM: payload bytes; COMP: estimated nanoseconds
         std::vector<size_t> successors; // shorthand for FINISH -> START dependencies
         std::optional<uint64_t> collective_id = std::nullopt; // workload metadata only
+        std::optional<uint64_t> comm_position = std::nullopt;
     };
     struct Dependency {
         size_t predecessor, successor;
