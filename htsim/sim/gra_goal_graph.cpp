@@ -97,3 +97,44 @@ GraGoalGraph buildGraGoalGraph(const Parser& parser, uint64_t dag_index,
     result.dag.tasks = std::move(logical);
     return result;
 }
+
+std::vector<GraStaticGraph::Dag> partitionGraGoalDag(GraStaticGraph::Dag combined,
+                                                   const std::vector<uint64_t>& rank_dags) {
+    std::map<uint64_t, GraStaticGraph::Dag> dags;
+    std::vector<std::optional<uint64_t>> owners(combined.nodes.size());
+    std::vector<size_t> indices(combined.nodes.size());
+    for (const auto& [task, binding] : combined.tasks) {
+        const auto dag = rank_dags.at(task.first);
+        auto& owner = owners.at(binding.node_index);
+        if (owner && *owner != dag) throw std::invalid_argument("GOAL COMM endpoints cross DAGs");
+        owner = dag;
+    }
+    for (size_t i = 0; i < combined.nodes.size(); ++i) {
+        const auto dag = owners[i].value();
+        auto& split = dags.try_emplace(dag, GraStaticGraph::Dag{dag, {}}).first->second;
+        indices[i] = split.nodes.size();
+        split.nodes.push_back(std::move(combined.nodes[i]));
+    }
+    const auto localIndex = [&](uint64_t dag, size_t node) {
+        if (owners.at(node) != dag) throw std::invalid_argument("GOAL dependency crosses DAGs");
+        return indices[node];
+    };
+    for (const auto& [task, binding] : combined.tasks) {
+        auto local = binding;
+        local.node_index = indices[binding.node_index];
+        dags.at(rank_dags.at(task.first)).tasks.emplace(task, local);
+    }
+    for (auto dep : combined.dependencies) {
+        const auto dag = owners.at(dep.predecessor).value();
+        dep.predecessor = indices[dep.predecessor];
+        dep.successor = localIndex(dag, dep.successor);
+        dags.at(dag).dependencies.push_back(dep);
+    }
+    std::vector<GraStaticGraph::Dag> result;
+    for (auto& [dag, split] : dags) {
+        for (auto& node : split.nodes)
+            for (auto& successor : node.successors) successor = localIndex(dag, successor);
+        result.push_back(std::move(split));
+    }
+    return result;
+}

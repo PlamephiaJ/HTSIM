@@ -15,6 +15,7 @@
 #include "dragonfly_source_route.h"
 #include "data_collector.h"
 #include "gra_goal_graph.h"
+#include "lgs/Parser.hpp"
 #include "online_fct_predictor.h"
 #include "uec.h"
 
@@ -77,6 +78,7 @@ void MessageletRuntime::submit(const SendEvent& event, graph_node_properties nod
         }
     }
 
+    const auto dag_id = dagForRank(from);
     from = _goal_runtime.getHtsimNodeNumber(from, node.nic);
     to = _goal_runtime.getHtsimNodeNumber(to, node.nic);
 
@@ -107,7 +109,7 @@ void MessageletRuntime::submit(const SendEvent& event, graph_node_properties nod
     // A null routing hook selects UecSrc's original entropy, retransmission
     // and control-packet paths. GOAL completion still uses _atlahs_api.
     uec_src->_messagelet_runtime = transparent() ? nullptr : this;
-    registerFlow(*uec_src, size, from, to, tag, routing);
+    registerFlow(*uec_src, size, from, to, tag, dag_id, routing);
 
     UecSink* uec_sink = new UecSink(traffic_logger,
                                     _goal_runtime.linkspeed,
@@ -167,7 +169,7 @@ void MessageletRuntime::reportNetworkFlowCompletion(const UecSrc& source, uint64
     const auto& state = flowState(source);
     if (!state.has_flow_id) throw std::logic_error("Online FCT completion has no DAG flow identity");
     const auto now_ps = _goal_runtime.getEventList()->now();
-    if (!_fct_predictor->observeCompletion({dagId(), state.flow_id}, start_ps, end_ps, now_ps)) return;
+    if (!_fct_predictor->observeCompletion({state.dag_id, state.flow_id}, start_ps, end_ps, now_ps)) return;
     auto* topology = _goal_runtime.getDragonflyTopology();
     // Same immediate ground-truth sharing model as reportHostProgress. Observe
     // once before sharing; neither GRA evaluation nor GOAL FINISH trains it.
@@ -182,7 +184,7 @@ void MessageletRuntime::reportTaskProgress(uint32_t rank, uint32_t task_offset, 
     auto& version = _rank_progress_versions[rank];
     if (version == std::numeric_limits<uint64_t>::max())
         throw std::overflow_error("Host progress report version exhausted");
-    GraProgressReport report{dagId(), rank, task_offset,
+    GraProgressReport report{dagForRank(rank), rank, task_offset,
         finished ? GraTaskEvent::FINISH : GraTaskEvent::START, ++version, event_time_ns};
     const auto host = _goal_runtime.getHtsimNodeNumber(rank, nic);
     topology->reportHostProgress(host, report);
@@ -258,6 +260,9 @@ void MessageletRuntime::initializeGoalGraph(const Parser& parser) {
     if (!topology) throw std::logic_error("Dragonfly topology not set");
     if (entrySwitchRouting() && !_flow_metadata_loaded)
         throw std::logic_error("ENTRY_SWITCH requires workload flow metadata with DAG-global flow IDs");
+    const auto& rank_dags = _flow_metadata.rank_dags;
+    if (!rank_dags.empty() && (_config.runtime.dag_id || rank_dags.size() != parser.schedules.size()))
+        throw std::invalid_argument("rank_dags requires one DAG ID per GOAL rank and no runtime.dag_id");
 
     FlowRoutingConfig identities = _routing_config_loaded ? _routing_config : _flow_metadata;
     if (_routing_config_loaded && _flow_metadata_loaded) {
@@ -279,7 +284,8 @@ void MessageletRuntime::initializeGoalGraph(const Parser& parser) {
     }
     auto graph = buildGraGoalGraph(parser, dagId(),
         (_routing_config_loaded || _flow_metadata_loaded) ? &identities : nullptr);
-    topology->initializeGraStaticGraphs({std::move(graph.dag)});
+    if (rank_dags.empty()) topology->initializeGraStaticGraphs({std::move(graph.dag)});
+    else topology->initializeGraStaticGraphs(partitionGraGoalDag(std::move(graph.dag), rank_dags));
     if (_config.scheduling.priority_dequeue) topology->enablePriorityDequeue();
     if (_config.routing.soft_claim.enabled || _config.scheduling.priority_dequeue) {
         if (_config.routing.soft_claim.priority == "global_slack_online")
@@ -419,7 +425,7 @@ const MessageletInfo& MessageletRuntime::messageletInfo(const UecSrc& source, ui
     const uint64_t total = packet_count / packets_per_mlet + (packet_count % packets_per_mlet != 0);
     const uint64_t payload = std::min(state.flow_size - state.original_payload_sent, packets_per_mlet * mss);
     return state.messagelets.emplace(index, MessageletInfo{
-        {dagId(), state.flow_id, index}, {payload, total}}).first->second;
+        {state.dag_id, state.flow_id, index}, {payload, total}}).first->second;
 }
 
 void MessageletRuntime::bindPacket(const UecSrc& source, uint64_t index, uint64_t seqno, uint64_t bytes) {
@@ -459,7 +465,7 @@ void MessageletRuntime::cancelMessageletReady(const UecSrc& source, uint64_t ind
     const auto& state = flowState(source);
     auto& topology = *_goal_runtime.getDragonflyTopology();
     topology.groupRoutingAgent(topology.get_host_switch(state.from) / topology.get_a())
-        .cancelReady({dagId(), state.flow_id, index});
+        .cancelReady({state.dag_id, state.flow_id, index});
 }
 
 void MessageletRuntime::setNetworkDecision(std::unique_ptr<NetworkDecision> decision) {
@@ -524,8 +530,10 @@ void MessageletRuntime::registerFlow(UecSrc& source,
                                      uint32_t from,
                                      uint32_t to,
                                      uint32_t tag,
+                                     uint64_t dag_id,
                                      const FlowRoutingConfig::Entry* routing) {
     FlowState state;
+    state.dag_id = dag_id;
     state.from = from;
     state.to = to;
     state.tag = tag;

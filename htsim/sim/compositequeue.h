@@ -123,6 +123,7 @@ private:
     bool hasWaitingData();
     void enqueueData(Packet* packet);
     void beginDataService();
+    void traceCrossDagService(const Packet& selected);
     bool canReplaceNewestData(mem_b size) const;
     Packet* evictNewestData();
 };

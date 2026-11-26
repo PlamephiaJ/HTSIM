@@ -36,6 +36,17 @@ FlowRoutingConfig FlowRoutingConfig::loadFromFile(const std::string& filename, b
         FlowRoutingConfig config;
         if (metadata && tree.get_optional<std::string>("workload.dag_id"))
             config.dag_id = number(tree, "workload.dag_id");
+        if (metadata) {
+            if (const auto ranks = tree.get_child_optional("workload.rank_dags")) {
+                if (ranks->empty() || config.dag_id)
+                    throw std::invalid_argument("rank_dags requires a nonempty array in place of workload.dag_id");
+                for (const auto& rank : *ranks) {
+                    if (!rank.first.empty() || !rank.second.empty())
+                        throw std::invalid_argument("rank_dags must contain DAG IDs in GOAL rank order");
+                    config.rank_dags.push_back(unsignedNumber(rank.second.get_value<std::string>()));
+                }
+            }
+        }
         std::set<uint64_t> ids;
         for (const auto& item : tree.get_child("flows")) {
             const auto& row = item.second;
@@ -54,6 +65,12 @@ FlowRoutingConfig FlowRoutingConfig::loadFromFile(const std::string& filename, b
                 entry.collective_id = number(row, "collective_id");
             if (metadata && row.get_optional<std::string>("comm_position"))
                 entry.comm_position = number(row, "comm_position");
+            if (!config.rank_dags.empty()) {
+                const auto& ranks = config.rank_dags;
+                if (entry.src >= ranks.size() || entry.dst >= ranks.size() || ranks[entry.src] != ranks[entry.dst] ||
+                    (row.get_optional<std::string>("dag_id") && number(row, "dag_id") != ranks[entry.src]))
+                    throw std::invalid_argument("Flow endpoints must belong to the same declared DAG: " + item.first);
+            }
             if (entry.label != "minimum" && entry.label != "valiant") {
                 throw std::invalid_argument("Unknown routing label '" + entry.label + "'");
             }

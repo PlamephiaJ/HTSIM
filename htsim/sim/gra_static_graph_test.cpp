@@ -218,6 +218,25 @@ void checkGoalStartup() {
     unlink(filename);
 }
 
+void checkGoalDagPartition() {
+    Dag combined{0, {{Type::COMM, 10, 2500, {}}, {Type::COMP, 0, 10, {}},
+                     {Type::COMM, 20, 2500, {}}, {Type::COMP, 0, 20, {}}},
+                 {{0, 1, Event::FINISH}, {2, 3, Event::FINISH}}};
+    combined.tasks = {{{0, 0}, {0, Event::START}}, {{1, 0}, {0, Event::RECEIVE_START}},
+                      {{1, 1}, {1, Event::START}}, {{2, 0}, {2, Event::START}},
+                      {{3, 0}, {2, Event::RECEIVE_START}}, {{3, 1}, {3, Event::START}}};
+    const auto graph = GraStaticGraph::build(partitionGraGoalDag(combined, {7, 7, 9, 9}), 200000000000ULL);
+    assert(graph->dags().size() == 2);
+    assert(graph->dags().at(7).tasks.at({1, 0}).node_index == 0);
+    assert(graph->dags().at(9).tasks.at({3, 0}).node_index == 0);
+    assert(graph->dTable().at({7, 10}) == 110);
+    assert(graph->dTable().at({9, 20}) == 120);
+    assert(!graph->dTable().count({7, 20}));
+    rejects<std::invalid_argument>([&] { partitionGraGoalDag(combined, {7, 9, 9, 9}); });
+    combined.dependencies.push_back({1, 2, Event::FINISH});
+    rejects<std::invalid_argument>([&] { partitionGraGoalDag(combined, {7, 7, 9, 9}); });
+}
+
 void checkStartTables() {
     // START releases overlap with the originating COMM instead of paying its
     // duration before the branch. FINISH retains the original serial formula.
@@ -385,6 +404,7 @@ int main() {
     checkTables();
     checkInvalidGraphs();
     checkGoalStartup();
+    checkGoalDagPartition();
     checkStartTables();
     checkGoalStarts();
     std::cout << "GRA static graph tests passed\n";

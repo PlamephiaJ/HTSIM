@@ -84,6 +84,11 @@ template <typename T> class CircularBuffer {
         return _queue.at(_next_pop);
     }
 
+    const T& atArrival(int index) const {
+        assert(index >= 0 && index < _count);
+        return _queue.at((_next_pop + index) % _size);
+    }
+
     bool empty() { return _count == 0; }
     int size() { return _count; }
 

@@ -35,6 +35,7 @@ public:
     using Granularity = MessageletConfig::Granularity;
 
     struct FlowState {
+        uint64_t dag_id = 0;
         uint64_t flow_id = 0;
         bool has_flow_id = false;
         uint32_t from = 0;
@@ -99,12 +100,16 @@ private:
                       uint32_t from,
                       uint32_t to,
                       uint32_t tag,
+                      uint64_t dag_id,
                       const FlowRoutingConfig::Entry* routing);
     RouteInfo minimumRoute(uint32_t from, uint32_t to) const;
     RouteInfo valiantRoute(uint32_t from, uint32_t to, uint64_t flow_id) const;
     FlowState& mutableFlowState(const UecSrc& source);
     void reportMessageletReady(const UecSrc& source, uint64_t messagelet_index);
     uint64_t dagId() const { return _config.runtime.dag_id.value_or(_flow_metadata.dag_id.value_or(0)); }
+    uint64_t dagForRank(uint32_t rank) const {
+        return _flow_metadata.rank_dags.empty() ? dagId() : _flow_metadata.rank_dags.at(rank);
+    }
 
     AtlahsDragonflyApi& _goal_runtime;
     MessageletConfig _config;

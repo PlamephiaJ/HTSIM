@@ -6,6 +6,7 @@
 #include <optional>
 #include <string>
 #include <utility>
+#include <vector>
 
 // IDs belong to workload.meta.json, not PacketFlow's allocation order.
 struct FlowRoutingConfig {
@@ -20,6 +21,7 @@ struct FlowRoutingConfig {
     };
     std::map<std::pair<uint32_t, uint32_t>, Entry> sends;
     std::optional<uint64_t> dag_id = std::nullopt;
+    std::vector<uint64_t> rank_dags; // optional DAG identity, in GOAL rank order
     // Metadata supplies identity only; routing labels remain a separate input.
     static FlowRoutingConfig loadFromFile(const std::string& filename, bool metadata = false);
 };

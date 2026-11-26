@@ -1,12 +1,15 @@
 // -*- c-basic-offset: 4; indent-tabs-mode: nil -*-        
 #include "compositequeue.h"
 #include <cstdlib>
+#include <iomanip>
+#include <limits>
 #include <math.h>
 #include <iostream>
 #include <sstream>
 #include <iterator>
 #include <stdexcept>
 #include "uecpacket.h"
+#include "data_collector.h"
 #include "ecn.h"
 
 static int global_queue_id=0;
@@ -79,13 +82,64 @@ void CompositeQueue::beginDataService() {
         auto& data = *_priority_data;
         const auto next = data.waiting.begin();
         packet = next->second;
+        traceCrossDagService(*packet);
         data.in_service = packet;
         data.arrivals.erase(next->first.arrival);
         data.waiting.erase(next);
     } else {
         packet = _enqueued_low.back();
+        traceCrossDagService(*packet);
     }
     eventlist().sourceIsPendingRel(*this, drainTime(packet));
+}
+
+void CompositeQueue::traceCrossDagService(const Packet& selected) {
+    static const bool enabled = [] {
+        const char* setting = std::getenv("HTSIM_TRACE_CROSS_DAG_SERVICE");
+        return setting && std::string(setting) == "1";
+    }();
+    if (!enabled) return;
+    const auto labelled = [](const Packet* packet) -> const UecDataPacket* {
+        if (packet->type() != UECDATA) return nullptr;
+        const auto* data = static_cast<const UecDataPacket*>(packet);
+        return data->messagelet() ? data : nullptr;
+    };
+    const auto* winner = labelled(&selected);
+    if (!winner) return;
+    const auto dag = winner->messagelet()->key.dag_id;
+    const Packet* oldest = nullptr;
+    const UecDataPacket* other = nullptr;
+    const auto inspect = [&](const Packet* packet) {
+        if (!oldest) oldest = packet;
+        const auto* candidate = labelled(packet);
+        if (candidate && candidate->messagelet()->key.dag_id != dag) other = candidate;
+        return other != nullptr;
+    };
+    if (_priority_data) {
+        for (const auto& arrival : _priority_data->arrivals)
+            if (inspect(arrival.second->second)) break;
+    } else {
+        for (int i = 0; i < _enqueued_low.size(); ++i)
+            if (inspect(_enqueued_low.atArrival(i))) break;
+    }
+    if (!other) return;
+    const auto* fifo = labelled(oldest);
+    const auto score = [](const UecDataPacket& packet) -> std::string {
+        if (!packet.service_priority()) return "";
+        std::ostringstream out;
+        out << std::setprecision(std::numeric_limits<long double>::max_digits10) << *packet.service_priority();
+        return out.str();
+    };
+    auto* trace = htsim::DataCollector::get_instance().RegisterCsvMetric("cross_dag_service",
+        {"time_ps", "queue", "selected_dag", "selected_transport_flow_id", "selected_seq", "selected_priority",
+         "oldest_dag", "oldest_transport_flow_id", "oldest_seq", "other_dag", "other_transport_flow_id", "other_seq",
+         "other_priority"});
+    trace->LogData({std::to_string(EventList::now()), _name, std::to_string(dag),
+        std::to_string(winner->flow_id()), std::to_string(winner->id()), score(*winner),
+        fifo ? std::to_string(fifo->messagelet()->key.dag_id) : "",
+        std::to_string(oldest->flow_id()), std::to_string(oldest->id()),
+        std::to_string(other->messagelet()->key.dag_id), std::to_string(other->flow_id()),
+        std::to_string(other->id()), score(*other)});
 }
 
 bool CompositeQueue::canReplaceNewestData(mem_b size) const {

@@ -924,9 +924,14 @@ downstream Join have an empty record collection.
 
 Access the immutable graph and tables with
 `topology.groupRoutingAgent(group).staticGraph()`. All messagelets of a flow
-use the same `(dag_index, flow_id)` entry. The current GOAL loader installs one
-DAG using `runtime.dag_id` as its index (default `0`); the static graph builder
-also supports multiple DAGs. Reinitialization is rejected.
+use the same `(dag_index, flow_id)` entry. By default the GOAL loader installs
+one DAG using `runtime.dag_id` or the metadata's `workload.dag_id` as its index
+(default `0`). For simultaneously launched independent DAGs, one GOAL binary
+can hold all rank schedules and metadata can supply `workload.rank_dags`, an
+array with one DAG ID per GOAL rank. In this mode omit both `dag_id` defaults.
+Every SEND and its matched RECV must belong to the same DAG. The scheduler
+keeps the original rank IDs and task offsets while the estimator gets a
+separate graph and terminal set for each DAG. Reinitialization is rejected.
 
 Flow identities come from workload metadata or static routing labels. If both
 are supplied they must agree. Metadata's `recv_task` identifies the matching

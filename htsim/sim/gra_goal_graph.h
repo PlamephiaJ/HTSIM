@@ -18,4 +18,9 @@ struct GraGoalGraph {
 GraGoalGraph buildGraGoalGraph(const Parser& parser, uint64_t dag_index,
                               const FlowRoutingConfig* identities = nullptr);
 
+// Retain scheduler rank/task IDs while giving each rank's declared DAG its
+// own estimator graph and terminal set. Communication cannot cross the split.
+std::vector<GraStaticGraph::Dag> partitionGraGoalDag(GraStaticGraph::Dag combined,
+                                                   const std::vector<uint64_t>& rank_dags);
+
 #endif
