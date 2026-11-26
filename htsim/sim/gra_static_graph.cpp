@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <numeric>
 #include <optional>
 #include <stdexcept>
 #include <tuple>
@@ -199,5 +200,28 @@ GraStaticGraph::GraStaticGraph(std::vector<Dag> dags, uint64_t bps) {
                                    entry.first.second, entry.second});
         }
         _dags.emplace(dag_index, std::move(dag));
+    }
+
+    for (size_t i = 0; i < _event_order.size(); ++i) _event_indices.emplace(_event_order[i], i);
+    std::vector<size_t> parents(_event_order.size());
+    std::iota(parents.begin(), parents.end(), size_t{0});
+    const auto root = [&](size_t index) {
+        while (parents[index] != index) {
+            parents[index] = parents[parents[index]];
+            index = parents[index];
+        }
+        return index;
+    };
+    for (const auto& arc : _event_arcs) {
+        const auto source = root(eventIndex(arc.source)), target = root(eventIndex(arc.target));
+        parents[target] = source;
+    }
+    const auto unassigned = _event_order.size();
+    std::vector<size_t> components(_event_order.size(), unassigned);
+    _event_components.reserve(_event_order.size());
+    for (size_t i = 0; i < _event_order.size(); ++i) {
+        auto& component = components[root(i)];
+        if (component == unassigned) component = _component_count++;
+        _event_components.push_back(component);
     }
 }

@@ -2,6 +2,7 @@
 #include "online_fct_predictor.h"
 
 #include <algorithm>
+#include <limits>
 #include <set>
 #include <stdexcept>
 
@@ -10,11 +11,9 @@ using G = GraStaticGraph;
 using Key = G::EventKey;
 using Flow = G::FlowKey;
 
-// Shared event semantics. An optional cost snapshot replaces only COMM's
-// SEND START -> FINISH edge, identically in forward and backward propagation.
+// Nominal event timing for the static Global Slack and Join Slack strategies.
 class EventTimeEstimator {
 public:
-    using CommCosts = std::map<Key, long double>; // keyed by SEND START
     struct Prediction {
         std::set<uint64_t> dags;
         std::set<Key> frontier;
@@ -42,8 +41,7 @@ public:
         }
     }
     Prediction predict(const GraExecutionProgress& progress, uint64_t now_ns,
-        const std::map<MessageletKey, RoutingDemandPolicy::Ready>& pending,
-        const CommCosts* costs = nullptr) const {
+        const std::map<MessageletKey, RoutingDemandPolicy::Ready>& pending) const {
         Prediction result;
         for (const auto& item : pending) result.dags.insert(item.first.dag_id);
         for (auto dag : result.dags) {
@@ -64,36 +62,17 @@ public:
             if (incoming != inputs.end() &&
                 (event.event == G::Event::FINISH || !result.frontier.count(event)))
                 for (const auto& arc : incoming->second)
-                    arrival = std::max(arrival, result.eta.at(arc.source) + cost(arc, costs));
+                    arrival = std::max(arrival, result.eta.at(arc.source) + arc.cost_ns);
             if (event.event == G::Event::FINISH) arrival = std::max(arrival, now + 1);
             result.eta[event] = arrival;
         }
         return result;
-    }
-    std::map<Key, long double> longestTails(const CommCosts& costs, const std::set<uint64_t>& dags) const {
-        std::map<Key, long double> tails;
-        for (auto it = _graph.eventOrder().rbegin(); it != _graph.eventOrder().rend(); ++it) {
-            if (!dags.count(it->dag_index)) continue;
-            auto& tail = tails[*it];
-            const auto outgoing = outputs.find(*it);
-            if (outgoing != outputs.end()) for (const auto& arc : outgoing->second)
-                tail = std::max(tail, cost(arc, &costs) + tails.at(arc.target));
-        }
-        return tails;
     }
     std::map<Key, std::vector<G::EventArc>> inputs, outputs;
     std::map<Flow, Key> finishes;
     std::map<uint64_t, std::vector<Key>> terminals;
     std::map<Key, long double> nominal_tail;
 private:
-    static long double cost(const G::EventArc& arc, const CommCosts* costs) {
-        if (costs && arc.source.node_index == arc.target.node_index &&
-            arc.source.event == G::Event::START && arc.target.event == G::Event::FINISH) {
-            const auto found = costs->find(arc.source);
-            if (found != costs->end()) return found->second;
-        }
-        return arc.cost_ns;
-    }
     const G& _graph;
 };
 
@@ -257,33 +236,30 @@ private:
     std::map<uint64_t, std::vector<Key>> _terminals;
 };
 
+void setGlobalSlack(RoutingPriorityStrategy::Estimate& estimate, uint64_t now_ns, long double finish,
+    long double nominal_tail, long double tail, long double end, size_t end_node) {
+    const auto slack = end - (finish + tail);
+    estimate.estimated_finish_time_ns = finish;
+    estimate.nominal_tail_ns = nominal_tail;
+    estimate.estimated_workload_end_ns = end;
+    estimate.global_end_node_index = end_node;
+    estimate.global_slack_ns = slack;
+    estimate.slack_ns = slack;
+    estimate.remaining_ns = std::max(0.0L, finish - now_ns);
+    // The denominator is identical within one workload. Across DAGs it
+    // avoids raw-time bias.
+    estimate.relative_slack = slack / std::max(1.0L, end - now_ns);
+}
+
 class GlobalSlackPriority final : public RoutingPriorityStrategy {
 public:
-    explicit GlobalSlackPriority(const G& graph, std::shared_ptr<const OnlineFctPredictor> predictor = nullptr)
-        : _timing(graph), _predictor(std::move(predictor)) {}
+    explicit GlobalSlackPriority(const G& graph) : _timing(graph) {}
     bool usesProgress() const override { return true; }
     Estimates evaluate(const GraExecutionProgress& progress, uint64_t now_ns,
         const std::map<MessageletKey, RoutingDemandPolicy::Ready>& pending) const override {
         Estimates result;
         if (pending.empty()) return result;
-        EventTimeEstimator::CommCosts costs;
-        std::map<Flow, OnlineFctPredictor::Prediction> fcts;
-        if (_predictor) {
-            std::set<uint64_t> dags;
-            for (const auto& item : pending) dags.insert(item.first.dag_id);
-            // Include blocked/downstream flows, not just local READY demands.
-            for (const auto& item : _timing.finishes) {
-                if (!dags.count(item.first.first)) continue;
-                const Key start{item.second.dag_index, item.second.node_index, G::Event::START};
-                const auto horizon = progress.eventTime(start) ? OnlineFctPredictor::Horizon::ShortTerm
-                                                               : OnlineFctPredictor::Horizon::LongTerm;
-                const auto fct = _predictor->predict(item.first, now_ns, horizon);
-                fcts.emplace(item.first, fct);
-                costs.emplace(start, fct.fct_ns);
-            }
-        }
-        const auto prediction = _timing.predict(progress, now_ns, pending, _predictor ? &costs : nullptr);
-        const auto dynamic_tails = _predictor ? _timing.longestTails(costs, prediction.dags) : std::map<Key, long double>{};
+        const auto prediction = _timing.predict(progress, now_ns, pending);
         std::map<uint64_t, std::pair<long double, Key>> ends;
         for (auto dag : prediction.dags) {
             const auto& terminals = _timing.terminals.at(dag);
@@ -296,40 +272,18 @@ public:
             const auto& key = item.first;
             const auto finish = _timing.finishes.at({key.dag_id, key.flow_id});
             Estimate estimate;
-            estimate.strategy = _predictor ? "global_slack_online" : "global_slack";
+            estimate.strategy = "global_slack";
             estimate.scope = "global";
             estimate.frontier_events = prediction.frontier_counts.at(key.dag_id);
             estimate.finish_at_frontier = prediction.frontier.count(finish) != 0;
-            if (_predictor) {
-                const auto& fct = fcts.at({key.dag_id, key.flow_id});
-                estimate.collective_id = fct.collective_id;
-                estimate.comm_position = fct.comm_position;
-                estimate.prediction_time_ns = now_ns;
-                estimate.predicted_fct_ns = fct.fct_ns;
-                estimate.fct_sample_count = fct.sample_count;
-                estimate.nominal_fallback = fct.nominal_fallback;
-                estimate.fct_horizon = fct.horizon == OnlineFctPredictor::Horizon::ShortTerm ? "short_term" : "long_term";
-                estimate.dynamic_tail_ns = dynamic_tails.at(finish);
-            }
             if (progress.eventTime(finish)) {
                 estimate.scope = "completed";
                 result.emplace(key, estimate);
                 continue;
             }
-            const auto finish_time = prediction.eta.at(finish);
-            const auto tail = _predictor ? dynamic_tails.at(finish) : _timing.nominal_tail.at(finish);
-            const auto end_time = ends.at(key.dag_id).first;
-            const auto slack = end_time - (finish_time + tail);
-            estimate.estimated_finish_time_ns = finish_time;
-            estimate.nominal_tail_ns = _timing.nominal_tail.at(finish);
-            estimate.estimated_workload_end_ns = end_time;
-            estimate.global_end_node_index = ends.at(key.dag_id).second.node_index;
-            estimate.global_slack_ns = slack;
-            estimate.slack_ns = slack;
-            estimate.remaining_ns = std::max(0.0L, finish_time - now_ns);
-            // The denominator is identical within one workload, preserving
-            // exact S_global ordering. Across DAGs it avoids raw-time bias.
-            estimate.relative_slack = slack / std::max(1.0L, end_time - now_ns);
+            const auto tail = _timing.nominal_tail.at(finish);
+            const auto& end = ends.at(key.dag_id);
+            setGlobalSlack(estimate, now_ns, prediction.eta.at(finish), tail, tail, end.first, end.second.node_index);
             result.emplace(key, estimate);
         }
         rankEstimates(result);
@@ -337,14 +291,226 @@ public:
     }
 private:
     EventTimeEstimator _timing;
+};
+
+class OnlineGlobalSlackPriority final : public RoutingPriorityStrategy {
+    static constexpr size_t no_flow = std::numeric_limits<size_t>::max();
+    struct Arc { size_t event, flow; uint64_t nominal_ns; };
+    struct Event { std::vector<Arc> inputs, outputs; bool finish = false; };
+    struct Comm { size_t index, start, finish, predictor_index; };
+    struct Component {
+        std::vector<size_t> events, terminals, unconfirmed;
+        std::vector<Comm> comms;
+        std::optional<uint64_t> progress_version;
+        uint64_t history_revision = 0, cost_time = 0, eta_time = 0;
+        size_t frontier_count = 0, latest = 0;
+        bool eta_time_initialized = false;
+    };
+    struct DagEstimate { size_t latest, frontier_count; };
+
+public:
+    OnlineGlobalSlackPriority(const G& graph, std::shared_ptr<const OnlineFctPredictor> predictor)
+        : _graph(graph), _predictor(std::move(predictor)), _indexed_history(&_predictor->graph() == &graph),
+          _events(graph.eventOrder().size()),
+          _components(graph.componentCount()), _eta(_events.size()), _tail(_events.size()),
+          _nominal_tail(_events.size()), _frontier(_events.size()), _actual(_events.size()) {
+        std::vector<size_t> comm_at_start(_events.size(), no_flow);
+        for (const auto& item : graph.dags()) {
+            _dag_components.try_emplace(item.first);
+            const auto& nodes = item.second.nodes;
+            for (size_t node = 0; node < nodes.size(); ++node) {
+                if (nodes[node].type != G::Type::COMM) continue;
+                const Flow key{item.first, nodes[node].flow_id};
+                const Comm comm{_comms.size(), graph.eventIndex({item.first, node, G::Event::START}),
+                    graph.eventIndex({item.first, node, G::Event::FINISH}),
+                    _indexed_history ? _predictor->flowIndex(key) : no_flow};
+                _comms.emplace(key, comm);
+                comm_at_start[comm.start] = comm.index;
+                _components[graph.eventComponent(comm.start)].comms.push_back(comm);
+            }
+        }
+        _fcts.resize(_comms.size());
+        for (const auto& arc : graph.eventArcs()) {
+            const auto src = graph.eventIndex(arc.source), dst = graph.eventIndex(arc.target);
+            const bool lifecycle = arc.source.node_index == arc.target.node_index &&
+                arc.source.event == G::Event::START && arc.target.event == G::Event::FINISH;
+            const auto flow = lifecycle ? comm_at_start[src] : no_flow;
+            _events[src].outputs.push_back({dst, flow, arc.cost_ns});
+            _events[dst].inputs.push_back({src, flow, arc.cost_ns});
+        }
+        for (size_t i = 0; i < _events.size(); ++i) {
+            const auto& key = graph.eventOrder()[i];
+            const auto component = graph.eventComponent(i);
+            auto& data = _components[component];
+            if (data.events.empty()) _dag_components.at(key.dag_index).push_back(component);
+            data.events.push_back(i);
+            _events[i].finish = key.event == G::Event::FINISH;
+            if (_events[i].outputs.empty()) data.terminals.push_back(i);
+        }
+        for (size_t i = _events.size(); i-- > 0;)
+            for (const auto& arc : _events[i].outputs)
+                _nominal_tail[i] = std::max(_nominal_tail[i], arc.nominal_ns + _nominal_tail[arc.event]);
+    }
+
+    bool usesProgress() const override { return true; }
+
+    Estimates evaluate(const GraExecutionProgress& progress, uint64_t now_ns,
+        const std::map<MessageletKey, RoutingDemandPolicy::Ready>& pending) const override {
+        Estimates result;
+        std::map<uint64_t, DagEstimate> dags;
+        for (const auto& item : pending) {
+            const auto& key = item.first;
+            auto [dag, inserted] = dags.try_emplace(key.dag_id);
+            if (inserted) dag->second = prepareDag(key.dag_id, progress, now_ns);
+            const auto& comm = _comms.at({key.dag_id, key.flow_id});
+            const auto& fct = _fcts[comm.index];
+            Estimate estimate;
+            estimate.strategy = "global_slack_online";
+            estimate.scope = _actual[comm.finish] ? "completed" : "global";
+            estimate.frontier_events = dag->second.frontier_count;
+            estimate.finish_at_frontier = _frontier[comm.finish];
+            estimate.collective_id = fct.collective_id;
+            estimate.comm_position = fct.comm_position;
+            estimate.prediction_time_ns = now_ns;
+            estimate.predicted_fct_ns = fct.fct_ns;
+            estimate.fct_sample_count = fct.sample_count;
+            estimate.nominal_fallback = fct.nominal_fallback;
+            estimate.fct_horizon = fct.horizon == OnlineFctPredictor::Horizon::ShortTerm ? "short_term" : "long_term";
+            estimate.dynamic_tail_ns = _tail[comm.finish];
+            if (!_actual[comm.finish]) {
+                const auto end = dag->second.latest;
+                setGlobalSlack(estimate, now_ns, _eta[comm.finish], _nominal_tail[comm.finish],
+                    _tail[comm.finish], _eta[end], _graph.eventOrder()[end].node_index);
+            }
+            result.emplace(key, std::move(estimate));
+        }
+        rankEstimates(result);
+        return result;
+    }
+
+private:
+    long double cost(const Arc& arc) const {
+        return arc.flow == no_flow ? arc.nominal_ns : _fcts[arc.flow].fct_ns;
+    }
+
+    bool later(size_t candidate, size_t other) const {
+        // The reference selects the first equal terminal in reverse topo order.
+        return _eta[candidate] > _eta[other] || (_eta[candidate] == _eta[other] && candidate > other);
+    }
+
+    DagEstimate prepareDag(uint64_t dag, const GraExecutionProgress& progress, uint64_t now_ns) const {
+        DagEstimate result{_events.size(), 0};
+        std::optional<std::set<Key>> external_frontier;
+        if (&progress.graph() != &_graph) {
+            const auto visible = progress.frontier(dag);
+            external_frontier.emplace(visible.begin(), visible.end());
+        }
+        for (const auto id : _dag_components.at(dag)) {
+            auto& component = _components[id];
+            prepareComponent(id, component, progress, now_ns, external_frontier ? &*external_frontier : nullptr);
+            result.frontier_count += component.frontier_count;
+            if (result.latest == _events.size() || later(component.latest, result.latest))
+                result.latest = component.latest;
+        }
+        if (external_frontier) result.frontier_count = external_frontier->size();
+        return result;
+    }
+
+    OnlineFctPredictor::Prediction predictFct(const Comm& comm, uint64_t now_ns) const {
+        const auto horizon = _actual[comm.start] ? OnlineFctPredictor::Horizon::ShortTerm
+                                                 : OnlineFctPredictor::Horizon::LongTerm;
+        if (_indexed_history) return _predictor->predictIndexed(comm.predictor_index, now_ns, horizon);
+        const auto& start = _graph.eventOrder()[comm.start];
+        const auto& flow = _graph.dags().at(start.dag_index).nodes[start.node_index];
+        return _predictor->predict({start.dag_index, flow.flow_id}, now_ns, horizon);
+    }
+
+    void prepareComponent(size_t id, Component& component, const GraExecutionProgress& progress, uint64_t now_ns,
+        const std::set<Key>* external_frontier) const {
+        const auto version = external_frontier ? std::nullopt : std::optional<uint64_t>{progress.componentVersion(id)};
+        const bool progress_changed = !version || component.progress_version != version;
+        if (progress_changed) {
+            component.frontier_count = 0;
+            component.unconfirmed.clear();
+            for (const auto i : component.events) {
+                _actual[i] = external_frontier ? progress.eventTime(_graph.eventOrder()[i]) : progress.indexedTime(i);
+                if (_actual[i]) _eta[i] = *_actual[i];
+                else component.unconfirmed.push_back(i);
+            }
+            for (const auto i : component.events) {
+                const auto& incoming = _events[i].inputs;
+                _frontier[i] = external_frontier ? external_frontier->count(_graph.eventOrder()[i]) != 0
+                    : !_actual[i] && std::all_of(incoming.begin(), incoming.end(),
+                        [&](const Arc& arc) { return _actual[arc.event].has_value(); });
+                component.frontier_count += _frontier[i];
+            }
+            component.progress_version = version;
+        }
+
+        const auto history = _indexed_history ? _predictor->componentHistory(id) : OnlineFctPredictor::ComponentHistory{};
+        bool costs_changed = false;
+        // Once every recorded sample in this component is visible, moving the
+        // clock alone cannot change the predictions. A history update marks
+        // every component that consumes the updated collective window.
+        if (progress_changed || !_indexed_history || component.history_revision != history.revision ||
+            (component.cost_time != now_ns && std::min(component.cost_time, now_ns) < history.latest_visible_ns)) {
+            for (const auto& comm : component.comms) {
+                const auto fct = predictFct(comm, now_ns);
+                costs_changed |= _fcts[comm.index].fct_ns != fct.fct_ns;
+                _fcts[comm.index] = fct;
+            }
+            component.history_revision = history.revision;
+            component.cost_time = now_ns;
+        }
+        if (costs_changed || !component.eta_time_initialized) {
+            // Reverse propagation is independent of both confirmed times and
+            // the current clock. Only changes to an arc's cost invalidate it.
+            for (auto it = component.events.rbegin(); it != component.events.rend(); ++it) {
+                long double tail = 0;
+                for (const auto& arc : _events[*it].outputs)
+                    tail = std::max(tail, cost(arc) + _tail[arc.event]);
+                _tail[*it] = tail;
+            }
+        }
+        // Confirmed ETAs are fixed. Recompute only unconfirmed events in their
+        // original forward order, and keep completed components across clocks.
+        if (progress_changed || (!component.unconfirmed.empty() && (costs_changed || component.eta_time != now_ns))) {
+            const long double now = now_ns;
+            for (const auto i : component.unconfirmed) {
+                const auto& event = _events[i];
+                long double arrival = now;
+                if (event.finish || !_frontier[i])
+                    for (const auto& arc : event.inputs) arrival = std::max(arrival, _eta[arc.event] + cost(arc));
+                if (event.finish) arrival = std::max(arrival, now + 1);
+                _eta[i] = arrival;
+            }
+            component.latest = component.terminals.back();
+            for (const auto terminal : component.terminals)
+                if (later(terminal, component.latest)) component.latest = terminal;
+            component.eta_time = now_ns;
+            component.eta_time_initialized = true;
+        }
+    }
+
+    const G& _graph;
     std::shared_ptr<const OnlineFctPredictor> _predictor;
+    const bool _indexed_history;
+    std::vector<Event> _events;
+    std::map<Flow, Comm> _comms;
+    std::map<uint64_t, std::vector<size_t>> _dag_components;
+    mutable std::vector<Component> _components;
+    mutable std::vector<long double> _eta, _tail;
+    std::vector<long double> _nominal_tail;
+    mutable std::vector<uint8_t> _frontier;
+    mutable std::vector<std::optional<uint64_t>> _actual;
+    mutable std::vector<OnlineFctPredictor::Prediction> _fcts;
 };
 }
 
 std::unique_ptr<RoutingPriorityStrategy> makeRoutingPriorityStrategy(const std::string& strategy, const G& graph,
     std::shared_ptr<const OnlineFctPredictor> predictor) {
     if (strategy == "global_slack") return std::make_unique<GlobalSlackPriority>(graph);
-    if (strategy == "global_slack_online") return std::make_unique<GlobalSlackPriority>(graph,
+    if (strategy == "global_slack_online") return std::make_unique<OnlineGlobalSlackPriority>(graph,
         predictor ? std::move(predictor) : std::make_shared<OnlineFctPredictor>(graph));
     if (strategy == "join_slack") return std::make_unique<JoinSlackPriority>(graph);
     if (strategy == "dag_downstream") return std::make_unique<DownstreamPriority>(graph);

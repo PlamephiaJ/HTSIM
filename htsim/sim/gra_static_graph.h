@@ -93,6 +93,9 @@ public:
     const std::vector<EventKey>& eventOrder() const { return _event_order; }
     const std::vector<EventArc>& eventArcs() const { return _event_arcs; }
     const std::map<BranchKey, std::vector<EventKey>>& joinBranches() const { return _join_branches; }
+    size_t eventIndex(const EventKey& key) const { return _event_indices.at(key); }
+    size_t eventComponent(size_t index) const { return _event_components[index]; }
+    size_t componentCount() const { return _component_count; }
 
 private:
     GraStaticGraph(std::vector<Dag> dags, uint64_t reference_bandwidth_bps);
@@ -104,6 +107,9 @@ private:
     std::vector<EventKey> _event_order;
     std::vector<EventArc> _event_arcs;
     std::map<BranchKey, std::vector<EventKey>> _join_branches;
+    std::map<EventKey, size_t> _event_indices;
+    std::vector<size_t> _event_components;
+    size_t _component_count = 0;
 };
 
 #endif

@@ -1,12 +1,27 @@
 #include "gra_execution_progress.h"
 
 #include <algorithm>
+#include <atomic>
 #include <limits>
 #include <stdexcept>
 
-GraExecutionProgress::GraExecutionProgress(std::shared_ptr<const GraStaticGraph> graph)
+GraExecutionProgress::GraExecutionProgress(std::shared_ptr<const GraStaticGraph> graph,
+    std::shared_ptr<ConfirmationVersions> versions)
     : _graph(std::move(graph)) {
     if (!_graph) throw std::invalid_argument("GRA progress requires a static graph");
+    _times.resize(_graph->eventOrder().size());
+    _component_versions.resize(_graph->componentCount());
+    _versions = versions ? std::move(versions) : std::make_shared<ConfirmationVersions>(_graph->componentCount());
+}
+
+uint64_t GraExecutionProgress::ConfirmationVersions::advance(size_t component, uint64_t prior, size_t event,
+    uint64_t time) {
+    auto& last = _last.at(component);
+    if (last && last->prior == prior && last->event == event && last->time == time) return last->version;
+    static std::atomic<uint64_t> sequence{0};
+    const auto version = sequence.fetch_add(1, std::memory_order_relaxed) + 1;
+    last = Transition{prior, time, version, event};
+    return version;
 }
 
 std::optional<GraExecutionProgress::EventKey> GraExecutionProgress::resolve(
@@ -32,7 +47,13 @@ void GraExecutionProgress::apply(const GraProgressReport& report) {
     const auto found = _confirmed.find(*key);
     if (found != _confirmed.end() && found->second != report.event_time_ns)
         throw std::invalid_argument("Conflicting actual time for a GRA execution event");
+    if (found != _confirmed.end()) return;
+    const auto index = _graph->eventIndex(*key);
+    const auto component = _graph->eventComponent(index);
     _confirmed.emplace(*key, report.event_time_ns);
+    _times[index] = report.event_time_ns;
+    auto& version = _component_versions[component];
+    version = _versions->advance(component, version, index, report.event_time_ns);
 }
 
 GraExecutionProgress::Result GraExecutionProgress::receive(const GraProgressReport& report) {

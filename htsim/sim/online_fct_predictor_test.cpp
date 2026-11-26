@@ -295,6 +295,44 @@ void checkStartedAndFuturePredictionHorizons() {
     assert(future.estimated_finish_time_ns == 159 && future.estimated_workload_end_ns == 159);
 }
 
+void checkComponentCacheAcrossTimeAndProgressViews() {
+    G::Dag dag{0, {{Type::COMM, 10, 10, {}, 0}, {Type::COMM, 20, 20, {}, 0}}};
+    bind(dag);
+    auto graph = G::build({dag}, bps);
+    assert(graph->componentCount() == 2);
+    auto versions = std::make_shared<GraExecutionProgress::ConfirmationVersions>(graph->componentCount());
+    GraExecutionProgress local(graph, versions), remote(graph, versions);
+    local.receive({0, 0, 0, GraTaskEvent::START, 1, 30});
+    remote.receive({0, 0, 0, GraTaskEvent::START, 1, 31});
+    for (auto* progress : {&local, &remote}) {
+        progress->receive({0, 100, 0, GraTaskEvent::START, 1, 30});
+        progress->receive({0, 1, 0, GraTaskEvent::START, 1, 0});
+    }
+    for (auto* progress : {&local, &remote}) progress->receive({0, 101, 0, GraTaskEvent::START, 1, 0});
+    const auto local_component = graph->eventComponent(graph->eventIndex({0, 0, Event::START}));
+    const auto shared_component = graph->eventComponent(graph->eventIndex({0, 1, Event::START}));
+    assert(local.componentVersion(local_component) != remote.componentVersion(local_component));
+    assert(local.componentVersion(shared_component) == remote.componentVersion(shared_component));
+    auto predictor = std::make_shared<OnlineFctPredictor>(*graph);
+    const auto online = makeRoutingPriorityStrategy("global_slack_online", *graph, predictor);
+    const auto requests = pending({{0, 10, 0}, {0, 20, 0}});
+    const auto before = online->evaluate(local, 39, requests).at({0, 10, 0});
+    assert(before.nominal_fallback == true && before.estimated_finish_time_ns == 40);
+    assert(before.global_end_node_index == 1); // Equal terminal ETAs keep reverse topological order.
+    assert(online->evaluate(local, 40, requests).at({0, 10, 0}).nominal_fallback == true);
+
+    // The FCT window spans the two components. A sample arriving at the
+    // same time as an estimate invalidates both, even with unchanged progress.
+    assert(predictor->observeCompletion({0, 20}, 0, 35000, 40000));
+    const auto after = online->evaluate(local, 40, requests).at({0, 10, 0});
+    assert(after.predicted_fct_ns == 35 && after.estimated_finish_time_ns == 65);
+    assert(after.global_end_node_index == 0 && after.global_slack_ns == 0);
+    const auto other = online->evaluate(remote, 40, requests).at({0, 10, 0});
+    assert(other.predicted_fct_ns == 35 && other.estimated_finish_time_ns == 66);
+    assert(online->evaluate(local, 40, requests).at({0, 10, 0}).estimated_finish_time_ns == 65);
+    assert(online->evaluate(local, 39, requests).at({0, 10, 0}).nominal_fallback == true);
+}
+
 void checkMissingMetadata() {
     const auto graph = G::build({{0, {{Type::COMM, 1, 10, {}}}}}, bps);
     invalid([&] { makeRoutingPriorityStrategy("global_slack_online", *graph); });
@@ -309,6 +347,7 @@ int main() {
     checkColdStartAndDynamicTail();
     checkReceiveGateAndStartDependencies();
     checkStartedAndFuturePredictionHorizons();
+    checkComponentCacheAcrossTimeAndProgressViews();
     checkMissingMetadata();
     std::cout << "online FCT predictor tests passed\n";
 }

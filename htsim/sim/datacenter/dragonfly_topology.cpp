@@ -405,9 +405,10 @@ void DragonflyTopology::initializeGraStaticGraphs(std::vector<GraStaticGraph::Da
     if (_group_agents.front()->_static_graph)
         throw std::logic_error("GRA static graphs are already initialized");
     auto result = GraStaticGraph::build(std::move(dags), _link_speed_global);
+    auto versions = std::make_shared<GraExecutionProgress::ConfirmationVersions>(result->componentCount());
     for (auto& agent : _group_agents) {
         agent->_static_graph = result;
-        agent->_execution_progress = std::make_unique<GraExecutionProgress>(result);
+        agent->_execution_progress = std::make_unique<GraExecutionProgress>(result, versions);
     }
 }
 
